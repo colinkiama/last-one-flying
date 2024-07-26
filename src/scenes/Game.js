@@ -21,19 +21,21 @@ export class Game extends Scene
         const { up, down, left, right } = this.movementKeys;
 
         if (left.isDown) {
-            this.player.setAngularVelocity(-100);
+            this.player.setAngularVelocity(-400);
         } else if (right.isDown) {
-            this.player.setAngularVelocity(100);
+            this.player.setAngularVelocity(400);
         } else {
             this.player.setAngularVelocity(0);
         }
 
         if (up.isDown) {
-            this.physics.velocityFromRotation(this.player.rotation, 100, this.player.body.velocity);
+            this.physics.velocityFromRotation(this.player.rotation, 300, this.player.body.velocity);
         } else if (down.isDown) {
-            this.physics.velocityFromRotation(this.player.rotation, -100, this.player.body.velocity);
+            this.physics.velocityFromRotation(this.player.rotation, -300, this.player.body.velocity);
         } else {
             this.player.setVelocity(0);
         }
+
+        this.physics.world.wrap(this.player, 32);
     }
 }
