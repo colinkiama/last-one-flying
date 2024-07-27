@@ -36,22 +36,38 @@ export class Game extends Scene
             this.player.setVelocity(0);
         }
 
-        if (isPositiveRotation(this.player.rotation)) {
-            if (this.player.rotation >= Math.PI / 2) {
-                this.player.setBodySize(24, 32, 0);
-            } else {
-                this.player.setBodySize(32, 24, 0);
+        // Set body size based on rotation boundaries (due to limitation of arcade physics body not supporting rotation)
+        const verticalBoundaries = [Math.PI / 2, -Math.PI / 2 ];
+        const horizontalBoundaries = [0, -Math.PI, Math.PI];
+
+        const verticalDifferences = verticalBoundaries.map(
+            (num) => Math.abs(this.player.rotation - num)
+        );
+        const horizontalDifferences = horizontalBoundaries.map(
+            (num) => Math.abs(this.player.rotation - num)
+        );
+
+        let verticalDifference, horizontalDifference = Math.MAX;
+
+        verticalDifference = verticalBoundaries.map(
+            (num) => Math.abs(this.player.rotation - num)
+        ).reduce((lastValue, currentValue) => {
+            return currentValue < lastValue ? currentValue : lastValue
+        }, Number.MAX_VALUE);
+
+        horizontalDifference = horizontalBoundaries.map(
+            (num) => Math.abs(this.player.rotation - num)
+        ).reduce((lastValue, currentValue) => {
+            return currentValue < lastValue ? currentValue : lastValue
+        }, Number.MAX_VALUE);
+
+        if ((verticalDifference < horizontalDifference)) {
+            if (this.player.body.width !== 24) {
+                this.player.setBodySize(24, 32, 8);
             }
-        } else {
-            if (this.player.rotation < - Math.PI / 2) {
-                this.player.setBodySize(32, 24, 0);
-            } else {
-                this.player.setBodySize(24, 32, 0);
-            }
+        } else if (this.player.body.width.x !== 32) {
+            this.player.setBodySize(32, 24, 8);
         }
-
-
-        console.log("Player rotation:", this.player.rotation);
 
         this.physics.world.wrap(this.player, 32);
     }
