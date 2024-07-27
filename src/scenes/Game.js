@@ -12,8 +12,8 @@ export class Game extends Scene
 
     create ()
     {
-        this.cameras.main.setBackgroundColor(0xffffff);
-        this.player = this.physics.add.sprite(320, 180, 'player').setOrigin(0.5, 0.5).setAlpha(1);
+        this.cameras.main.setBackgroundColor(0x222222);
+        this.player = this.physics.add.sprite(320, 180, 'player').setBodySize(32,24, 8).setOrigin(0.5, 0.5);
         this.movementKeys = createMovementKeys(this.input.keyboard);
     }
 
@@ -36,6 +36,31 @@ export class Game extends Scene
             this.player.setVelocity(0);
         }
 
+        if (isPositiveRotation(this.player.rotation)) {
+            if (this.player.rotation >= Math.PI / 2) {
+                this.player.setBodySize(24, 32, 0);
+            } else {
+                this.player.setBodySize(32, 24, 0);
+            }
+        } else {
+            if (this.player.rotation < - Math.PI / 2) {
+                this.player.setBodySize(32, 24, 0);
+            } else {
+                this.player.setBodySize(24, 32, 0);
+            }
+        }
+
+
+        console.log("Player rotation:", this.player.rotation);
+
         this.physics.world.wrap(this.player, 32);
     }
+}
+
+function isPositiveRotation(rotationValue) {
+    if (rotationValue >= 0) {
+        return true;
+    }
+
+    return false;
 }
