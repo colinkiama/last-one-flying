@@ -30,7 +30,9 @@ export class Game extends Scene
             if (this.player.body.width === 24) {
                 laserBeam.setBodySize(1, 8);
             }
+            const speed = 250;
             this.laserBeams.add(laserBeam);
+            this.physics.velocityFromRotation(this.player.rotation, speed, laserBeam.body.velocity);
         }
 
     }
