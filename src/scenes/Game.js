@@ -24,7 +24,7 @@ export class Game extends Scene
         this.handlePlayerMovement();
 
         const { shoot, useAbility, cycleAbilities } = this.combatKeys;
-        if (shoot.isDown) {
+        if (this.input.keyboard.checkDown(shoot, 250)) {
             const laserBeam = this.physics.add.image(this.player.x + 10, this.player.y + 10, 'laser-beam');
             this.laserBeams.add(laserBeam);
         }
