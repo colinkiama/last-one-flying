@@ -1,10 +1,11 @@
 import { Scene } from 'phaser';
-import { createMovementKeys } from '../utils';
+import { createMovementKeys, createCombatKeys } from '../utils';
 
 export class Game extends Scene
 {
     movementKeys;
     player
+    laserBeams;
     constructor ()
     {
         super('Game');
@@ -15,9 +16,22 @@ export class Game extends Scene
         this.cameras.main.setBackgroundColor(0x222222);
         this.player = this.physics.add.sprite(320, 180, 'player').setBodySize(32,24, 8).setOrigin(0.5, 0.5);
         this.movementKeys = createMovementKeys(this.input.keyboard);
+        this.combatKeys = createCombatKeys(this.input.keyboard);
+        this.laserBeams = this.physics.add.group();
     }
 
     update () {
+        this.handlePlayerMovement();
+
+        const { shoot, useAbility, cycleAbilities } = this.combatKeys;
+        if (shoot.isDown) {
+            const laserBeam = this.physics.add.image(this.player.x + 10, this.player.y + 10, 'laser-beam');
+            this.laserBeams.add(laserBeam);
+        }
+
+    }
+
+    handlePlayerMovement() {
         const { up, down, left, right } = this.movementKeys;
 
         if (left.isDown) {

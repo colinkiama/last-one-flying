@@ -36,6 +36,8 @@ export class Preloader extends Scene
         this.load.spritesheet([
             { key: 'player', frameConfig: { frameWidth: 32, frameHeight: 32 } }
         ]);
+
+        this.load.image('laser-beam', 'laser-beam.png');
     }
 
     create ()
