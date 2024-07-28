@@ -13,7 +13,6 @@ export class Game extends Scene
     constructor ()
     {
         super('Game');
-        this.nextShotTime = 0;
     }
 
     create ()
@@ -22,7 +21,9 @@ export class Game extends Scene
         this.player = this.physics.add.sprite(320, 180, 'player').setBodySize(32,24, 8).setOrigin(0.5, 0.5);
         this.movementKeys = createMovementKeys(this.input.keyboard);
         this.combatKeys = createCombatKeys(this.input.keyboard);
-        this.laserBeams = this.physics.add.group();
+        this.laserBeams = this.physics.add.group({
+            collideWorldBounds: true
+        });
         this.nextShotTime = 0;
     }
 
@@ -31,7 +32,7 @@ export class Game extends Scene
 
         const { shoot, useAbility, cycleAbilities } = this.combatKeys;
 
-        if (this.input.keyboard.checkDown(shoot, LASER_SHOT_DELAY) && this.time.now >= this.nextShotTime) {
+        if (shoot.isDown && this.time.now >= this.nextShotTime) {
             this.nextShotTime = this.time.now + LASER_SHOT_DELAY;
             const rotatedShipHeadOffset = new PhaserMath.Vector2(
                 this.player.width * this.player.originX + LASER_BEAM_WIDTH,
