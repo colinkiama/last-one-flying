@@ -1,14 +1,19 @@
-import { Scene } from 'phaser';
+import { Scene, Math as PhaserMath } from 'phaser';
 import { createMovementKeys, createCombatKeys } from '../utils';
 
+const LASER_BEAM_WIDTH = 8;
+const MICROSECONDS_IN_MILLISECOND = 1000;
+const LASER_SHOT_DELAY = 250 // In milliseconds
 export class Game extends Scene
 {
     movementKeys;
     player
     laserBeams;
+    nextShotTime
     constructor ()
     {
         super('Game');
+        this.nextShotTime = 0;
     }
 
     create ()
@@ -18,23 +23,37 @@ export class Game extends Scene
         this.movementKeys = createMovementKeys(this.input.keyboard);
         this.combatKeys = createCombatKeys(this.input.keyboard);
         this.laserBeams = this.physics.add.group();
+        this.nextShotTime = 0;
     }
 
     update () {
         this.handlePlayerMovement();
 
         const { shoot, useAbility, cycleAbilities } = this.combatKeys;
-        if (this.input.keyboard.checkDown(shoot, 250)) {
-            const laserBeam = this.physics.add.image(this.player.x + 10, this.player.y + 10, 'laser-beam');
+
+        if (this.input.keyboard.checkDown(shoot, LASER_SHOT_DELAY) && this.time.now >= this.nextShotTime) {
+            this.nextShotTime = this.time.now + LASER_SHOT_DELAY;
+            const rotatedShipHeadOffset = new PhaserMath.Vector2(
+                this.player.width * this.player.originX + LASER_BEAM_WIDTH,
+                0
+            ).rotate(this.player.rotation);
+
+            const laserBeam = this.physics.add.image(
+                this.player.x + rotatedShipHeadOffset.x,
+                this.player.y + rotatedShipHeadOffset.y,
+                'laser-beam'
+            );
+
             laserBeam.setRotation(this.player.rotation);
+
             if (this.player.body.width === 24) {
                 laserBeam.setBodySize(1, 8);
             }
+
             const speed = 250;
             this.laserBeams.add(laserBeam);
             this.physics.velocityFromRotation(this.player.rotation, speed, laserBeam.body.velocity);
         }
-
     }
 
     handlePlayerMovement() {
