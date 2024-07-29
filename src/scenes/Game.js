@@ -28,6 +28,7 @@ export class Game extends Scene
         this._laserBeams = this.physics.add.group({
             classType: LaserBeam,
             maxSize: 50,
+            runChildUpdate: true
         });
     }
 
@@ -109,7 +110,7 @@ export class Game extends Scene
             this._player.setBodySize(32, 24, 8);
         }
 
-        this.physics.world.wrap(this._player, 32);
+        this.physics.world.wrap(this._player, this._player.width / 2);
     }
 }
 

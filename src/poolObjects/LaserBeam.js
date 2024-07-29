@@ -1,7 +1,10 @@
 import { Physics, Math as PhaserMath } from 'phaser';
 const LASER_SHOT_SPEED = 250;
+const LIFESPAN = 2000; // In milliseconds
 
 export default class LaserBeam extends Physics.Arcade.Image {
+    lifespan
+
     constructor (scene) {
         super(scene, 0, 0, 'laser-beam');
     }
@@ -20,9 +23,19 @@ export default class LaserBeam extends Physics.Arcade.Image {
         this.setRotation(rotation);
 
         if (isVertical) {
-            this.setBodySize(1, 8);
+            this.setBodySize(this.height, this.width);
         }
 
         this.scene.physics.velocityFromRotation(this.rotation, LASER_SHOT_SPEED, this.body.velocity);
+        this.lifespan = LIFESPAN
+    }
+
+    update (time, delta) {
+        this.lifespan -= delta;
+        this.scene.physics.world.wrap(this, this.width / 2);
+
+        if (this.lifespan <= 0) {
+            this.disableBody(true, true);
+        }
     }
 }
