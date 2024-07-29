@@ -1,15 +1,18 @@
 import { Scene, Math as PhaserMath } from 'phaser';
 import { createMovementKeys, createCombatKeys } from '../utils';
+import { LaserBeam } from '../poolObjects';
 
-const LASER_BEAM_WIDTH = 8;
 const MICROSECONDS_IN_MILLISECOND = 1000;
 const LASER_SHOT_DELAY = 250 // In milliseconds
 export class Game extends Scene
 {
-    movementKeys;
-    player
-    laserBeams;
-    nextShotTime
+    _movementKeys;
+    __combatKeys;
+
+    _player
+    _laserBeams;
+    _nextShotTime;
+
     constructor ()
     {
         super('Game');
@@ -18,62 +21,59 @@ export class Game extends Scene
     create ()
     {
         this.cameras.main.setBackgroundColor(0x222222);
-        this.player = this.physics.add.sprite(320, 180, 'player').setBodySize(32,24, 8).setOrigin(0.5, 0.5);
-        this.movementKeys = createMovementKeys(this.input.keyboard);
-        this.combatKeys = createCombatKeys(this.input.keyboard);
-        this.laserBeams = this.physics.add.group({
-            collideWorldBounds: true
+        this._player = this.physics.add.sprite(320, 180, 'player').setBodySize(32,24, 8).setOrigin(0.5, 0.5);
+        this._nextShotTime = 0;
+        this._movementKeys = createMovementKeys(this.input.keyboard);
+        this._combatKeys = createCombatKeys(this.input.keyboard);
+        this._laserBeams = this.physics.add.group({
+            classType: LaserBeam,
+            maxSize: 50,
         });
-        this.nextShotTime = 0;
     }
 
     update () {
-        this.handlePlayerMovement();
+        this.handle_playerMovement();
 
-        const { shoot, useAbility, cycleAbilities } = this.combatKeys;
+        const { shoot, useAbility, cycleAbilities } = this._combatKeys;
 
-        if (shoot.isDown && this.time.now >= this.nextShotTime) {
-            this.nextShotTime = this.time.now + LASER_SHOT_DELAY;
-            const rotatedShipHeadOffset = new PhaserMath.Vector2(
-                this.player.width * this.player.originX + LASER_BEAM_WIDTH,
-                0
-            ).rotate(this.player.rotation);
+        if (shoot.isDown && this.time.now >= this._nextShotTime) {
+            this._nextShotTime = this.time.now + LASER_SHOT_DELAY;
+            const laserBeam = this._laserBeams.get();
+            if (laserBeam) {
+                const rotatedShipHeadOffset = new PhaserMath.Vector2(
+                    this._player.width * this._player.originX + laserBeam.width,
+                    0
+                ).rotate(this._player.rotation);
 
-            const laserBeam = this.physics.add.image(
-                this.player.x + rotatedShipHeadOffset.x,
-                this.player.y + rotatedShipHeadOffset.y,
-                'laser-beam'
-            );
-
-            laserBeam.setRotation(this.player.rotation);
-
-            if (this.player.body.width === 24) {
-                laserBeam.setBodySize(1, 8);
+                laserBeam.fire(
+                    this._player.x + rotatedShipHeadOffset.x,
+                    this._player.y + rotatedShipHeadOffset.y,
+                    {
+                        isVertical: this._player.body.width === 24,
+                        rotation: this._player.rotation
+                    }
+                );
             }
-
-            const speed = 250;
-            this.laserBeams.add(laserBeam);
-            this.physics.velocityFromRotation(this.player.rotation, speed, laserBeam.body.velocity);
         }
     }
 
-    handlePlayerMovement() {
-        const { up, down, left, right } = this.movementKeys;
+    handle_playerMovement () {
+        const { up, down, left, right } = this._movementKeys;
 
         if (left.isDown) {
-            this.player.setAngularVelocity(-400);
+            this._player.setAngularVelocity(-400);
         } else if (right.isDown) {
-            this.player.setAngularVelocity(400);
+            this._player.setAngularVelocity(400);
         } else {
-            this.player.setAngularVelocity(0);
+            this._player.setAngularVelocity(0);
         }
 
         if (up.isDown) {
-            this.physics.velocityFromRotation(this.player.rotation, 300, this.player.body.velocity);
+            this.physics.velocityFromRotation(this._player.rotation, 300, this._player.body.velocity);
         } else if (down.isDown) {
-            this.physics.velocityFromRotation(this.player.rotation, -300, this.player.body.velocity);
+            this.physics.velocityFromRotation(this._player.rotation, -300, this._player.body.velocity);
         } else {
-            this.player.setVelocity(0);
+            this._player.setVelocity(0);
         }
 
         // Set body size based on rotation boundaries (due to limitation of arcade physics body not supporting rotation)
@@ -81,42 +81,35 @@ export class Game extends Scene
         const horizontalBoundaries = [0, -Math.PI, Math.PI];
 
         const verticalDifferences = verticalBoundaries.map(
-            (num) => Math.abs(this.player.rotation - num)
+            (num) => Math.abs(this._player.rotation - num)
         );
         const horizontalDifferences = horizontalBoundaries.map(
-            (num) => Math.abs(this.player.rotation - num)
+            (num) => Math.abs(this._player.rotation - num)
         );
 
         let verticalDifference, horizontalDifference = Math.MAX;
 
         verticalDifference = verticalBoundaries.map(
-            (num) => Math.abs(this.player.rotation - num)
+            (num) => Math.abs(this._player.rotation - num)
         ).reduce((lastValue, currentValue) => {
             return currentValue < lastValue ? currentValue : lastValue
         }, Number.MAX_VALUE);
 
         horizontalDifference = horizontalBoundaries.map(
-            (num) => Math.abs(this.player.rotation - num)
+            (num) => Math.abs(this._player.rotation - num)
         ).reduce((lastValue, currentValue) => {
             return currentValue < lastValue ? currentValue : lastValue
         }, Number.MAX_VALUE);
 
         if ((verticalDifference < horizontalDifference)) {
-            if (this.player.body.width !== 24) {
-                this.player.setBodySize(24, 32, 8);
+            if (this._player.body.width !== 24) {
+                this._player.setBodySize(24, 32, 8);
             }
-        } else if (this.player.body.width.x !== 32) {
-            this.player.setBodySize(32, 24, 8);
+        } else if (this._player.body.width.x !== 32) {
+            this._player.setBodySize(32, 24, 8);
         }
 
-        this.physics.world.wrap(this.player, 32);
+        this.physics.world.wrap(this._player, 32);
     }
 }
 
-function isPositiveRotation(rotationValue) {
-    if (rotationValue >= 0) {
-        return true;
-    }
-
-    return false;
-}
