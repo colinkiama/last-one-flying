@@ -1,6 +1,6 @@
 import { Scene, Math as PhaserMath } from 'phaser';
 import { createMovementKeys, createCombatKeys } from '../utils';
-import { LaserBeam } from '../poolObjects';
+import { LaserBeam, TestEnemy } from '../poolObjects';
 
 const MICROSECONDS_IN_MILLISECOND = 1000;
 const LASER_SHOT_DELAY = 250 // In milliseconds
@@ -10,7 +10,7 @@ export class Game extends Scene
     __combatKeys;
 
     _player;
-    _enemy;
+    _testEnemies;
     _laserBeams;
     _nextShotTime;
 
@@ -23,25 +23,36 @@ export class Game extends Scene
     {
         this.cameras.main.setBackgroundColor(0x000000);
         this._player = this.physics.add.sprite(320, 180, 'player').setBodySize(32,24, 8).setOrigin(0.5, 0.5);
-        this._enemy = this.physics.add.image(400, 200, 'test-enemy');
         this._nextShotTime = 0;
         this._movementKeys = createMovementKeys(this.input.keyboard);
         this._combatKeys = createCombatKeys(this.input.keyboard);
+
         this._laserBeams = this.physics.add.group({
             classType: LaserBeam,
             maxSize: 50,
             runChildUpdate: true
         });
 
+        this._testEnemies = this.physics.add.group({
+            classType: TestEnemy,
+            maxSize: 50,
+            runChildUpdate: true,
+        })
+
         this.physics.add.overlap(
-            this._enemy,
+            this._testEnemies,
             this._laserBeams,
             (enemy, laserBeam) => {
                 console.log("Enemy Hit!");
-                enemy.destroy();
+                enemy.disableBody(true, true);
                 laserBeam.disableBody(true, true);
             }
         )
+
+        const startingEnemy = this._testEnemies.get();
+        if (startingEnemy) {
+            startingEnemy.spawn(400, 200);
+        }
     }
 
     update () {
