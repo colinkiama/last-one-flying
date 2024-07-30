@@ -20,7 +20,7 @@ export class Game extends Scene
 
     create ()
     {
-        this.cameras.main.setBackgroundColor(0x222222);
+        this.cameras.main.setBackgroundColor(0x000000);
         this._player = this.physics.add.sprite(320, 180, 'player').setBodySize(32,24, 8).setOrigin(0.5, 0.5);
         this._nextShotTime = 0;
         this._movementKeys = createMovementKeys(this.input.keyboard);
