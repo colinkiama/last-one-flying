@@ -37,7 +37,9 @@ export class Game extends Scene
             this._enemy,
             this._laserBeams,
             (enemy, laserBeam) => {
-                console.log('laserBeam hit!');
+                console.log("Enemy Hit!");
+                enemy.destroy();
+                laserBeam.disableBody(true, true);
             }
         )
     }
