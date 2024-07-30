@@ -9,7 +9,8 @@ export class Game extends Scene
     _movementKeys;
     __combatKeys;
 
-    _player
+    _player;
+    _enemy;
     _laserBeams;
     _nextShotTime;
 
@@ -22,6 +23,7 @@ export class Game extends Scene
     {
         this.cameras.main.setBackgroundColor(0x000000);
         this._player = this.physics.add.sprite(320, 180, 'player').setBodySize(32,24, 8).setOrigin(0.5, 0.5);
+        this._enemy = this.physics.add.image(400, 200, 'test-enemy');
         this._nextShotTime = 0;
         this._movementKeys = createMovementKeys(this.input.keyboard);
         this._combatKeys = createCombatKeys(this.input.keyboard);
@@ -30,10 +32,18 @@ export class Game extends Scene
             maxSize: 50,
             runChildUpdate: true
         });
+
+        this.physics.add.overlap(
+            this._enemy,
+            this._laserBeams,
+            (enemy, laserBeam) => {
+                console.log('laserBeam hit!');
+            }
+        )
     }
 
     update () {
-        this.handle_playerMovement();
+        this.handlePlayerMovement();
 
         const { shoot, useAbility, cycleAbilities } = this._combatKeys;
 
@@ -58,7 +68,7 @@ export class Game extends Scene
         }
     }
 
-    handle_playerMovement () {
+    handlePlayerMovement () {
         const { up, down, left, right } = this._movementKeys;
 
         if (left.isDown) {
