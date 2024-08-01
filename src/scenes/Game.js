@@ -44,6 +44,21 @@ export class Game extends Scene
             this._laserBeams,
             (enemy, laserBeam) => {
                 console.log("Enemy Hit!");
+                this.add.particles(
+                    enemy.x,
+                    enemy.y,
+                    'explosion',
+                    {
+                        lifespan: 4000,
+                        speed: { min: 150, max: 250 },
+                        scale: { start: 2, end: 0 },
+                        gravityY: 150,
+                        emitting: false
+                    }
+                ).explode(20);
+
+
+
                 enemy.disableBody(true, true);
                 laserBeam.disableBody(true, true);
             }
