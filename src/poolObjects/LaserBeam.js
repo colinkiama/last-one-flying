@@ -24,6 +24,8 @@ export default class LaserBeam extends Physics.Arcade.Image {
 
         if (isVertical) {
             this.setBodySize(this.height, this.width);
+        } else {
+            this.setBodySize(this.width, this.height);
         }
 
         this.scene.physics.velocityFromRotation(this.rotation, LASER_SHOT_SPEED, this.body.velocity);

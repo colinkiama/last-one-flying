@@ -57,17 +57,14 @@ export class Game extends Scene
                     }
                 ).explode(20);
 
-
-
                 enemy.disableBody(true, true);
                 laserBeam.disableBody(true, true);
+
+                this.spawnEnemy();
             }
         )
 
-        const startingEnemy = this._testEnemies.get();
-        if (startingEnemy) {
-            startingEnemy.spawn(400, 200);
-        }
+        this.spawnEnemy();
     }
 
     update () {
@@ -149,6 +146,13 @@ export class Game extends Scene
         }
 
         this.physics.world.wrap(this._player, this._player.width / 2);
+    }
+
+    spawnEnemy () {
+        const startingEnemy = this._testEnemies.get();
+        if (startingEnemy) {
+            startingEnemy.spawn(400, PhaserMath.RND.between(100, 300));
+        }
     }
 }
 
