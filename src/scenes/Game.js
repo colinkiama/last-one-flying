@@ -1,6 +1,6 @@
 import { Scene, Math as PhaserMath } from 'phaser';
 import { createMovementKeys, createCombatKeys } from '../utils';
-import { LaserBeam, TestEnemy } from '../poolObjects';
+import { LaserBeam, TestEnemy, Explosion } from '../poolObjects';
 
 const MICROSECONDS_IN_MILLISECOND = 1000;
 const LASER_SHOT_DELAY = 250 // In milliseconds
@@ -13,6 +13,7 @@ export class Game extends Scene
     _testEnemies;
     _laserBeams;
     _nextShotTime;
+    _explosions;
 
     constructor ()
     {
@@ -37,29 +38,37 @@ export class Game extends Scene
             classType: TestEnemy,
             maxSize: 50,
             runChildUpdate: true,
-        })
+        });
+
+        this._explosions = this.add.group({
+            classType: Explosion,
+            maxSize: 50,
+            runChildUpdate: true
+        });
 
         this.physics.add.overlap(
             this._testEnemies,
             this._laserBeams,
             (enemy, laserBeam) => {
                 console.log("Enemy Hit!");
-                this.add.particles(
-                    enemy.x,
-                    enemy.y,
-                    'explosion',
-                    {
-                        lifespan: 4000,
+                const explosion = this._explosions.get();
+                if (explosion) {
+                    // In scenarios where there are no inactive items in the explosions pool, you
+                    // don't display an explosion.
+                    explosion
+                    .enable()
+                    .setConfig({
+                        lifespan: 1000,
                         speed: { min: 150, max: 250 },
                         scale: { start: 2, end: 0 },
                         gravityY: 150,
-                        emitting: false
-                    }
-                ).explode(20);
+                        emitting: false,
+                        texture: 'explosion'
+                    }).explode(20, enemy.x, enemy.y);
+                }
 
                 enemy.disableBody(true, true);
                 laserBeam.disableBody(true, true);
-
                 this.spawnEnemy();
             }
         )
