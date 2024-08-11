@@ -40,6 +40,7 @@ export class Preloader extends Scene
         this.load.image('laser-beam', 'laser-beam.png');
         this.load.image('test-enemy', 'test-enemy.png');
         this.load.image('explosion', 'explosion.png');
+        this.load.image('basic-enemy', 'basic-enemy.png');
     }
 
     create ()

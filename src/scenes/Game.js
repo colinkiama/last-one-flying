@@ -1,6 +1,6 @@
 import { Scene, Math as PhaserMath } from 'phaser';
 import { createMovementKeys, createCombatKeys } from '../utils';
-import { LaserBeam, TestEnemy, Explosion } from '../poolObjects';
+import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
 
 const MICROSECONDS_IN_MILLISECOND = 1000;
 const LASER_SHOT_DELAY = 250 // In milliseconds
@@ -10,7 +10,7 @@ export class Game extends Scene
     __combatKeys;
 
     _player;
-    _testEnemies;
+    _basicEnemies;
     _laserBeams;
     _nextShotTime;
     _explosions;
@@ -34,8 +34,8 @@ export class Game extends Scene
             runChildUpdate: true
         });
 
-        this._testEnemies = this.physics.add.group({
-            classType: TestEnemy,
+        this._basicEnemies = this.physics.add.group({
+            classType: BasicEnemy,
             maxSize: 50,
             runChildUpdate: true,
         });
@@ -47,7 +47,7 @@ export class Game extends Scene
         });
 
         this.physics.add.overlap(
-            this._testEnemies,
+            this._basicEnemies,
             this._laserBeams,
             (enemy, laserBeam) => {
                 console.log("Enemy Hit!");
@@ -158,7 +158,7 @@ export class Game extends Scene
     }
 
     spawnEnemy () {
-        const startingEnemy = this._testEnemies.get();
+        const startingEnemy = this._basicEnemies.get();
         if (startingEnemy) {
             startingEnemy.spawn(400, PhaserMath.RND.between(100, 300));
         }
