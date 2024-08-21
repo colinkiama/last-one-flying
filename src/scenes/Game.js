@@ -23,7 +23,7 @@ export class Game extends Scene
     create ()
     {
         this.cameras.main.setBackgroundColor(0x000000);
-        this._player = this.physics.add.sprite(320, 180, 'player').setBodySize(32,24, 8).setOrigin(0.5, 0.5);
+        this._player = this.spawnPlayer();
         this._nextShotTime = 0;
         this._movementKeys = createMovementKeys(this.input.keyboard);
         this._combatKeys = createCombatKeys(this.input.keyboard);
@@ -50,30 +50,25 @@ export class Game extends Scene
             this._basicEnemies,
             this._laserBeams,
             (enemy, laserBeam) => {
-                console.log("Enemy Hit!");
-                const explosion = this._explosions.get();
-                if (explosion) {
-                    // In scenarios where there are no inactive items in the explosions pool, you
-                    // don't display an explosion.
-                    explosion
-                    .enable()
-                    .setConfig({
-                        lifespan: 1000,
-                        speed: { min: 150, max: 250 },
-                        scale: { start: 2, end: 0 },
-                        gravityY: 150,
-                        emitting: false,
-                        texture: 'explosion'
-                    }).explode(20, enemy.x, enemy.y);
-                }
-
-                enemy.disableBody(true, true);
+                explodeShip(this._explosions.get(), enemy);
                 laserBeam.disableBody(true, true);
                 this.spawnEnemy();
             }
         )
 
+        this.physics.add.collider(
+            this._basicEnemies,
+            this._player,
+            (enemy, player) => {
+                explodeShip(this._explosions.get(), player);
+                explodeShip(this._explosions.get(), enemy);
+                this.spawnEnemy();
+                this.spawnPlayer();
+            }
+        )
+
         this.spawnEnemy();
+
     }
 
     update () {
@@ -163,5 +158,33 @@ export class Game extends Scene
             startingEnemy.spawn(400, PhaserMath.RND.between(100, 300));
         }
     }
+
+    spawnPlayer () {
+        if (!this._player) {
+            return this.physics.add.sprite(320, 180, 'player').setBodySize(32,24, 8).setOrigin(0.5, 0.5);
+        }
+
+        this._player.enableBody(true, 320, PhaserMath.RND.between(100, 300), true, true);
+    }
 }
 
+function explodeShip (explosion, ship) {
+    // In scenarios where there are no inactive items in the explosions pool, you
+    // don't display an explosion.
+    if (!explosion) {
+        return;
+    }
+
+    explosion
+    .enable()
+    .setConfig({
+        lifespan: 1000,
+        speed: { min: 150, max: 250 },
+        scale: { start: 2, end: 0 },
+        gravityY: 150,
+        emitting: false,
+        texture: 'explosion'
+    }).explode(20, ship.x, ship.y);
+
+    ship.disableBody(true, true);
+}
