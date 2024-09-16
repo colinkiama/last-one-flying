@@ -12,6 +12,7 @@ export class Game extends Scene
     _player;
     _basicEnemies;
     _laserBeams;
+    _enemyLaserBeams;
     _nextShotTime;
     _explosions;
 
@@ -31,6 +32,12 @@ export class Game extends Scene
         this._laserBeams = this.physics.add.group({
             classType: LaserBeam,
             maxSize: 50,
+            runChildUpdate: true
+        });
+
+        this._enemyLaserBeams = this.physics.add.group({
+            classType: LaserBeam,
+            maxSize: 500,
             runChildUpdate: true
         });
 
@@ -63,6 +70,16 @@ export class Game extends Scene
                 explodeShip(this._explosions.get(), player);
                 explodeShip(this._explosions.get(), enemy);
                 this.spawnEnemy();
+                this.spawnPlayer();
+            }
+        )
+
+        this.physics.add.overlap(
+            this._player,
+            this._enemyLaserBeams,
+            (player, laserBeam) => {
+                explodeShip(this.explosions.get(), player);
+                laserBeam.disableBody(true, true);
                 this.spawnPlayer();
             }
         )
