@@ -115,6 +115,7 @@ export class Game extends Scene
         });
 
         this.time.addEvent(this._enemyShotTimerEvent);
+        this.input.on('pointermove', this.onPointerMove.bind(this));
     }
 
     update () {
@@ -159,6 +160,11 @@ export class Game extends Scene
 
             this.physics.moveToObject(enemy, this._player, 40);
         }
+    }
+
+    onPointerMove(pointer) {
+        const targetAngle = Phaser.Math.Angle.Between(this._player.x, this._player.y, pointer.worldX, pointer.worldY);
+        const rotation = this._player.setRotation(targetAngle);
     }
 
     handlePlayerMovement () {
