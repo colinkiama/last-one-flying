@@ -122,8 +122,10 @@ export class Game extends Scene
         this.handlePlayerMovement();
 
         const { shoot, useAbility, cycleAbilities } = this._combatKeys;
+        const activePointer = this.input.activePointer;
+        const shootButtonPressed = shoot.isDown || activePointer.primaryDown;
 
-        if (shoot.isDown && this.time.now >= this._nextShotTime) {
+        if (shootButtonPressed && this.time.now >= this._nextShotTime) {
             this._nextShotTime = this.time.now + LASER_SHOT_DELAY;
             const laserBeam = this._laserBeams.get();
             if (laserBeam) {
