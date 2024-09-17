@@ -1,4 +1,4 @@
-import { Scene, Math as PhaserMath } from 'phaser';
+import { Scene, Math as PhaserMath, Time } from 'phaser';
 import { createMovementKeys, createCombatKeys } from '../utils';
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
 
@@ -15,6 +15,7 @@ export class Game extends Scene
     _enemyLaserBeams;
     _nextShotTime;
     _explosions;
+    _enemyShotTimerEvent;
 
     constructor ()
     {
@@ -78,14 +79,42 @@ export class Game extends Scene
             this._player,
             this._enemyLaserBeams,
             (player, laserBeam) => {
-                explodeShip(this.explosions.get(), player);
+                explodeShip(this._explosions.get(), player);
                 laserBeam.disableBody(true, true);
                 this.spawnPlayer();
             }
         )
 
         this.spawnEnemy();
+        this._enemyShotTimerEvent = new Time.TimerEvent ({
+            delay: 2000,
+            loop: true,
+            callback: () => {
+                const activeEnemies = this._basicEnemies.getMatching('active', true);
+                for (let i = 0; i < activeEnemies.length; i++) {
+                    const enemy = activeEnemies[i];
+                    const enemyLaserBeam = this._enemyLaserBeams.get();
 
+                    if (enemyLaserBeam) {
+                        const rotatedShipHeadOffset = new PhaserMath.Vector2(
+                            enemy.width * enemy.originX + enemyLaserBeam.width,
+                            0
+                        ).rotate(enemy.rotation);
+
+                        enemyLaserBeam.fire(
+                            enemy.x + rotatedShipHeadOffset.x,
+                            enemy.y + rotatedShipHeadOffset.y,
+                            {
+                                isVertical: enemy.body.width === 24,
+                                rotation: enemy.rotation
+                            }
+                        );
+                    }
+                }
+            }
+        });
+
+        this.time.addEvent(this._enemyShotTimerEvent);
     }
 
     update () {
