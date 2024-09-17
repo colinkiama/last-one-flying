@@ -141,6 +141,24 @@ export class Game extends Scene
                 );
             }
         }
+
+        this.followPlayer();
+    }
+
+    followPlayer () {
+        const activeEnemies = this._basicEnemies.getMatching('active', true);
+        const targetX = this._player.x;
+        const targetY = this._player.y;
+
+        for (let i = 0; i < activeEnemies.length; i++) {
+            const enemy = activeEnemies[i];
+
+            const targetAngle = Phaser.Math.Angle.Between(enemy.x, enemy.y, targetX, targetY);
+            const rotation = Phaser.Math.Angle.RotateTo(enemy.rotation, targetAngle, 0.05 * Math.PI);
+            enemy.setRotation(rotation);
+
+            this.physics.moveToObject(enemy, this._player, 40);
+        }
     }
 
     handlePlayerMovement () {
