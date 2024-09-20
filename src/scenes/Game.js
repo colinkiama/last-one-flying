@@ -1,14 +1,19 @@
 import { Scene, Math as PhaserMath, Time } from 'phaser';
 import { createMovementKeys, createCombatKeys } from '../utils';
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
+import crossSceneEventEmitter from '../utils'
 
 const MICROSECONDS_IN_MILLISECOND = 1000;
 const LASER_SHOT_DELAY = 250 // In milliseconds
+
+const ScoreUpdateType = {
+    ENEMY_HIT: 'enemy-hit'
+};
+
 export class Game extends Scene
 {
     _movementKeys;
-    __combatKeys;
-
+    _combatKeys;
     _player;
     _basicEnemies;
     _laserBeams;
@@ -16,6 +21,7 @@ export class Game extends Scene
     _nextShotTime;
     _explosions;
     _enemyShotTimerEvent;
+    _score;
 
     constructor ()
     {
@@ -24,6 +30,8 @@ export class Game extends Scene
 
     create ()
     {
+        this._score = 0;
+
         this.cameras.main.setBackgroundColor(0x000000);
         this._player = this.spawnPlayer();
         this._nextShotTime = 0;
@@ -59,6 +67,7 @@ export class Game extends Scene
             this._laserBeams,
             (enemy, laserBeam) => {
                 explodeShip(this._explosions.get(), enemy);
+                this.updateScore('enemy-hit');
                 laserBeam.disableBody(true, true);
                 this.spawnEnemy();
             }
@@ -116,6 +125,8 @@ export class Game extends Scene
 
         this.time.addEvent(this._enemyShotTimerEvent);
         this.input.on('pointermove', this.onPointerMove.bind(this));
+
+        this.scene.launch('HUD');
     }
 
     update () {
@@ -146,6 +157,16 @@ export class Game extends Scene
         }
 
         this.followPlayer();
+    }
+
+    updateScore (updateType) {
+        switch (updateType) {
+            case ScoreUpdateType.ENEMY_HIT:
+                this._score += 100;
+                break;
+        }
+
+        crossSceneEventEmitter.emit('update-score', this._score);
     }
 
     followPlayer () {
