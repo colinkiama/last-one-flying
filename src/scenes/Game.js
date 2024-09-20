@@ -247,9 +247,19 @@ export class Game extends Scene
 
     spawnEnemy () {
         const startingEnemy = this._basicEnemies.get();
-        if (startingEnemy) {
-            startingEnemy.spawn(400, PhaserMath.RND.between(100, 300));
+        if (!startingEnemy) {
+            return;
         }
+
+        const minDistanceToPlayer = 200;
+        // 50% of being left of player or right of player.
+        const xPosition1 = PhaserMath.RND.between(0, this._player.x - minDistanceToPlayer);
+        const xPosition2 = PhaserMath.RND.between(this._player.x + minDistanceToPlayer, this.cameras.main.width);
+
+        let enemyX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
+        let enemyY = Phaser.Math.RND.between(startingEnemy.height, this.cameras.main.height - startingEnemy.height);
+
+        startingEnemy.spawn(enemyX, enemyY);
     }
 
     spawnPlayer () {
