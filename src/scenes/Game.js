@@ -68,6 +68,7 @@ export class Game extends Scene
             (enemy, laserBeam) => {
                 explodeShip(this._explosions.get(), enemy);
                 this.updateScore('enemy-hit');
+                this.cameras.main.shake(200, 0.01);
                 laserBeam.disableBody(true, true);
                 this.spawnEnemy();
             }
@@ -79,6 +80,7 @@ export class Game extends Scene
             (enemy, player) => {
                 explodeShip(this._explosions.get(), player);
                 explodeShip(this._explosions.get(), enemy);
+                this.cameras.main.shake(500, 0.01);
                 this.spawnEnemy();
                 this.spawnPlayer();
             }
@@ -89,6 +91,7 @@ export class Game extends Scene
             this._enemyLaserBeams,
             (player, laserBeam) => {
                 explodeShip(this._explosions.get(), player);
+                this.cameras.main.shake(500, 0.01);
                 laserBeam.disableBody(true, true);
                 this.spawnPlayer();
             }
@@ -145,6 +148,7 @@ export class Game extends Scene
                     0
                 ).rotate(this._player.rotation);
 
+                this.cameras.main.shake(100, 0.005);
                 laserBeam.fire(
                     this._player.x + rotatedShipHeadOffset.x,
                     this._player.y + rotatedShipHeadOffset.y,
