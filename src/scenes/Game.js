@@ -22,6 +22,7 @@ export class Game extends Scene
     _explosions;
     _enemyShotTimerEvent;
     _score;
+    _enemySpawnTimerEvent;
 
     constructor ()
     {
@@ -70,7 +71,6 @@ export class Game extends Scene
                 this.updateScore('enemy-hit');
                 this.cameras.main.shake(200, 0.01);
                 laserBeam.disableBody(true, true);
-                this.spawnEnemy();
             }
         )
 
@@ -81,7 +81,6 @@ export class Game extends Scene
                 explodeShip(this._explosions.get(), player);
                 explodeShip(this._explosions.get(), enemy);
                 this.cameras.main.shake(500, 0.01);
-                this.spawnEnemy();
                 this.spawnPlayer();
             }
         )
@@ -97,11 +96,11 @@ export class Game extends Scene
             }
         )
 
-        this.spawnEnemy();
         this._enemyShotTimerEvent = new Time.TimerEvent ({
             delay: 2000,
             loop: true,
             callback: () => {
+                console.log("shot timer event");
                 const activeEnemies = this._basicEnemies.getMatching('active', true);
                 for (let i = 0; i < activeEnemies.length; i++) {
                     const enemy = activeEnemies[i];
@@ -126,7 +125,21 @@ export class Game extends Scene
             }
         });
 
+        this._enemySpawnTimerEvent = new Time.TimerEvent({
+            delay: 2000,
+            startAt: 2000,
+            loop: true,
+            callback: () => {
+                const activeEnemies = this._basicEnemies.getMatching('active', true);
+                if (activeEnemies.length > 0) {
+                    return;
+                }
+                this.spawnEnemy();
+            }
+        })
+
         this.time.addEvent(this._enemyShotTimerEvent);
+        this.time.addEvent(this._enemySpawnTimerEvent);
         this.input.on('pointermove', this.onPointerMove.bind(this));
 
         this.scene.launch('HUD');
@@ -158,11 +171,6 @@ export class Game extends Scene
                     }
                 );
             }
-        }
-
-        const activeEnemies = this._basicEnemies.getMatching('active', true);
-        if (activeEnemies.length < 3) {
-            this.spawnEnemy();
         }
 
         this.followPlayer();
