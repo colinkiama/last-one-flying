@@ -160,6 +160,11 @@ export class Game extends Scene
             }
         }
 
+        const activeEnemies = this._basicEnemies.getMatching('active', true);
+        if (activeEnemies.length < 3) {
+            this.spawnEnemy();
+        }
+
         this.followPlayer();
     }
 
