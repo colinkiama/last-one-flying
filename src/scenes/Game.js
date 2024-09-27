@@ -1,5 +1,5 @@
 import { Scene, Math as PhaserMath, Time } from 'phaser';
-import { createMovementKeys, createCombatKeys } from '../utils';
+import { createMovementKeys, createCombatKeys, SpawnManager } from '../utils';
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
 import crossSceneEventEmitter from '../utils'
 
@@ -25,6 +25,7 @@ export class Game extends Scene
     _score;
     _enemySpawnTimerEvent;
     _last_enemy_hit_time;
+    _enemySpawnManager;
 
     constructor ()
     {
@@ -65,6 +66,8 @@ export class Game extends Scene
             maxSize: 50,
             runChildUpdate: true
         });
+
+        this._enemySpawnManager = new SpawnManager(this, this._player, this._basicEnemies);
 
         this.physics.add.overlap(
             this._basicEnemies,
@@ -162,7 +165,7 @@ export class Game extends Scene
                 if (activeEnemies.length > 0 || this.time.now - this._last_enemy_hit_time < ENEMY_SPAWN_COOLDOWN) {
                     return;
                 }
-                this.spawnEnemy();
+                this._enemySpawnManager.spawn()
             }
         })
 
