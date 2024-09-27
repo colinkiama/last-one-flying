@@ -5,7 +5,6 @@ import crossSceneEventEmitter from '../utils'
 
 const MICROSECONDS_IN_MILLISECOND = 1000;
 const LASER_SHOT_DELAY = 250 // In milliseconds
-const ENEMY_SPAWN_COOLDOWN = 2500 // in milliseconds;
 
 const ScoreUpdateType = {
     ENEMY_HIT: 'enemy-hit'
@@ -87,7 +86,6 @@ export class Game extends Scene
             (enemy, player) => {
                 explodeShip(this._explosions.get(), enemy);
                 const activeEnemies = this._basicEnemies.getMatching('active', true);
-                console.log('Active enemies:', activeEnemies);
                 const closestEnemy = activeEnemies.reduce((lastEnemy, currentEnemy, index) => {
                     if (!lastEnemy) {
                         return currentEnemy;
@@ -131,7 +129,6 @@ export class Game extends Scene
             delay: 2000,
             loop: true,
             callback: () => {
-                console.log("shot timer event");
                 const activeEnemies = this._basicEnemies.getMatching('active', true);
                 for (let i = 0; i < activeEnemies.length; i++) {
                     const enemy = activeEnemies[i];
@@ -161,10 +158,6 @@ export class Game extends Scene
             startAt: 500,
             loop: true,
             callback: () => {
-                const activeEnemies = this._basicEnemies.getMatching('active', true);
-                if (activeEnemies.length > 0 || this.time.now - this._last_enemy_hit_time < ENEMY_SPAWN_COOLDOWN) {
-                    return;
-                }
                 this._enemySpawnManager.spawn()
             }
         })
@@ -293,23 +286,6 @@ export class Game extends Scene
         this.physics.world.wrap(this._player, this._player.width / 2);
     }
 
-    spawnEnemy () {
-        const startingEnemy = this._basicEnemies.get();
-        if (!startingEnemy) {
-            return;
-        }
-
-        const minDistanceToPlayer = 200;
-        // 50% of being left of player or right of player.
-        const xPosition1 = PhaserMath.RND.between(0, this._player.x - minDistanceToPlayer);
-        const xPosition2 = PhaserMath.RND.between(this._player.x + minDistanceToPlayer, this.cameras.main.width);
-
-        let enemyX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
-        let enemyY = Phaser.Math.RND.between(startingEnemy.height, this.cameras.main.height - startingEnemy.height);
-
-        startingEnemy.spawn(enemyX, enemyY);
-    }
-
     spawnPlayer (payload) {
         const { enemy: enemy = null } = payload ?? {};
         if (!this._player) {
@@ -318,7 +294,6 @@ export class Game extends Scene
 
         if (!enemy) {
             this._player.enableBody(true, 320, PhaserMath.RND.between(100, 300), true, true);
-            console.log('No enemy involved');
             return;
         }
 
