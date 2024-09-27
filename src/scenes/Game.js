@@ -5,6 +5,7 @@ import crossSceneEventEmitter from '../utils'
 
 const MICROSECONDS_IN_MILLISECOND = 1000;
 const LASER_SHOT_DELAY = 250 // In milliseconds
+const ENEMY_SPAWN_COOLDOWN = 2500 // in milliseconds;
 
 const ScoreUpdateType = {
     ENEMY_HIT: 'enemy-hit'
@@ -23,6 +24,7 @@ export class Game extends Scene
     _enemyShotTimerEvent;
     _score;
     _enemySpawnTimerEvent;
+    _last_enemy_hit_time;
 
     constructor ()
     {
@@ -32,6 +34,7 @@ export class Game extends Scene
     create ()
     {
         this._score = 0;
+        this._last_enemy_hit_time = 0;
 
         this.cameras.main.setBackgroundColor(0x000000);
         this._player = this.spawnPlayer();
@@ -71,6 +74,7 @@ export class Game extends Scene
                 this.updateScore('enemy-hit');
                 this.cameras.main.shake(200, 0.01);
                 laserBeam.disableBody(true, true);
+                this._last_enemy_hit_time = this.time.now;
             }
         )
 
@@ -78,10 +82,20 @@ export class Game extends Scene
             this._basicEnemies,
             this._player,
             (enemy, player) => {
-                explodeShip(this._explosions.get(), player);
                 explodeShip(this._explosions.get(), enemy);
+                const activeEnemies = this._basicEnemies.getMatching('active', true);
+                console.log('Active enemies:', activeEnemies);
+                const closestEnemy = activeEnemies.reduce((lastEnemy, currentEnemy, index) => {
+                    if (!lastEnemy) {
+                        return currentEnemy;
+                    }
+
+                    return Math.abs(player.x - currentEnemy.x) < Math.abs(player.x - lastEnemy.x) ? currentEnemy : lastEnemy;
+                }, null);
+
+                explodeShip(this._explosions.get(), player);
                 this.cameras.main.shake(500, 0.01);
-                this.spawnPlayer();
+                this.spawnPlayer({ enemy: closestEnemy });
             }
         )
 
@@ -89,10 +103,24 @@ export class Game extends Scene
             this._player,
             this._enemyLaserBeams,
             (player, laserBeam) => {
+                const deathPosition = {
+                    x: player.x,
+                    y: player.y
+                };
+
+                const activeEnemies = this._basicEnemies.getMatching('active', true);
+                const closestEnemy = activeEnemies.reduce((lastEnemy, currentEnemy, index) => {
+                    if (!lastEnemy) {
+                        return currentEnemy;
+                    }
+
+                    return Math.abs(player.x - currentEnemy.x) < Math.abs(player.x - lastEnemy.x) ? currentEnemy : lastEnemy;
+                }, null);
+
                 explodeShip(this._explosions.get(), player);
                 this.cameras.main.shake(500, 0.01);
                 laserBeam.disableBody(true, true);
-                this.spawnPlayer();
+                this.spawnPlayer({ enemy: closestEnemy });
             }
         )
 
@@ -126,12 +154,12 @@ export class Game extends Scene
         });
 
         this._enemySpawnTimerEvent = new Time.TimerEvent({
-            delay: 2000,
-            startAt: 2000,
+            delay: 500,
+            startAt: 500,
             loop: true,
             callback: () => {
                 const activeEnemies = this._basicEnemies.getMatching('active', true);
-                if (activeEnemies.length > 0) {
+                if (activeEnemies.length > 0 || this.time.now - this._last_enemy_hit_time < ENEMY_SPAWN_COOLDOWN) {
                     return;
                 }
                 this.spawnEnemy();
@@ -279,12 +307,28 @@ export class Game extends Scene
         startingEnemy.spawn(enemyX, enemyY);
     }
 
-    spawnPlayer () {
+    spawnPlayer (payload) {
+        const { enemy: enemy = null } = payload ?? {};
         if (!this._player) {
             return this.physics.add.sprite(320, 180, 'player').setBodySize(32,24, 8).setOrigin(0.5, 0.5);
         }
 
-        this._player.enableBody(true, 320, PhaserMath.RND.between(100, 300), true, true);
+        if (!enemy) {
+            this._player.enableBody(true, 320, PhaserMath.RND.between(100, 300), true, true);
+            console.log('No enemy involved');
+            return;
+        }
+
+        const minDistanceFromEnemy = 200;
+
+        // 50% of being left or right of enemy.
+        const xPosition1 = PhaserMath.RND.between(0, enemy.x - minDistanceFromEnemy);
+        const xPosition2 = PhaserMath.RND.between(enemy.x + minDistanceFromEnemy, this.cameras.main.width);
+
+        let playerX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
+        let playerY = Phaser.Math.RND.between(this._player.height, this.cameras.main.height - this._player.height);
+
+        this._player.enableBody(true, playerX, playerY, true, true);
     }
 }
 
@@ -294,6 +338,8 @@ function explodeShip (explosion, ship) {
     if (!explosion) {
         return;
     }
+
+    ship.disableBody(true, true);
 
     explosion
     .enable()
@@ -306,5 +352,4 @@ function explodeShip (explosion, ship) {
         texture: 'explosion'
     }).explode(20, ship.x, ship.y);
 
-    ship.disableBody(true, true);
 }
