@@ -1,5 +1,5 @@
 import { Scene, Math as PhaserMath, Time } from 'phaser';
-import { createMovementKeys, createCombatKeys, SpawnManager, handlePlayerMovement } from '../utils';
+import { createCombatKeys, SpawnManager, MovementManager } from '../utils';
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
 import crossSceneEventEmitter from '../utils'
 
@@ -12,7 +12,6 @@ const ScoreUpdateType = {
 
 export class Game extends Scene
 {
-    _movementKeys;
     _combatKeys;
     _player;
     _basicEnemies;
@@ -25,6 +24,7 @@ export class Game extends Scene
     _enemySpawnTimerEvent;
     _last_enemy_hit_time;
     _enemySpawnManager;
+    _movementManager;
 
     constructor ()
     {
@@ -39,7 +39,6 @@ export class Game extends Scene
         this.cameras.main.setBackgroundColor(0x000000);
         this._player = this.spawnPlayer();
         this._nextShotTime = 0;
-        this._movementKeys = createMovementKeys(this.input.keyboard);
         this._combatKeys = createCombatKeys(this.input.keyboard);
 
         this._laserBeams = this.physics.add.group({
@@ -67,6 +66,7 @@ export class Game extends Scene
         });
 
         this._enemySpawnManager = new SpawnManager(this, this._player, this._basicEnemies);
+        this._movementManager = new MovementManager(this, this._player);
 
         this.physics.add.overlap(
             this._basicEnemies,
@@ -170,7 +170,7 @@ export class Game extends Scene
     }
 
     update () {
-        handlePlayerMovement(this, this._player, this._movementKeys);
+        this._movementManager.handlePlayerMovement();
 
         const { shoot, useAbility, cycleAbilities } = this._combatKeys;
         const activePointer = this.input.activePointer;
