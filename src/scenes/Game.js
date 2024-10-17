@@ -1,7 +1,7 @@
 import { Scene, Math as PhaserMath, Time } from 'phaser';
-import { createCombatKeys, SpawnManager, MovementManager } from '../utils';
+import { createCombatKeys, SpawnManager, MovementManager, crossSceneEventEmitter, gameLogicEventEmitter } from '../utils';
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
-import crossSceneEventEmitter from '../utils'
+
 
 const MICROSECONDS_IN_MILLISECOND = 1000;
 const LASER_SHOT_DELAY = 250 // In milliseconds

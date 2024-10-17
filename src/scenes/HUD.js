@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import crossSceneEventEmitter from '../utils'
+import { crossSceneEventEmitter } from '../utils'
 
 export class HUD extends Scene {
     _scoreValueText;

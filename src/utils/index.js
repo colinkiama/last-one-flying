@@ -1,4 +1,5 @@
 export * from './input';
-export { default } from './crossSceneEventEmitter';
+export * from './events';
 export * from './spawnManager';
 export * from './movementManager.js';
+
