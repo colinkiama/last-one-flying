@@ -204,25 +204,3 @@ export class Game extends Scene
         const rotation = this._player.setRotation(targetAngle);
     }
 }
-
-function explodeShip (explosion, ship) {
-    // In scenarios where there are no inactive items in the explosions pool, you
-    // don't display an explosion.
-    if (!explosion) {
-        return;
-    }
-
-    ship.disableBody(true, true);
-
-    explosion
-    .enable()
-    .setConfig({
-        lifespan: 1000,
-        speed: { min: 150, max: 250 },
-        scale: { start: 2, end: 0 },
-        gravityY: 150,
-        emitting: false,
-        texture: 'explosion'
-    }).explode(20, ship.x, ship.y);
-
-}
