@@ -26,8 +26,6 @@ export class CombatManager {
             (enemy, laserBeam) => {
                 explodeShip(this._explosionPool.get(), enemy);
                 gameLogicEventEmitter.emit(GameLogicEvent.ENEMY_DEATH);
-                // this.updateScore('enemy-hit');
-                // this.cameras.main.shake(200, 0.01);
                 laserBeam.disableBody(true, true);
             }
         )
@@ -47,10 +45,8 @@ export class CombatManager {
                 }, null);
 
                 explodeShip(this._explosionPool.get(), player);
-                // this.cameras.main.shake(500, 0.01);
                 gameLogicEventEmitter.emit(GameLogicEvent.PLAYER_DEATH);
                 gameLogicEventEmitter.emit(GameLogicEvent.ENEMY_DEATH);
-
             }
         )
 
@@ -73,9 +69,8 @@ export class CombatManager {
                 }, null);
 
                 explodeShip(this._explosionPool.get(), player);
-                // this.cameras.main.shake(500, 0.01);
                 laserBeam.disableBody(true, true);
-                gameLogicEventEmitter.emit(GameLogicEvent.PLAYER_DEATH);
+                gameLogicEventEmitter.emit(GameLogicEvent.PLAYER_DEATH, closestEnemy);
             }
         )
     }

@@ -9,7 +9,7 @@ import {
 } from '../utils';
 
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
-import { CrossSceneEvent } from '../constants';
+import { CrossSceneEvent, GameLogicEvent } from '../constants';
 
 const MICROSECONDS_IN_MILLISECOND = 1000;
 const LASER_SHOT_DELAY = 250 // In milliseconds
@@ -84,6 +84,8 @@ export class Game extends Scene
         });
 
         this._combatManager.activateCollisions();
+        gameLogicEventEmitter.on(GameLogicEvent.ENEMY_DEATH, this.onEnemyDeath, this);
+        gameLogicEventEmitter.on(GameLogicEvent.PLAYER_DEATH, this.onPlayerDeath, this);
 
         this._enemyShotTimerEvent = new Time.TimerEvent ({
             delay: 2000,
@@ -127,6 +129,17 @@ export class Game extends Scene
         this.input.on('pointermove', this.onPointerMove.bind(this));
 
         this.scene.launch('HUD');
+    }
+
+    onEnemyDeath () {
+        this.cameras.main.shake(200, 0.01);
+        this._spawnManager.spawn();
+        this.updateScore(ScoreUpdateType.ENEMY_HIT);
+    }
+
+    onPlayerDeath(closestEnemy) {
+        this.cameras.main.shake(500, 0.01);
+        this._spawnManager.spawnPlayer(closestEnemy ? { enemy: closestEnemy } : undefined);
     }
 
     update () {
