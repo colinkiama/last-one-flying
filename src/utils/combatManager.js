@@ -1,37 +1,42 @@
+import { gameLogicEventEmitter } from '../utils';
+import { GameLogicEvent } from '../constants';
+
 export class CombatManager {
-    scene,
-    _player,
-    _enemyPool
+    scene;
+    _player;
+    _enemyPool;
     _explosionPool;
-    _laserBeamPool
+    _laserBeamPool;
+    _enemyLaserBeamPool;
 
     constructor (scene, player, pools) {
-        const { enemyPool, laserBeamPool, explosionPool } = pools;
+        const { enemyPool, laserBeamPool, enemyLaserBeamPool, explosionPool } = pools;
         this.scene = scene;
         this._player = player;
         this._enemyPool = enemyPool;
         this._explosionPool = explosionPool;
         this._laserBeamPool = laserBeamPool;
+        this._enemyLaserBeamPool = enemyLaserBeamPool;
     }
 
-    activateCollisons () {
-         this.physics.add.overlap(
+    activateCollisions () {
+         this.scene.physics.add.overlap(
             this._enemyPool,
             this._laserBeamPool,
             (enemy, laserBeam) => {
-                explodeShip(this._explosions.get(), enemy);
-                this.updateScore('enemy-hit');
-                this.cameras.main.shake(200, 0.01);
+                explodeShip(this._explosionPool.get(), enemy);
+                gameLogicEventEmitter.emit(GameLogicEvent.ENEMY_DEATH);
+                // this.updateScore('enemy-hit');
+                // this.cameras.main.shake(200, 0.01);
                 laserBeam.disableBody(true, true);
-                this._last_enemy_hit_time = this.time.now;
             }
         )
 
-        this.physics.add.collider(
+        this.scene.physics.add.collider(
             this._enemyPool,
             this._player,
             (enemy, player) => {
-                explodeShip(this._explosions.get(), enemy);
+                explodeShip(this._explosionPool.get(), enemy);
                 const activeEnemies = this._enemyPool.getMatching('active', true);
                 const closestEnemy = activeEnemies.reduce((lastEnemy, currentEnemy, index) => {
                     if (!lastEnemy) {
@@ -41,15 +46,17 @@ export class CombatManager {
                     return Math.abs(player.x - currentEnemy.x) < Math.abs(player.x - lastEnemy.x) ? currentEnemy : lastEnemy;
                 }, null);
 
-                explodeShip(this._explosions.get(), player);
-                this.cameras.main.shake(500, 0.01);
-                this._spawnManager.spawnPlayer({ enemy: closestEnemy });
+                explodeShip(this._explosionPool.get(), player);
+                // this.cameras.main.shake(500, 0.01);
+                gameLogicEventEmitter.emit(GameLogicEvent.PLAYER_DEATH);
+                gameLogicEventEmitter.emit(GameLogicEvent.ENEMY_DEATH);
+
             }
         )
 
-        this.physics.add.overlap(
+        this.scene.physics.add.overlap(
             this._player,
-            this._enemyLaserBeams,
+            this._enemyLaserBeamPool,
             (player, laserBeam) => {
                 const deathPosition = {
                     x: player.x,
@@ -65,10 +72,10 @@ export class CombatManager {
                     return Math.abs(player.x - currentEnemy.x) < Math.abs(player.x - lastEnemy.x) ? currentEnemy : lastEnemy;
                 }, null);
 
-                explodeShip(this._explosions.get(), player);
-                this.cameras.main.shake(500, 0.01);
+                explodeShip(this._explosionPool.get(), player);
+                // this.cameras.main.shake(500, 0.01);
                 laserBeam.disableBody(true, true);
-                this._spawnManager.spawnPlayer({ enemy: closestEnemy });
+                gameLogicEventEmitter.emit(GameLogicEvent.PLAYER_DEATH);
             }
         )
     }

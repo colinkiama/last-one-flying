@@ -1,5 +1,13 @@
 import { Scene, Math as PhaserMath, Time } from 'phaser';
-import { createCombatKeys, SpawnManager, MovementManager, crossSceneEventEmitter, gameLogicEventEmitter } from '../utils';
+import {
+    createCombatKeys,
+    SpawnManager,
+    CombatManager,
+    MovementManager,
+    crossSceneEventEmitter,
+    gameLogicEventEmitter
+} from '../utils';
+
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
 import { CrossSceneEvent } from '../constants';
 
@@ -25,6 +33,7 @@ export class Game extends Scene
     _last_enemy_hit_time;
     _spawnManager;
     _movementManager;
+    _combatManager;
 
     constructor ()
     {
@@ -67,63 +76,14 @@ export class Game extends Scene
         this._spawnManager = new SpawnManager(this, this._basicEnemies);
         this._player = this._spawnManager.player;
         this._movementManager = new MovementManager(this, this._player);
+        this._combatManager = new CombatManager(this, this._player, {
+            enemyPool: this._basicEnemies,
+            explosionPool: this._explosions,
+            laserBeamPool: this._laserBeams,
+            enemyLaserBeamPool: this._enemyLaserBeams
+        });
 
-        this.physics.add.overlap(
-            this._basicEnemies,
-            this._laserBeams,
-            (enemy, laserBeam) => {
-                explodeShip(this._explosions.get(), enemy);
-                this.updateScore('enemy-hit');
-                this.cameras.main.shake(200, 0.01);
-                laserBeam.disableBody(true, true);
-                this._last_enemy_hit_time = this.time.now;
-            }
-        )
-
-        this.physics.add.collider(
-            this._basicEnemies,
-            this._player,
-            (enemy, player) => {
-                explodeShip(this._explosions.get(), enemy);
-                const activeEnemies = this._basicEnemies.getMatching('active', true);
-                const closestEnemy = activeEnemies.reduce((lastEnemy, currentEnemy, index) => {
-                    if (!lastEnemy) {
-                        return currentEnemy;
-                    }
-
-                    return Math.abs(player.x - currentEnemy.x) < Math.abs(player.x - lastEnemy.x) ? currentEnemy : lastEnemy;
-                }, null);
-
-                explodeShip(this._explosions.get(), player);
-                this.cameras.main.shake(500, 0.01);
-                this._spawnManager.spawnPlayer({ enemy: closestEnemy });
-            }
-        )
-
-        this.physics.add.overlap(
-            this._player,
-            this._enemyLaserBeams,
-            (player, laserBeam) => {
-                const deathPosition = {
-                    x: player.x,
-                    y: player.y
-                };
-
-                const activeEnemies = this._basicEnemies.getMatching('active', true);
-                const closestEnemy = activeEnemies.reduce((lastEnemy, currentEnemy, index) => {
-                    if (!lastEnemy) {
-                        return currentEnemy;
-                    }
-
-                    return Math.abs(player.x - currentEnemy.x) < Math.abs(player.x - lastEnemy.x) ? currentEnemy : lastEnemy;
-                }, null);
-
-                explodeShip(this._explosions.get(), player);
-                this.cameras.main.shake(500, 0.01);
-                laserBeam.disableBody(true, true);
-                this._spawnManager.spawnPlayer({ enemy: closestEnemy });
-            }
-        )
+        this._combatManager.activateCollisions();
 
         this._enemyShotTimerEvent = new Time.TimerEvent ({
             delay: 2000,
