@@ -23,7 +23,7 @@ export class Game extends Scene
     _score;
     _enemySpawnTimerEvent;
     _last_enemy_hit_time;
-    _enemySpawnManager;
+    _spawnManager;
     _movementManager;
 
     constructor ()
@@ -37,7 +37,6 @@ export class Game extends Scene
         this._last_enemy_hit_time = 0;
 
         this.cameras.main.setBackgroundColor(0x000000);
-        this._player = this.spawnPlayer();
         this._nextShotTime = 0;
         this._combatKeys = createCombatKeys(this.input.keyboard);
 
@@ -65,7 +64,8 @@ export class Game extends Scene
             runChildUpdate: true
         });
 
-        this._enemySpawnManager = new SpawnManager(this, this._player, this._basicEnemies);
+        this._spawnManager = new SpawnManager(this, this._basicEnemies);
+        this._player = this._spawnManager.player;
         this._movementManager = new MovementManager(this, this._player);
 
         this.physics.add.overlap(
@@ -96,7 +96,7 @@ export class Game extends Scene
 
                 explodeShip(this._explosions.get(), player);
                 this.cameras.main.shake(500, 0.01);
-                this.spawnPlayer({ enemy: closestEnemy });
+                this._spawnManager.spawnPlayer({ enemy: closestEnemy });
             }
         )
 
@@ -121,7 +121,7 @@ export class Game extends Scene
                 explodeShip(this._explosions.get(), player);
                 this.cameras.main.shake(500, 0.01);
                 laserBeam.disableBody(true, true);
-                this.spawnPlayer({ enemy: closestEnemy });
+                this._spawnManager.spawnPlayer({ enemy: closestEnemy });
             }
         )
 
@@ -158,7 +158,7 @@ export class Game extends Scene
             startAt: 500,
             loop: true,
             callback: () => {
-                this._enemySpawnManager.spawn()
+                this._spawnManager.spawn()
             }
         })
 
@@ -229,30 +229,6 @@ export class Game extends Scene
     onPointerMove(pointer) {
         const targetAngle = Phaser.Math.Angle.Between(this._player.x, this._player.y, pointer.worldX, pointer.worldY);
         const rotation = this._player.setRotation(targetAngle);
-    }
-
-
-    spawnPlayer (payload) {
-        const { enemy: enemy = null } = payload ?? {};
-        if (!this._player) {
-            return this.physics.add.sprite(320, 180, 'player').setBodySize(32,24, 8).setOrigin(0.5, 0.5);
-        }
-
-        if (!enemy) {
-            this._player.enableBody(true, 320, PhaserMath.RND.between(100, 300), true, true);
-            return;
-        }
-
-        const minDistanceFromEnemy = 200;
-
-        // 50% of being left or right of enemy.
-        const xPosition1 = PhaserMath.RND.between(0, enemy.x - minDistanceFromEnemy);
-        const xPosition2 = PhaserMath.RND.between(enemy.x + minDistanceFromEnemy, this.cameras.main.width);
-
-        let playerX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
-        let playerY = Phaser.Math.RND.between(this._player.height, this.cameras.main.height - this._player.height);
-
-        this._player.enableBody(true, playerX, playerY, true, true);
     }
 }
 

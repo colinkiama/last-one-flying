@@ -1,14 +1,14 @@
 import { createMovementKeys } from './input.js';
 
 export class MovementManager {
-    _scene;
+    scene;
     _player;
     _movementKeys;
 
     constructor (scene, player) {
-        this._scene = scene;
+        this.scene = scene;
         this._player = player;
-        this._movementKeys = createMovementKeys(this._scene.input.keyboard);
+        this._movementKeys = createMovementKeys(this.scene.input.keyboard);
     }
 
     handlePlayerMovement () {
@@ -23,9 +23,9 @@ export class MovementManager {
         }
 
         if (up.isDown) {
-            this._scene.physics.velocityFromRotation(this._player.rotation, 300, this._player.body.velocity);
+            this.scene.physics.velocityFromRotation(this._player.rotation, 300, this._player.body.velocity);
         } else if (down.isDown) {
-            this._scene.physics.velocityFromRotation(this._player.rotation, -300, this._player.body.velocity);
+            this.scene.physics.velocityFromRotation(this._player.rotation, -300, this._player.body.velocity);
         } else {
             this._player.setVelocity(0);
         }
@@ -63,7 +63,7 @@ export class MovementManager {
             this._player.setBodySize(32, 24, 8);
         }
 
-        this._scene.physics.world.wrap(this._player, this._player.width / 2);
+        this.scene.physics.world.wrap(this._player, this._player.width / 2);
     }
 }
 
