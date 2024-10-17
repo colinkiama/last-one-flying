@@ -1,7 +1,7 @@
 import { Scene, Math as PhaserMath, Time } from 'phaser';
 import { createCombatKeys, SpawnManager, MovementManager, crossSceneEventEmitter, gameLogicEventEmitter } from '../utils';
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
-
+import { CrossSceneEvent } from '../constants';
 
 const MICROSECONDS_IN_MILLISECOND = 1000;
 const LASER_SHOT_DELAY = 250 // In milliseconds
@@ -207,7 +207,7 @@ export class Game extends Scene
                 break;
         }
 
-        crossSceneEventEmitter.emit('update-score', this._score);
+        crossSceneEventEmitter.emit(CrossSceneEvent.UPDATE_SCORE, this._score);
     }
 
     followPlayer () {

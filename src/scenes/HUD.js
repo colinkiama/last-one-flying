@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { crossSceneEventEmitter } from '../utils'
+import { CrossSceneEvent } from '../constants';
 
 export class HUD extends Scene {
     _scoreValueText;
@@ -12,7 +13,7 @@ export class HUD extends Scene {
         this._score = 0;
         this.add.text (20, 20, 'Score');
         this._scoreValueText = this.add.text (20, 40, '0');
-        crossSceneEventEmitter.on('update-score', this.incrementPoints, this);
+        crossSceneEventEmitter.on(CrossSceneEvent.UPDATE_SCORE, this.incrementPoints, this);
     }
 
     incrementPoints (nextPointsValue) {
