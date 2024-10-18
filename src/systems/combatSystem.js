@@ -132,7 +132,7 @@ export class CombatSystem {
 
 
                 // TODO: Replace with emitted "player-fire" event
-                this.scene.cameras.main.shake(100, 0.005);
+                gameLogicEventEmitter.emit(GameLogicEvent.PLAYER_FIRE);
                 laserBeam.fire(
                     this._player.x + rotatedShipHeadOffset.x,
                     this._player.y + rotatedShipHeadOffset.y,

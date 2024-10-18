@@ -74,6 +74,7 @@ export class Game extends Scene
         });
 
         this._combatSystem.activateCollisions();
+        gameLogicEventEmitter.on(GameLogicEvent.PLAYER_FIRE, this.onPlayerFire, this);
         gameLogicEventEmitter.on(GameLogicEvent.ENEMY_DEATH, this.onEnemyDeath, this);
         gameLogicEventEmitter.on(GameLogicEvent.PLAYER_DEATH, this.onPlayerDeath, this);
         gameLogicEventEmitter.on(GameLogicEvent.SHIP_DESTROYED, this.onShipDestroyed, this);
@@ -95,6 +96,10 @@ export class Game extends Scene
         this.time.addEvent(this._enemySpawnTimerEvent);
 
         this.scene.launch('HUD');
+    }
+
+    onPlayerFire () {
+        this.cameras.main.shake(100, 0.005);
     }
 
     onEnemyDeath () {
