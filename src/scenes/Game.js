@@ -1,12 +1,8 @@
 import { Scene, Math as PhaserMath, Time } from 'phaser';
 import { crossSceneEventEmitter, gameLogicEventEmitter } from '../utils';
-import { SpawnSystem, CombatSystem, MovementSystem, VFXSystem } from '../systems';
+import { SpawnSystem, CombatSystem, MovementSystem, VFXSystem, ScoreSystem } from '../systems';
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
-import { CrossSceneEvent, GameLogicEvent, ScreenShakeType } from '../constants';
-
-const ScoreUpdateType = {
-    ENEMY_HIT: 'enemy-hit'
-};
+import { CrossSceneEvent, GameLogicEvent, ScreenShakeType, ScoreUpdateType } from '../constants';
 
 export class Game extends Scene
 {
@@ -21,6 +17,7 @@ export class Game extends Scene
     _movementSystem;
     _combatSystem;
     _vfxSystem;
+    _scoreSystem;
 
     constructor ()
     {
@@ -71,9 +68,9 @@ export class Game extends Scene
             explosionPool: this._explosionPool,
         });
 
+        this._scoreSystem = new ScoreSystem();
+
         this._combatSystem.activateCollisions();
-
-
         this._combatSystem.startEnemyAI();
         this._spawnSystem.activateEnemySpawnTimer();
         this._movementSystem.activatePointerMovement();
@@ -86,6 +83,7 @@ export class Game extends Scene
         gameLogicEventEmitter.on(GameLogicEvent.ENEMY_DEATH, this.onEnemyDeath, this);
         gameLogicEventEmitter.on(GameLogicEvent.PLAYER_DEATH, this.onPlayerDeath, this);
         gameLogicEventEmitter.on(GameLogicEvent.SHIP_DESTROYED, this.onShipDestroyed, this);
+        gameLogicEventEmitter.on(GameLogicEvent.SCORE_UPDATED, this.onScoreUpdated, this);
     }
 
     onPlayerFire () {
@@ -94,7 +92,7 @@ export class Game extends Scene
 
     onEnemyDeath () {
         this._vfxSystem.shakeScreen(ScreenShakeType.ENEMY_DEATH);
-        this.updateScore(ScoreUpdateType.ENEMY_HIT);
+        this._scoreSystem.update(ScoreUpdateType.ENEMY_HIT);
     }
 
     onPlayerDeath(closestEnemy) {
@@ -106,18 +104,12 @@ export class Game extends Scene
         this._vfxSystem.makeShipExplosion(ship);
     }
 
+    onScoreUpdated (score) {
+        crossSceneEventEmitter.emit(CrossSceneEvent.UPDATE_SCORE, score);
+    }
+
     update () {
         this._movementSystem.handlePlayerMovement();
         this._combatSystem.update();
-    }
-
-    updateScore (updateType) {
-        switch (updateType) {
-            case ScoreUpdateType.ENEMY_HIT:
-                this._score += 100;
-                break;
-        }
-
-        crossSceneEventEmitter.emit(CrossSceneEvent.UPDATE_SCORE, this._score);
     }
 }
