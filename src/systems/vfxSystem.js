@@ -1,3 +1,5 @@
+import { ScreenShakeType } from '../constants';
+
 export class VFXSystem {
     scene;
     _explosionPool;
@@ -28,5 +30,19 @@ export class VFXSystem {
             emitting: false,
             texture: 'explosion'
         }).explode(20, ship.x, ship.y);
+    }
+
+    shakeScreen (screenShakeType) {
+        switch (screenShakeType) {
+            case ScreenShakeType.PLAYER_FIRE:
+                this.scene.cameras.main.shake(100, 0.005);
+                break;
+            case ScreenShakeType.ENEMY_DEATH:
+                this.scene.cameras.main.shake(200, 0.01);
+                break;
+            case ScreenShakeType.PLAYER_DEATH:
+                this.scene.cameras.main.shake(500, 0.01);
+                break;
+        }
     }
 }

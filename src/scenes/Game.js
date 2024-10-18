@@ -1,18 +1,8 @@
 import { Scene, Math as PhaserMath, Time } from 'phaser';
-import {
-    crossSceneEventEmitter,
-    gameLogicEventEmitter
-} from '../utils';
-
-import {
-    SpawnSystem,
-    CombatSystem,
-    MovementSystem,
-    VFXSystem
-} from '../systems';
-
+import { crossSceneEventEmitter, gameLogicEventEmitter } from '../utils';
+import { SpawnSystem, CombatSystem, MovementSystem, VFXSystem } from '../systems';
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
-import { CrossSceneEvent, GameLogicEvent } from '../constants';
+import { CrossSceneEvent, GameLogicEvent, ScreenShakeType } from '../constants';
 
 const ScoreUpdateType = {
     ENEMY_HIT: 'enemy-hit'
@@ -20,12 +10,10 @@ const ScoreUpdateType = {
 
 export class Game extends Scene
 {
-
     _player;
     _enemyPool;
     _laserPool;
     _enemyLaserPool;
-    _nextShotTime;
 
     _score;
     _enemySpawnTimerEvent;
@@ -110,16 +98,16 @@ export class Game extends Scene
     }
 
     onPlayerFire () {
-        this.cameras.main.shake(100, 0.005);
+        this._vfxSystem.shakeScreen(ScreenShakeType.PLAYER_FIRE);
     }
 
     onEnemyDeath () {
-        this.cameras.main.shake(200, 0.01);
+        this._vfxSystem.shakeScreen(ScreenShakeType.ENEMY_DEATH);
         this.updateScore(ScoreUpdateType.ENEMY_HIT);
     }
 
     onPlayerDeath(closestEnemy) {
-        this.cameras.main.shake(500, 0.01);
+        this._vfxSystem.shakeScreen(ScreenShakeType.PLAYER_DEATH);
         this._spawnSystem.spawnPlayer(closestEnemy ? { enemy: closestEnemy } : undefined);
     }
 
