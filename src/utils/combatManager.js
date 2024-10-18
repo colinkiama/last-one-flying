@@ -1,5 +1,5 @@
-import { gameLogicEventEmitter } from '../utils';
-import { GameLogicEvent } from '../constants';
+import { gameLogicEventEmitter, createCombatKeys, } from '../utils';
+import { GameLogicEvent, LASER_SHOT_DELAY } from '../constants';
 import { Math as PhaserMath, Time } from 'phaser';
 
 export class CombatManager {
@@ -9,7 +9,10 @@ export class CombatManager {
     _explosionPool;
     _laserBeamPool;
     _enemyLaserBeamPool;
+
     _enemyAutoFireEvent;
+    _combatKeys;
+    _nextShotTime;
 
     constructor (scene, player, pools) {
         const { enemyPool, laserBeamPool, enemyLaserBeamPool, explosionPool } = pools;
@@ -19,6 +22,9 @@ export class CombatManager {
         this._explosionPool = explosionPool;
         this._laserBeamPool = laserBeamPool;
         this._enemyLaserBeamPool = enemyLaserBeamPool;
+
+        this._combatKeys = createCombatKeys(this.scene.input.keyboard);
+        this._nextShotTime = 0;
     }
 
     activateCollisions () {
@@ -107,19 +113,58 @@ export class CombatManager {
             }
         });
 
-        this._enemySpawnTimerEvent = new Time.TimerEvent({
-            delay: 500,
-            startAt: 500,
-            loop: true,
-            callback: () => {
-                this._spawnManager.spawn()
-            }
-        })
-
         this.scene.time.addEvent(this._enemyAutoFireEvent);
+    }
+
+    update () {
+        const { shoot, useAbility, cycleAbilities } = this._combatKeys;
+        const activePointer = this.scene.input.activePointer;
+        const shootButtonPressed = shoot.isDown || activePointer.primaryDown;
+
+        if (shootButtonPressed && this.scene.time.now >= this._nextShotTime) {
+            this._nextShotTime = this.scene.time.now + LASER_SHOT_DELAY;
+            const laserBeam = this._laserBeamPool.get();
+            if (laserBeam) {
+                const rotatedShipHeadOffset = new PhaserMath.Vector2(
+                    this._player.width * this._player.originX + laserBeam.width,
+                    0
+                ).rotate(this._player.rotation);
+
+
+                // TODO: Replace with emitted "player-fire" event
+                this.scene.cameras.main.shake(100, 0.005);
+                laserBeam.fire(
+                    this._player.x + rotatedShipHeadOffset.x,
+                    this._player.y + rotatedShipHeadOffset.y,
+                    {
+                        isVertical: this._player.body.width === 24,
+                        rotation: this._player.rotation
+                    }
+                );
+            }
+        }
+        this.followPlayer();
+    }
+
+    followPlayer () {
+        const activeEnemies = this._enemyPool.getMatching('active', true);
+        const targetX = this._player.x;
+        const targetY = this._player.y;
+
+        for (let i = 0; i < activeEnemies.length; i++) {
+            const enemy = activeEnemies[i];
+
+            const targetAngle = Phaser.Math.Angle.Between(enemy.x, enemy.y, targetX, targetY);
+            const rotation = Phaser.Math.Angle.RotateTo(enemy.rotation, targetAngle, 0.05 * Math.PI);
+            enemy.setRotation(rotation);
+
+            this.scene.physics.moveToObject(enemy, this._player, 40);
+        }
     }
 }
 
+// TODO: Emit ship explosion event instead with ship co-ordinates
+// Will be handled in game scene, likely by a VFX Class
 function explodeShip (explosion, ship) {
     // In scenarios where there are no inactive items in the explosions pool, you
     // don't display an explosion.

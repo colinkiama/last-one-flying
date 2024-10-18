@@ -1,6 +1,6 @@
 import { Scene, Math as PhaserMath, Time } from 'phaser';
 import {
-    createCombatKeys,
+
     SpawnManager,
     CombatManager,
     MovementManager,
@@ -11,16 +11,13 @@ import {
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
 import { CrossSceneEvent, GameLogicEvent } from '../constants';
 
-const MICROSECONDS_IN_MILLISECOND = 1000;
-const LASER_SHOT_DELAY = 250 // In milliseconds
-
 const ScoreUpdateType = {
     ENEMY_HIT: 'enemy-hit'
 };
 
 export class Game extends Scene
 {
-    _combatKeys;
+
     _player;
     _basicEnemies;
     _laserBeams;
@@ -43,8 +40,6 @@ export class Game extends Scene
         this._score = 0;
 
         this.cameras.main.setBackgroundColor(0x000000);
-        this._nextShotTime = 0;
-        this._combatKeys = createCombatKeys(this.input.keyboard);
 
         this._laserBeams = this.physics.add.group({
             classType: LaserBeam,
@@ -114,33 +109,7 @@ export class Game extends Scene
 
     update () {
         this._movementManager.handlePlayerMovement();
-
-        const { shoot, useAbility, cycleAbilities } = this._combatKeys;
-        const activePointer = this.input.activePointer;
-        const shootButtonPressed = shoot.isDown || activePointer.primaryDown;
-
-        if (shootButtonPressed && this.time.now >= this._nextShotTime) {
-            this._nextShotTime = this.time.now + LASER_SHOT_DELAY;
-            const laserBeam = this._laserBeams.get();
-            if (laserBeam) {
-                const rotatedShipHeadOffset = new PhaserMath.Vector2(
-                    this._player.width * this._player.originX + laserBeam.width,
-                    0
-                ).rotate(this._player.rotation);
-
-                this.cameras.main.shake(100, 0.005);
-                laserBeam.fire(
-                    this._player.x + rotatedShipHeadOffset.x,
-                    this._player.y + rotatedShipHeadOffset.y,
-                    {
-                        isVertical: this._player.body.width === 24,
-                        rotation: this._player.rotation
-                    }
-                );
-            }
-        }
-
-        this.followPlayer();
+        this._combatManager.update();
     }
 
     updateScore (updateType) {
@@ -151,22 +120,6 @@ export class Game extends Scene
         }
 
         crossSceneEventEmitter.emit(CrossSceneEvent.UPDATE_SCORE, this._score);
-    }
-
-    followPlayer () {
-        const activeEnemies = this._basicEnemies.getMatching('active', true);
-        const targetX = this._player.x;
-        const targetY = this._player.y;
-
-        for (let i = 0; i < activeEnemies.length; i++) {
-            const enemy = activeEnemies[i];
-
-            const targetAngle = Phaser.Math.Angle.Between(enemy.x, enemy.y, targetX, targetY);
-            const rotation = Phaser.Math.Angle.RotateTo(enemy.rotation, targetAngle, 0.05 * Math.PI);
-            enemy.setRotation(rotation);
-
-            this.physics.moveToObject(enemy, this._player, 40);
-        }
     }
 
     onPointerMove(pointer) {
