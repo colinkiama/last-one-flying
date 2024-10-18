@@ -4,7 +4,12 @@ import {
     gameLogicEventEmitter
 } from '../utils';
 
-import { SpawnSystem, CombatSystem, MovementSystem } from '../systems';
+import {
+    SpawnSystem,
+    CombatSystem,
+    MovementSystem,
+    VFXSystem
+} from '../systems';
 
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
 import { CrossSceneEvent, GameLogicEvent } from '../constants';
@@ -21,12 +26,14 @@ export class Game extends Scene
     _laserPool;
     _enemyLaserPool;
     _nextShotTime;
-    _explosionPool;
+
     _score;
     _enemySpawnTimerEvent;
+
     _spawnSystem;
     _movementSystem;
     _combatSystem;
+    _vfxSystem;
 
     constructor ()
     {
@@ -73,6 +80,10 @@ export class Game extends Scene
             enemyLaserBeamPool: this._enemyLaserPool
         });
 
+        this._vfxSystem = new VFXSystem(this, {
+            explosionPool: this._explosionPool,
+        });
+
         this._combatSystem.activateCollisions();
         gameLogicEventEmitter.on(GameLogicEvent.PLAYER_FIRE, this.onPlayerFire, this);
         gameLogicEventEmitter.on(GameLogicEvent.ENEMY_DEATH, this.onEnemyDeath, this);
@@ -113,27 +124,7 @@ export class Game extends Scene
     }
 
     onShipDestroyed (ship) {
-        // TODO: Move logic to a new VFXSystem class
-
-        // In scenarios where there are no inactive items in the explosions pool, you
-        // don't display an explosion.
-        const explosion = this._explosionPool.get();
-        if (!explosion) {
-            return;
-        }
-
-        ship.disableBody(true, true);
-
-        explosion
-        .enable()
-        .setConfig({
-            lifespan: 1000,
-            speed: { min: 150, max: 250 },
-            scale: { start: 2, end: 0 },
-            gravityY: 150,
-            emitting: false,
-            texture: 'explosion'
-        }).explode(20, ship.x, ship.y);
+        this._vfxSystem.makeShipExplosion(ship);
     }
 
     update () {
