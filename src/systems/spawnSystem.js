@@ -1,6 +1,5 @@
 import { Math as PhaserMath, Time } from 'phaser';
-
-const ENEMY_SPAWN_COOLDOWN = 2500 // in milliseconds;
+import { ENEMY_SPAWN_COOLDOWN, ENEMY_HEIGHT } from '../constants';
 
 export class SpawnSystem {
     scene;
@@ -28,21 +27,16 @@ export class SpawnSystem {
             startAt: 500,
             loop: true,
             callback: () => {
-                this.spawn()
+                this.spawnEnemies()
             }
         })
 
         this.scene.time.addEvent(this._enemySpawnTimerEvent);
     }
 
-    spawn () {
+    spawnEnemies () {
         const activeEnemies = this._enemyGroup.getMatching('active', true);
         if (activeEnemies.length > 0 || this.scene.time.now - this._last_enemy_hit_time < ENEMY_SPAWN_COOLDOWN) {
-            return;
-        }
-
-        const startingEnemy = this._enemyGroup.get();
-        if (!startingEnemy) {
             return;
         }
 
@@ -51,10 +45,22 @@ export class SpawnSystem {
         const xPosition1 = PhaserMath.RND.between(0, this.player.x - minDistanceToPlayer);
         const xPosition2 = PhaserMath.RND.between(this.player.x + minDistanceToPlayer, this.scene.cameras.main.width);
 
-        let enemyX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
-        let enemyY = Phaser.Math.RND.between(startingEnemy.height, this.scene.cameras.main.height - startingEnemy.height);
 
-        startingEnemy.spawn(enemyX, enemyY);
+        let enemyX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
+        let enemyY = Phaser.Math.RND.between(ENEMY_HEIGHT, this.scene.cameras.main.height - ENEMY_HEIGHT);
+
+        const enemiesToSpawn = PhaserMath.RND.between(1, 4);
+        for (let i = 0; i < enemiesToSpawn; i++) {
+            const enemy = this._enemyGroup.get();
+            if (!enemy) {
+                break;
+            }
+
+
+            const spawnOffsetX = PhaserMath.RND.between(0,250);
+            const spawnOffsetY = PhaserMath.RND.between(0,250);
+            enemy.spawn(enemyX + spawnOffsetX, enemyY + spawnOffsetY);
+        }
     }
 
     spawnPlayer (payload) {
