@@ -1,4 +1,4 @@
-import { Math as PhaserMath } from 'phaser';
+import { Math as PhaserMath, Time } from 'phaser';
 
 const ENEMY_SPAWN_COOLDOWN = 2500 // in milliseconds;
 
@@ -9,12 +9,30 @@ export class SpawnSystem {
     player;
     _enemyGroup;
     _last_enemy_hit_time;
+    _enemySpawnTimerEvent;
 
     constructor (scene, enemyGroup) {
         this.scene = scene;
         this.player = this.spawnPlayer();
         this._enemyGroup = enemyGroup;
         this._last_enemy_hit_time = 0;
+    }
+
+    activateEnemySpawnTimer() {
+        if (this._enemySpawnTimerEvent) {
+            return;
+        }
+
+        this._enemySpawnTimerEvent = new Time.TimerEvent({
+            delay: 500,
+            startAt: 500,
+            loop: true,
+            callback: () => {
+                this.spawn()
+            }
+        })
+
+        this.scene.time.addEvent(this._enemySpawnTimerEvent);
     }
 
     spawn () {

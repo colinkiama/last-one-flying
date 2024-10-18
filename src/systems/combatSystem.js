@@ -85,6 +85,10 @@ export class CombatSystem {
 
 
     startEnemyAI () {
+        if (this._enemyAutoFireEvent) {
+            return;
+        }
+
         this._enemyAutoFireEvent = new Time.TimerEvent ({
             delay: 2000,
             loop: true,

@@ -16,7 +16,6 @@ export class Game extends Scene
     _enemyLaserPool;
 
     _score;
-    _enemySpawnTimerEvent;
 
     _spawnSystem;
     _movementSystem;
@@ -30,8 +29,8 @@ export class Game extends Scene
 
     create ()
     {
+        this.subscribeToEvents();
         this._score = 0;
-
         this.cameras.main.setBackgroundColor(0x000000);
 
         this._laserPool = this.physics.add.group({
@@ -73,28 +72,20 @@ export class Game extends Scene
         });
 
         this._combatSystem.activateCollisions();
+
+
+        this._combatSystem.startEnemyAI();
+        this._spawnSystem.activateEnemySpawnTimer();
+        this._movementSystem.activatePointerMovement();
+
+        this.scene.launch('HUD');
+    }
+
+    subscribeToEvents () {
         gameLogicEventEmitter.on(GameLogicEvent.PLAYER_FIRE, this.onPlayerFire, this);
         gameLogicEventEmitter.on(GameLogicEvent.ENEMY_DEATH, this.onEnemyDeath, this);
         gameLogicEventEmitter.on(GameLogicEvent.PLAYER_DEATH, this.onPlayerDeath, this);
         gameLogicEventEmitter.on(GameLogicEvent.SHIP_DESTROYED, this.onShipDestroyed, this);
-
-        this._combatSystem.startEnemyAI();
-
-        this._enemySpawnTimerEvent = new Time.TimerEvent({
-            delay: 500,
-            startAt: 500,
-            loop: true,
-            callback: () => {
-                this._spawnSystem.spawn()
-            }
-        })
-
-        this._movementSystem.activatePointerMovement();
-
-        this.time.addEvent(this._enemyShotTimerEvent);
-        this.time.addEvent(this._enemySpawnTimerEvent);
-
-        this.scene.launch('HUD');
     }
 
     onPlayerFire () {
