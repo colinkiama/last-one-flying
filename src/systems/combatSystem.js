@@ -32,7 +32,7 @@ export class CombatSystem {
             this._enemyPool,
             this._laserBeamPool,
             (enemy, laserBeam) => {
-                explodeShip(this._explosionPool.get(), enemy);
+                this.destroyShip(enemy);
                 gameLogicEventEmitter.emit(GameLogicEvent.ENEMY_DEATH);
                 laserBeam.disableBody(true, true);
             }
@@ -42,7 +42,7 @@ export class CombatSystem {
             this._enemyPool,
             this._player,
             (enemy, player) => {
-                explodeShip(this._explosionPool.get(), enemy);
+                this.destroyShip(enemy);
                 const activeEnemies = this._enemyPool.getMatching('active', true);
                 const closestEnemy = activeEnemies.reduce((lastEnemy, currentEnemy, index) => {
                     if (!lastEnemy) {
@@ -52,7 +52,7 @@ export class CombatSystem {
                     return Math.abs(player.x - currentEnemy.x) < Math.abs(player.x - lastEnemy.x) ? currentEnemy : lastEnemy;
                 }, null);
 
-                explodeShip(this._explosionPool.get(), player);
+                this.destroyShip(player);
                 gameLogicEventEmitter.emit(GameLogicEvent.PLAYER_DEATH);
                 gameLogicEventEmitter.emit(GameLogicEvent.ENEMY_DEATH);
             }
@@ -76,7 +76,7 @@ export class CombatSystem {
                     return Math.abs(player.x - currentEnemy.x) < Math.abs(player.x - lastEnemy.x) ? currentEnemy : lastEnemy;
                 }, null);
 
-                explodeShip(this._explosionPool.get(), player);
+                this.destroyShip(player);
                 laserBeam.disableBody(true, true);
                 gameLogicEventEmitter.emit(GameLogicEvent.PLAYER_DEATH, closestEnemy);
             }
@@ -143,6 +143,7 @@ export class CombatSystem {
                 );
             }
         }
+
         this.followPlayer();
     }
 
@@ -161,27 +162,10 @@ export class CombatSystem {
             this.scene.physics.moveToObject(enemy, this._player, 40);
         }
     }
-}
 
-// TODO: Emit ship explosion event instead with ship co-ordinates
-// Will be handled in game scene, likely by a VFX Class
-function explodeShip (explosion, ship) {
-    // In scenarios where there are no inactive items in the explosions pool, you
-    // don't display an explosion.
-    if (!explosion) {
-        return;
+    destroyShip (ship) {
+        ship.disableBody(true, true);
+        gameLogicEventEmitter.emit(GameLogicEvent.SHIP_DESTROYED, ship);
     }
-
-    ship.disableBody(true, true);
-
-    explosion
-    .enable()
-    .setConfig({
-        lifespan: 1000,
-        speed: { min: 150, max: 250 },
-        scale: { start: 2, end: 0 },
-        gravityY: 150,
-        emitting: false,
-        texture: 'explosion'
-    }).explode(20, ship.x, ship.y);
 }
+

@@ -17,11 +17,11 @@ export class Game extends Scene
 {
 
     _player;
-    _basicEnemies;
-    _laserBeams;
-    _enemyLaserBeams;
+    _enemyPool;
+    _laserPool;
+    _enemyLaserPool;
     _nextShotTime;
-    _explosions;
+    _explosionPool;
     _score;
     _enemySpawnTimerEvent;
     _spawnSystem;
@@ -39,43 +39,44 @@ export class Game extends Scene
 
         this.cameras.main.setBackgroundColor(0x000000);
 
-        this._laserBeams = this.physics.add.group({
+        this._laserPool = this.physics.add.group({
             classType: LaserBeam,
             maxSize: 50,
             runChildUpdate: true
         });
 
-        this._enemyLaserBeams = this.physics.add.group({
+        this._enemyLaserPool = this.physics.add.group({
             classType: LaserBeam,
             maxSize: 500,
             runChildUpdate: true
         });
 
-        this._basicEnemies = this.physics.add.group({
+        this._enemyPool = this.physics.add.group({
             classType: BasicEnemy,
             maxSize: 50,
             runChildUpdate: true,
         });
 
-        this._explosions = this.add.group({
+        this._explosionPool = this.add.group({
             classType: Explosion,
             maxSize: 50,
             runChildUpdate: true
         });
 
-        this._spawnSystem = new SpawnSystem(this, this._basicEnemies);
+        this._spawnSystem = new SpawnSystem(this, this._enemyPool);
         this._player = this._spawnSystem.player;
         this._movementSystem = new MovementSystem(this, this._player);
         this._combatSystem = new CombatSystem(this, this._player, {
-            enemyPool: this._basicEnemies,
-            explosionPool: this._explosions,
-            laserBeamPool: this._laserBeams,
-            enemyLaserBeamPool: this._enemyLaserBeams
+            enemyPool: this._enemyPool,
+            explosionPool: this._explosionPool,
+            laserBeamPool: this._laserPool,
+            enemyLaserBeamPool: this._enemyLaserPool
         });
 
         this._combatSystem.activateCollisions();
         gameLogicEventEmitter.on(GameLogicEvent.ENEMY_DEATH, this.onEnemyDeath, this);
         gameLogicEventEmitter.on(GameLogicEvent.PLAYER_DEATH, this.onPlayerDeath, this);
+        gameLogicEventEmitter.on(GameLogicEvent.SHIP_DESTROYED, this.onShipDestroyed, this);
 
         this._combatSystem.startEnemyAI();
 
@@ -104,6 +105,30 @@ export class Game extends Scene
     onPlayerDeath(closestEnemy) {
         this.cameras.main.shake(500, 0.01);
         this._spawnSystem.spawnPlayer(closestEnemy ? { enemy: closestEnemy } : undefined);
+    }
+
+    onShipDestroyed (ship) {
+        // TODO: Move logic to a new VFXSystem class
+
+        // In scenarios where there are no inactive items in the explosions pool, you
+        // don't display an explosion.
+        const explosion = this._explosionPool.get();
+        if (!explosion) {
+            return;
+        }
+
+        ship.disableBody(true, true);
+
+        explosion
+        .enable()
+        .setConfig({
+            lifespan: 1000,
+            speed: { min: 150, max: 250 },
+            scale: { start: 2, end: 0 },
+            gravityY: 150,
+            emitting: false,
+            texture: 'explosion'
+        }).explode(20, ship.x, ship.y);
     }
 
     update () {

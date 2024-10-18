@@ -4,6 +4,8 @@ const ENEMY_SPAWN_COOLDOWN = 2500 // in milliseconds;
 
 export class SpawnSystem {
     scene;
+    // TODO: Figure out a better way to create a player so you don't have to
+    // make the player field public here.
     player;
     _enemyGroup;
     _last_enemy_hit_time;
