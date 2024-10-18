@@ -90,9 +90,10 @@ export class Game extends Scene
             }
         })
 
+        this._movementManager.activatePointerMovement();
+
         this.time.addEvent(this._enemyShotTimerEvent);
         this.time.addEvent(this._enemySpawnTimerEvent);
-        this.input.on('pointermove', this.onPointerMove.bind(this));
 
         this.scene.launch('HUD');
     }
@@ -120,10 +121,5 @@ export class Game extends Scene
         }
 
         crossSceneEventEmitter.emit(CrossSceneEvent.UPDATE_SCORE, this._score);
-    }
-
-    onPointerMove(pointer) {
-        const targetAngle = Phaser.Math.Angle.Between(this._player.x, this._player.y, pointer.worldX, pointer.worldY);
-        const rotation = this._player.setRotation(targetAngle);
     }
 }

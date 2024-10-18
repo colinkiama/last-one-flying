@@ -1,4 +1,5 @@
 import { createMovementKeys } from './input.js';
+import { Math as PhaserMath } from 'phaser';
 
 export class MovementManager {
     scene;
@@ -9,6 +10,10 @@ export class MovementManager {
         this.scene = scene;
         this._player = player;
         this._movementKeys = createMovementKeys(this.scene.input.keyboard);
+    }
+
+    activatePointerMovement () {
+        this.scene.input.on('pointermove', this.onPointerMove.bind(this));
     }
 
     handlePlayerMovement () {
@@ -64,6 +69,11 @@ export class MovementManager {
         }
 
         this.scene.physics.world.wrap(this._player, this._player.width / 2);
+    }
+
+    onPointerMove(pointer) {
+        const targetAngle = Phaser.Math.Angle.Between(this._player.x, this._player.y, pointer.worldX, pointer.worldY);
+        const rotation = this._player.setRotation(targetAngle);
     }
 }
 
