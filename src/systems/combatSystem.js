@@ -2,7 +2,7 @@ import { gameLogicEventEmitter, createCombatKeys, } from '../utils';
 import { GameLogicEvent, LASER_SHOT_DELAY } from '../constants';
 import { Math as PhaserMath, Time } from 'phaser';
 
-export class CombatManager {
+export class CombatSystem {
     scene;
     _player;
     _enemyPool;

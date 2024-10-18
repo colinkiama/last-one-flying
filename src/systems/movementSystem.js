@@ -1,7 +1,7 @@
-import { createMovementKeys } from './input.js';
+import { createMovementKeys } from '../utils/input.js';
 import { Math as PhaserMath } from 'phaser';
 
-export class MovementManager {
+export class MovementSystem {
     scene;
     _player;
     _movementKeys;

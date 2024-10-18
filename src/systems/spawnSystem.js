@@ -2,7 +2,7 @@ import { Math as PhaserMath } from 'phaser';
 
 const ENEMY_SPAWN_COOLDOWN = 2500 // in milliseconds;
 
-export class SpawnManager {
+export class SpawnSystem {
     scene;
     player;
     _enemyGroup;

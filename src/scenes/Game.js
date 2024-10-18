@@ -1,12 +1,10 @@
 import { Scene, Math as PhaserMath, Time } from 'phaser';
 import {
-
-    SpawnManager,
-    CombatManager,
-    MovementManager,
     crossSceneEventEmitter,
     gameLogicEventEmitter
 } from '../utils';
+
+import { SpawnSystem, CombatSystem, MovementSystem } from '../systems';
 
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
 import { CrossSceneEvent, GameLogicEvent } from '../constants';
@@ -26,9 +24,9 @@ export class Game extends Scene
     _explosions;
     _score;
     _enemySpawnTimerEvent;
-    _spawnManager;
-    _movementManager;
-    _combatManager;
+    _spawnSystem;
+    _movementSystem;
+    _combatSystem;
 
     constructor ()
     {
@@ -65,32 +63,32 @@ export class Game extends Scene
             runChildUpdate: true
         });
 
-        this._spawnManager = new SpawnManager(this, this._basicEnemies);
-        this._player = this._spawnManager.player;
-        this._movementManager = new MovementManager(this, this._player);
-        this._combatManager = new CombatManager(this, this._player, {
+        this._spawnSystem = new SpawnSystem(this, this._basicEnemies);
+        this._player = this._spawnSystem.player;
+        this._movementSystem = new MovementSystem(this, this._player);
+        this._combatSystem = new CombatSystem(this, this._player, {
             enemyPool: this._basicEnemies,
             explosionPool: this._explosions,
             laserBeamPool: this._laserBeams,
             enemyLaserBeamPool: this._enemyLaserBeams
         });
 
-        this._combatManager.activateCollisions();
+        this._combatSystem.activateCollisions();
         gameLogicEventEmitter.on(GameLogicEvent.ENEMY_DEATH, this.onEnemyDeath, this);
         gameLogicEventEmitter.on(GameLogicEvent.PLAYER_DEATH, this.onPlayerDeath, this);
 
-        this._combatManager.startEnemyAI();
+        this._combatSystem.startEnemyAI();
 
         this._enemySpawnTimerEvent = new Time.TimerEvent({
             delay: 500,
             startAt: 500,
             loop: true,
             callback: () => {
-                this._spawnManager.spawn()
+                this._spawnSystem.spawn()
             }
         })
 
-        this._movementManager.activatePointerMovement();
+        this._movementSystem.activatePointerMovement();
 
         this.time.addEvent(this._enemyShotTimerEvent);
         this.time.addEvent(this._enemySpawnTimerEvent);
@@ -105,12 +103,12 @@ export class Game extends Scene
 
     onPlayerDeath(closestEnemy) {
         this.cameras.main.shake(500, 0.01);
-        this._spawnManager.spawnPlayer(closestEnemy ? { enemy: closestEnemy } : undefined);
+        this._spawnSystem.spawnPlayer(closestEnemy ? { enemy: closestEnemy } : undefined);
     }
 
     update () {
-        this._movementManager.handlePlayerMovement();
-        this._combatManager.update();
+        this._movementSystem.handlePlayerMovement();
+        this._combatSystem.update();
     }
 
     updateScore (updateType) {
