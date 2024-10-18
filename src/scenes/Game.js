@@ -87,33 +87,7 @@ export class Game extends Scene
         gameLogicEventEmitter.on(GameLogicEvent.ENEMY_DEATH, this.onEnemyDeath, this);
         gameLogicEventEmitter.on(GameLogicEvent.PLAYER_DEATH, this.onPlayerDeath, this);
 
-        this._enemyShotTimerEvent = new Time.TimerEvent ({
-            delay: 2000,
-            loop: true,
-            callback: () => {
-                const activeEnemies = this._basicEnemies.getMatching('active', true);
-                for (let i = 0; i < activeEnemies.length; i++) {
-                    const enemy = activeEnemies[i];
-                    const enemyLaserBeam = this._enemyLaserBeams.get();
-
-                    if (enemyLaserBeam) {
-                        const rotatedShipHeadOffset = new PhaserMath.Vector2(
-                            enemy.width * enemy.originX + enemyLaserBeam.width,
-                            0
-                        ).rotate(enemy.rotation);
-
-                        enemyLaserBeam.fire(
-                            enemy.x + rotatedShipHeadOffset.x,
-                            enemy.y + rotatedShipHeadOffset.y,
-                            {
-                                isVertical: enemy.body.width === 24,
-                                rotation: enemy.rotation
-                            }
-                        );
-                    }
-                }
-            }
-        });
+        this._combatManager.startEnemyAI();
 
         this._enemySpawnTimerEvent = new Time.TimerEvent({
             delay: 500,
@@ -133,7 +107,6 @@ export class Game extends Scene
 
     onEnemyDeath () {
         this.cameras.main.shake(200, 0.01);
-        this._spawnManager.spawn();
         this.updateScore(ScoreUpdateType.ENEMY_HIT);
     }
 

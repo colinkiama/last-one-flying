@@ -1,5 +1,6 @@
 import { gameLogicEventEmitter } from '../utils';
 import { GameLogicEvent } from '../constants';
+import { Math as PhaserMath, Time } from 'phaser';
 
 export class CombatManager {
     scene;
@@ -8,6 +9,7 @@ export class CombatManager {
     _explosionPool;
     _laserBeamPool;
     _enemyLaserBeamPool;
+    _enemyShotTimerEvent;
 
     constructor (scene, player, pools) {
         const { enemyPool, laserBeamPool, enemyLaserBeamPool, explosionPool } = pools;
@@ -73,6 +75,48 @@ export class CombatManager {
                 gameLogicEventEmitter.emit(GameLogicEvent.PLAYER_DEATH, closestEnemy);
             }
         )
+    }
+
+
+    startEnemyAI () {
+        this._enemyShotTimerEvent = new Time.TimerEvent ({
+            delay: 2000,
+            loop: true,
+            callback: () => {
+                const activeEnemies = this._enemyPool.getMatching('active', true);
+                for (let i = 0; i < activeEnemies.length; i++) {
+                    const enemy = activeEnemies[i];
+                    const enemyLaserBeam = this._enemyLaserBeamPool.get();
+
+                    if (enemyLaserBeam) {
+                        const rotatedShipHeadOffset = new PhaserMath.Vector2(
+                            enemy.width * enemy.originX + enemyLaserBeam.width,
+                            0
+                        ).rotate(enemy.rotation);
+
+                        enemyLaserBeam.fire(
+                            enemy.x + rotatedShipHeadOffset.x,
+                            enemy.y + rotatedShipHeadOffset.y,
+                            {
+                                isVertical: enemy.body.width === 24,
+                                rotation: enemy.rotation
+                            }
+                        );
+                    }
+                }
+            }
+        });
+
+        this._enemySpawnTimerEvent = new Time.TimerEvent({
+            delay: 500,
+            startAt: 500,
+            loop: true,
+            callback: () => {
+                this._spawnManager.spawn()
+            }
+        })
+
+        this.scene.time.addEvent(this._enemyShotTimerEvent);
     }
 }
 
