@@ -1,4 +1,4 @@
-import { Scene, Math as PhaserMath, Time } from 'phaser';
+import { Scene } from 'phaser';
 import { crossSceneEventEmitter, gameLogicEventEmitter } from '../utils';
 import { SpawnSystem, CombatSystem, MovementSystem, VFXSystem, ScoreSystem } from '../systems';
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
@@ -10,8 +10,6 @@ export class Game extends Scene
     _enemyPool;
     _laserPool;
     _enemyLaserPool;
-
-    _score;
 
     _spawnSystem;
     _movementSystem;
@@ -27,7 +25,6 @@ export class Game extends Scene
     create ()
     {
         this.subscribeToEvents();
-        this._score = 0;
         this.cameras.main.setBackgroundColor(0x000000);
 
         this._laserPool = this.physics.add.group({
@@ -54,6 +51,7 @@ export class Game extends Scene
             runChildUpdate: true
         });
 
+        this._scoreSystem = new ScoreSystem();
         this._spawnSystem = new SpawnSystem(this, this._enemyPool);
         this._player = this._spawnSystem.player;
         this._movementSystem = new MovementSystem(this, this._player);
@@ -68,7 +66,6 @@ export class Game extends Scene
             explosionPool: this._explosionPool,
         });
 
-        this._scoreSystem = new ScoreSystem();
 
         this._combatSystem.activateCollisions();
         this._combatSystem.startEnemyAI();
