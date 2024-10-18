@@ -27,10 +27,8 @@ export class Game extends Scene
     _enemyLaserBeams;
     _nextShotTime;
     _explosions;
-    _enemyShotTimerEvent;
     _score;
     _enemySpawnTimerEvent;
-    _last_enemy_hit_time;
     _spawnManager;
     _movementManager;
     _combatManager;
@@ -43,7 +41,6 @@ export class Game extends Scene
     create ()
     {
         this._score = 0;
-        this._last_enemy_hit_time = 0;
 
         this.cameras.main.setBackgroundColor(0x000000);
         this._nextShotTime = 0;

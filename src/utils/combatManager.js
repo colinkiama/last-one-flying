@@ -9,7 +9,7 @@ export class CombatManager {
     _explosionPool;
     _laserBeamPool;
     _enemyLaserBeamPool;
-    _enemyShotTimerEvent;
+    _enemyAutoFireEvent;
 
     constructor (scene, player, pools) {
         const { enemyPool, laserBeamPool, enemyLaserBeamPool, explosionPool } = pools;
@@ -79,7 +79,7 @@ export class CombatManager {
 
 
     startEnemyAI () {
-        this._enemyShotTimerEvent = new Time.TimerEvent ({
+        this._enemyAutoFireEvent = new Time.TimerEvent ({
             delay: 2000,
             loop: true,
             callback: () => {
@@ -116,7 +116,7 @@ export class CombatManager {
             }
         })
 
-        this.scene.time.addEvent(this._enemyShotTimerEvent);
+        this.scene.time.addEvent(this._enemyAutoFireEvent);
     }
 }
 
