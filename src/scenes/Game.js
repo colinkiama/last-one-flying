@@ -90,6 +90,7 @@ export class Game extends Scene
     onEnemyDeath () {
         this._vfxSystem.shakeScreen(ScreenShakeType.ENEMY_DEATH);
         this._scoreSystem.update(ScoreUpdateType.ENEMY_HIT);
+        this._spawnSystem.updateLastEnemyHitTime(this.time.now);
     }
 
     onPlayerDeath(closestEnemy) {

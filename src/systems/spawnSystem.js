@@ -9,12 +9,22 @@ export class SpawnSystem {
     _enemyGroup;
     _last_enemy_hit_time;
     _enemySpawnTimerEvent;
+    _enemySpawnCondition;
 
     constructor (scene, enemyGroup) {
         this.scene = scene;
         this.player = this.spawnPlayer();
         this._enemyGroup = enemyGroup;
         this._last_enemy_hit_time = 0;
+        this._enemySpawnCondition = {
+            triggerInfo: {
+                numberOfEnemiesRemaining: 0,
+                spawnCooldown: 2500,
+            },
+            spawnInfo: {
+                numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 4)
+            }
+        };
     }
 
     activateEnemySpawnTimer() {
@@ -23,11 +33,11 @@ export class SpawnSystem {
         }
 
         this._enemySpawnTimerEvent = new Time.TimerEvent({
-            delay: 500,
-            startAt: 500,
+            delay: 100,
+            startAt: 100,
             loop: true,
             callback: () => {
-                this.spawnEnemies()
+                this.spawnEnemies();
             }
         })
 
@@ -35,8 +45,9 @@ export class SpawnSystem {
     }
 
     spawnEnemies () {
+        const { triggerInfo, spawnInfo } = this._enemySpawnCondition;
         const activeEnemies = this._enemyGroup.getMatching('active', true);
-        if (activeEnemies.length > 0 || this.scene.time.now - this._last_enemy_hit_time < ENEMY_SPAWN_COOLDOWN) {
+        if (activeEnemies.length > triggerInfo.numberOfEnemiesRemaining || (this.scene.time.now - this._last_enemy_hit_time) < triggerInfo.spawnCooldown) {
             return;
         }
 
@@ -49,7 +60,7 @@ export class SpawnSystem {
         let enemyX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
         let enemyY = Phaser.Math.RND.between(ENEMY_HEIGHT, this.scene.cameras.main.height - ENEMY_HEIGHT);
 
-        const enemiesToSpawn = PhaserMath.RND.between(1, 4);
+        const enemiesToSpawn = spawnInfo.numberOfEnemiesToSpawn;
         for (let i = 0; i < enemiesToSpawn; i++) {
             const enemy = this._enemyGroup.get();
             if (!enemy) {
@@ -61,6 +72,10 @@ export class SpawnSystem {
             const spawnOffsetY = PhaserMath.RND.between(0,250);
             enemy.spawn(enemyX + spawnOffsetX, enemyY + spawnOffsetY);
         }
+
+        // Set new spawn condition here:
+        this._enemySpawnCondition = this.prepareNextSpawnCondition();
+
     }
 
     spawnPlayer (payload) {
@@ -86,9 +101,19 @@ export class SpawnSystem {
         this.player.enableBody(true, playerX, playerY, true, true);
     }
 
-    updateLastHitTime (time) {
+    updateLastEnemyHitTime (time) {
         this._last_enemy_hit_time = time;
     }
 
-
+    prepareNextSpawnCondition () {
+        return {
+            triggerInfo: {
+                numberOfEnemiesRemaining: PhaserMath.RND.between(0, 2),
+                spawnCooldown: PhaserMath.RND.between(1000, 2500),
+            },
+            spawnInfo: {
+                numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 4)
+            }
+        };
+    }
 }
