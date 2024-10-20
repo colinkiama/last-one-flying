@@ -24,7 +24,7 @@ export class SpawnSystem {
                 spawnCooldown: 2500,
             },
             spawnInfo: {
-                numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 4)
+                numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 3)
             }
         };
 
@@ -55,7 +55,6 @@ export class SpawnSystem {
         }
 
         this._currentEnemyWave++;
-        console.log('Current enemy wave:', this._currentEnemyWave);
 
         const minDistanceToPlayer = 200;
         // 50% of being left of player or right of player.
@@ -118,7 +117,7 @@ export class SpawnSystem {
                 spawnCooldown: PhaserMath.RND.between(1000, 2500),
             },
             spawnInfo: {
-                numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 4)
+                numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 3)
             }
         };
     }
