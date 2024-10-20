@@ -112,39 +112,54 @@ export class SpawnSystem {
     }
 
     prepareNextSpawnCondition () {
-        const difficulty = getDifficulty(this._currentEnemyWave + 1);
+        const nextWave = this._currentEnemyWave + 1;
 
-        switch (difficulty) {
-            case WaveDifficulty.EASY:
-                return {
-                    triggerInfo: {
-                        spawnCooldown: PhaserMath.RND.between(1000, 2500),
-                    },
-                    spawnInfo: {
-                        numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 3)
-                    }
-                };
-            case WaveDifficulty.MEDIUM:
-                return {
-                    triggerInfo: {
-                        spawnCooldown: PhaserMath.RND.between(1000, 2500),
-                    },
-                    spawnInfo: {
-                        numberOfEnemiesToSpawn: PhaserMath.RND.between(4, 6)
-                    }
-                };
-            default:
-                 return {
-                    triggerInfo: {
-                        spawnCooldown: PhaserMath.RND.between(1000, 2500),
-                    },
-                    spawnInfo: {
-                        numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 3)
-                    }
-                };
-                // throw new Error(`Unknown wave difficulty: ${difficulty}`);
+        if (nextWave >= WaveDifficulty.SOULSLIKE) {
+            return this.getSoulslikeSpawnConditions();
+        } else if (nextWave >= WaveDifficulty.HARD) {
+           return this.getHardSpawnConditions();
+        } else if (nextWave >= WaveDifficulty.MEDIUM) {
+            return this.getMediumSpawnConditions();
+        } else {
+            // Assume wave difficulty is easy
+            return this.getEasySpawnConditions();
         }
+    }
 
+    getEasySpawnConditions (nextWave) {
+        return {
+            triggerInfo: {
+                spawnCooldown: PhaserMath.RND.between(1000, 2500),
+            },
+            spawnInfo: {
+                numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 3)
+            }
+        };
+    }
+
+    getMediumSpawnConditions (nextWave) {
+        return {
+            triggerInfo: {
+                spawnCooldown: PhaserMath.RND.between(1000, 2500),
+            },
+            spawnInfo: {
+                numberOfEnemiesToSpawn: PhaserMath.RND.between(4, 6)
+            }
+        };
+    }
+
+    getHardSpawnConditions (nextWave) {
+        return {
+            triggerInfo: {
+                spawnCooldown: PhaserMath.RND.between(1000, 2500),
+            },
+            spawnInfo: {
+                numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 3)
+            }
+        };
+    }
+
+    getSoulslikeSpawnConditions (nextWave) {
         return {
             triggerInfo: {
                 spawnCooldown: PhaserMath.RND.between(1000, 2500),
@@ -156,14 +171,3 @@ export class SpawnSystem {
     }
 }
 
-function getDifficulty (nextWave) {
-    if (nextWave < 3) {
-        return WaveDifficulty.EASY;
-    } else if (nextWave < 7) {
-        return WaveDifficulty.MEDIUM;
-    } else if (nextWave < 13) {
-        return WaveDifficulty.HARD;
-    } else {
-        return WaveDifficulty.SOULS_LIKE;
-    }
-}
