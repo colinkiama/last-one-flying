@@ -1,5 +1,5 @@
 import { Math as PhaserMath, Time } from 'phaser';
-import { ENEMY_SPAWN_COOLDOWN, ENEMY_HEIGHT } from '../constants';
+import { ENEMY_SPAWN_COOLDOWN, ENEMY_HEIGHT, WaveDifficulty } from '../constants';
 
 export class SpawnSystem {
     scene;
@@ -20,7 +20,6 @@ export class SpawnSystem {
         this._currentEnemyWave = 0;
         this._enemySpawnCondition = {
             triggerInfo: {
-                numberOfEnemiesRemaining: 0,
                 spawnCooldown: 2500,
             },
             spawnInfo: {
@@ -50,11 +49,13 @@ export class SpawnSystem {
     spawnEnemies () {
         const { triggerInfo, spawnInfo } = this._enemySpawnCondition;
         const activeEnemies = this._enemyGroup.getMatching('active', true);
-        if (activeEnemies.length > triggerInfo.numberOfEnemiesRemaining || (this.scene.time.now - this._last_enemy_hit_time) < triggerInfo.spawnCooldown) {
+        if (activeEnemies.length > 0 || (this.scene.time.now - this._last_enemy_hit_time) < triggerInfo.spawnCooldown) {
             return;
         }
 
         this._currentEnemyWave++;
+
+        console.log('Current enemy wave:', this._currentEnemyWave);
 
         const minDistanceToPlayer = 200;
         // 50% of being left of player or right of player.
@@ -111,14 +112,58 @@ export class SpawnSystem {
     }
 
     prepareNextSpawnCondition () {
+        const difficulty = getDifficulty(this._currentEnemyWave + 1);
+
+        switch (difficulty) {
+            case WaveDifficulty.EASY:
+                return {
+                    triggerInfo: {
+                        spawnCooldown: PhaserMath.RND.between(1000, 2500),
+                    },
+                    spawnInfo: {
+                        numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 3)
+                    }
+                };
+            case WaveDifficulty.MEDIUM:
+                return {
+                    triggerInfo: {
+                        spawnCooldown: PhaserMath.RND.between(1000, 2500),
+                    },
+                    spawnInfo: {
+                        numberOfEnemiesToSpawn: PhaserMath.RND.between(4, 6)
+                    }
+                };
+            default:
+                 return {
+                    triggerInfo: {
+                        spawnCooldown: PhaserMath.RND.between(1000, 2500),
+                    },
+                    spawnInfo: {
+                        numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 3)
+                    }
+                };
+                // throw new Error(`Unknown wave difficulty: ${difficulty}`);
+        }
+
         return {
             triggerInfo: {
-                numberOfEnemiesRemaining: 0,
                 spawnCooldown: PhaserMath.RND.between(1000, 2500),
             },
             spawnInfo: {
                 numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 3)
             }
         };
+    }
+}
+
+function getDifficulty (nextWave) {
+    if (nextWave < 3) {
+        return WaveDifficulty.EASY;
+    } else if (nextWave < 7) {
+        return WaveDifficulty.MEDIUM;
+    } else if (nextWave < 13) {
+        return WaveDifficulty.HARD;
+    } else {
+        return WaveDifficulty.SOULS_LIKE;
     }
 }
