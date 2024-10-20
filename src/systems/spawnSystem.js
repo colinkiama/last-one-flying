@@ -10,12 +10,14 @@ export class SpawnSystem {
     _last_enemy_hit_time;
     _enemySpawnTimerEvent;
     _enemySpawnCondition;
+    _currentEnemyWave;
 
     constructor (scene, enemyGroup) {
         this.scene = scene;
         this.player = this.spawnPlayer();
         this._enemyGroup = enemyGroup;
         this._last_enemy_hit_time = 0;
+        this._currentEnemyWave = 0;
         this._enemySpawnCondition = {
             triggerInfo: {
                 numberOfEnemiesRemaining: 0,
@@ -25,6 +27,7 @@ export class SpawnSystem {
                 numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 4)
             }
         };
+
     }
 
     activateEnemySpawnTimer() {
@@ -50,6 +53,9 @@ export class SpawnSystem {
         if (activeEnemies.length > triggerInfo.numberOfEnemiesRemaining || (this.scene.time.now - this._last_enemy_hit_time) < triggerInfo.spawnCooldown) {
             return;
         }
+
+        this._currentEnemyWave++;
+        console.log('Current enemy wave:', this._currentEnemyWave);
 
         const minDistanceToPlayer = 200;
         // 50% of being left of player or right of player.
@@ -108,7 +114,7 @@ export class SpawnSystem {
     prepareNextSpawnCondition () {
         return {
             triggerInfo: {
-                numberOfEnemiesRemaining: PhaserMath.RND.between(0, 2),
+                numberOfEnemiesRemaining: 0,
                 spawnCooldown: PhaserMath.RND.between(1000, 2500),
             },
             spawnInfo: {
