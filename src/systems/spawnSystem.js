@@ -55,8 +55,6 @@ export class SpawnSystem {
 
         this._currentEnemyWave++;
 
-        console.log('Current enemy wave:', this._currentEnemyWave);
-
         const minDistanceToPlayer = 200;
         // 50% of being left of player or right of player.
         const xPosition1 = PhaserMath.RND.between(0, this.player.x - minDistanceToPlayer);
