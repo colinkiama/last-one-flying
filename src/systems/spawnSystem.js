@@ -138,34 +138,70 @@ export class SpawnSystem {
     }
 
     getMediumSpawnConditions (nextWave) {
+        let numberOfEnemiesToSpawn;
+        let percentage = PhaserMath.RND.frac();
+
+        if (percentage < 0.6) {
+            numberOfEnemiesToSpawn = PhaserMath.RND.between(4, 6);
+        } else if (percentage < 0.9) {
+            numberOfEnemiesToSpawn = PhaserMath.RND.between(1, 3);
+        } else {
+            numberOfEnemiesToSpawn = PhaserMath.RND.between(7, 10);
+        }
+
+
         return {
             triggerInfo: {
                 spawnCooldown: PhaserMath.RND.between(1000, 2500),
             },
             spawnInfo: {
-                numberOfEnemiesToSpawn: PhaserMath.RND.between(4, 6)
+                numberOfEnemiesToSpawn
             }
         };
     }
 
     getHardSpawnConditions (nextWave) {
+        let numberOfEnemiesToSpawn;
+        let percentage = PhaserMath.RND.frac();
+
+        if (percentage < 0.55) {
+            numberOfEnemiesToSpawn = PhaserMath.RND.between(4, 6);
+        } else if (percentage < 0.95) {
+            numberOfEnemiesToSpawn = PhaserMath.RND.between(7, 10);
+        } else {
+            numberOfEnemiesToSpawn = PhaserMath.RND.between(1, 3);
+        }
+
+
         return {
             triggerInfo: {
                 spawnCooldown: PhaserMath.RND.between(1000, 2500),
             },
             spawnInfo: {
-                numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 3)
+                numberOfEnemiesToSpawn
             }
         };
     }
 
     getSoulslikeSpawnConditions (nextWave) {
+        let numberOfEnemiesToSpawn;
+        let percentage = PhaserMath.RND.frac();
+
+        if (percentage < 0.6) {
+            numberOfEnemiesToSpawn = PhaserMath.RND.between(7, 10);
+        } else if (percentage < 0.95) {
+            numberOfEnemiesToSpawn = PhaserMath.RND.between(4, 6);
+        } else {
+            numberOfEnemiesToSpawn = PhaserMath.RND.between(1, 3);
+        }
+
+
         return {
             triggerInfo: {
                 spawnCooldown: PhaserMath.RND.between(1000, 2500),
             },
             spawnInfo: {
-                numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 3)
+                numberOfEnemiesToSpawn
             }
         };
     }
