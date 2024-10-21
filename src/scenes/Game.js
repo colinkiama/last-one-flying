@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 import { crossSceneEventEmitter, gameLogicEventEmitter } from '../utils';
-import { SpawnSystem, CombatSystem, MovementSystem, VFXSystem, ScoreSystem } from '../systems';
+import { SpawnSystem, CombatSystem, MovementSystem, VFXSystem, ScoreSystem, StatusSystem } from '../systems';
 import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
 import { CrossSceneEvent, GameLogicEvent, ScreenShakeType, ScoreUpdateType } from '../constants';
 
@@ -16,6 +16,7 @@ export class Game extends Scene
     _combatSystem;
     _vfxSystem;
     _scoreSystem;
+    _statusSystem;
 
     constructor ()
     {
@@ -66,13 +67,16 @@ export class Game extends Scene
             explosionPool: this._explosionPool,
         });
 
+        this._statusSystem = new StatusSystem();
 
         this._combatSystem.activateCollisions();
         this._combatSystem.startEnemyAI();
         this._spawnSystem.activateEnemySpawnTimer();
         this._movementSystem.activatePointerMovement();
 
-        this.scene.launch('HUD');
+        this.scene.launch('HUD', {
+            lives: 3
+        });
     }
 
     subscribeToEvents () {
@@ -81,6 +85,7 @@ export class Game extends Scene
         gameLogicEventEmitter.on(GameLogicEvent.PLAYER_DEATH, this.onPlayerDeath, this);
         gameLogicEventEmitter.on(GameLogicEvent.SHIP_DESTROYED, this.onShipDestroyed, this);
         gameLogicEventEmitter.on(GameLogicEvent.SCORE_UPDATED, this.onScoreUpdated, this);
+        gameLogicEventEmitter.on(GameLogicEvent.LIVES_UPDATED, this.onLivesUpdated, this);
     }
 
     onPlayerFire () {
@@ -95,6 +100,7 @@ export class Game extends Scene
 
     onPlayerDeath(closestEnemy) {
         this._vfxSystem.shakeScreen(ScreenShakeType.PLAYER_DEATH);
+        this._statusSystem.loseLife();
         this._spawnSystem.spawnPlayer(closestEnemy ? { enemy: closestEnemy } : undefined);
     }
 
@@ -104,6 +110,10 @@ export class Game extends Scene
 
     onScoreUpdated (score) {
         crossSceneEventEmitter.emit(CrossSceneEvent.UPDATE_SCORE, score);
+    }
+
+    onLivesUpdated (lives) {
+        crossSceneEventEmitter.emit(CrossSceneEvent.UPDATE_LIVES, lives);
     }
 
     update () {
