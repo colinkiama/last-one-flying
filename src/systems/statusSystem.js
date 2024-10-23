@@ -23,5 +23,11 @@ export class StatusSystem {
         if (this._playerLives > 0) {
             return;
         }
+
+        gameLogicEventEmitter.emit(GameLogicEvent.GAME_OVER);
+    }
+
+    getLives () {
+        return this._playerLives;
     }
 }

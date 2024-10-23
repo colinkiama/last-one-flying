@@ -86,6 +86,7 @@ export class Game extends Scene
         gameLogicEventEmitter.on(GameLogicEvent.SHIP_DESTROYED, this.onShipDestroyed, this);
         gameLogicEventEmitter.on(GameLogicEvent.SCORE_UPDATED, this.onScoreUpdated, this);
         gameLogicEventEmitter.on(GameLogicEvent.LIVES_UPDATED, this.onLivesUpdated, this);
+        gameLogicEventEmitter.on(GameLogicEvent.GAME_OVER, this.onGameOver, this);
     }
 
     onPlayerFire () {
@@ -101,6 +102,10 @@ export class Game extends Scene
     onPlayerDeath(closestEnemy) {
         this._vfxSystem.shakeScreen(ScreenShakeType.PLAYER_DEATH);
         this._statusSystem.loseLife();
+        if (this._statusSystem.getLives() < 1) {
+            return;
+        }
+
         this.time.delayedCall(2000, () => {
             this._spawnSystem.spawnPlayer(closestEnemy ? { enemy: closestEnemy } : undefined);
         });
@@ -116,6 +121,10 @@ export class Game extends Scene
 
     onLivesUpdated (lives) {
         crossSceneEventEmitter.emit(CrossSceneEvent.UPDATE_LIVES, lives);
+    }
+
+    onGameOver () {
+        console.log("Game Over!");
     }
 
     update () {
