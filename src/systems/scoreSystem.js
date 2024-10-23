@@ -14,6 +14,9 @@ export class ScoreSystem {
             case ScoreUpdateType.ENEMY_HIT:
                 this._score += 100;
                 break;
+            case ScoreUpdateType.RESET:
+                this._score = 0;
+                break;
             default:
                 throw new Error(`Score update type '${updateType}' is not recognised'`);
         }
@@ -26,8 +29,7 @@ export class ScoreSystem {
     }
 
     reset () {
-        this._score = 0;
-        gameLogicEventEmitter.emit(GameLogicEvent.SCORE_UPDATED, this._score);
+        this.update(ScoreUpdateType.RESET);
     }
 
     getScore () {

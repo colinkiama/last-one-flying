@@ -10,6 +10,7 @@ export class Game extends Scene
     _enemyPool;
     _laserPool;
     _enemyLaserPool;
+    _explosionPool
 
     _spawnSystem;
     _movementSystem;
@@ -75,7 +76,7 @@ export class Game extends Scene
         this._movementSystem.activatePointerMovement();
 
         this.scene.launch('HUD', {
-            lives: 3
+            lives: this._statusSystem.getLives()
         });
     }
 
@@ -124,11 +125,39 @@ export class Game extends Scene
     }
 
     onGameOver () {
-        console.log("Game Over!");
+        this._spawnSystem.deactivateEnemySpawnTimer();
+        this.reset();
     }
 
     update () {
         this._movementSystem.handlePlayerMovement();
         this._combatSystem.update();
+    }
+
+    reset () {
+        this.clearPools();
+
+        this.time.delayedCall(500, () => {
+            this._statusSystem.reset();
+            this._scoreSystem.reset();
+            this._spawnSystem.reset();
+        });
+    }
+
+    clearPools () {
+        const pools = [
+            this._enemyPool,
+            this._explosionPool,
+            this._laserPool,
+            this._enemyLaserPool
+        ];
+
+        for (const pool of pools) {
+            const activeElements = pool.getMatching('active', true);
+            for (let i = activeElements.length - 1; i > -1; i--) {
+                const element = activeElements[i];
+                pool.killAndHide(element);
+            }
+        }
     }
 }

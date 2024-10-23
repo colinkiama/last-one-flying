@@ -18,14 +18,7 @@ export class SpawnSystem {
         this._enemyGroup = enemyGroup;
         this._last_enemy_hit_time = 0;
         this._currentEnemyWave = 0;
-        this._enemySpawnCondition = {
-            triggerInfo: {
-                spawnCooldown: 2500,
-            },
-            spawnInfo: {
-                numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 3)
-            }
-        };
+        this._enemySpawnCondition = this.getEasySpawnConditions();
 
     }
 
@@ -44,6 +37,21 @@ export class SpawnSystem {
         })
 
         this.scene.time.addEvent(this._enemySpawnTimerEvent);
+    }
+
+    deactivateEnemySpawnTimer() {
+        if (!this._enemySpawnTimerEvent) {
+            return;
+        }
+
+        this.scene.time.removeEvent(this._enemySpawnTimerEvent);
+    }
+
+    reset() {
+        this._currentEnemyWave = 0;
+        this._enemySpawnCondition = this.getEasySpawnConditions();
+        this.spawnPlayer();
+        this.scene.time.addEvent(this._enemySpawnTimerEvent)
     }
 
     spawnEnemies () {
@@ -124,7 +132,7 @@ export class SpawnSystem {
         }
     }
 
-    getEasySpawnConditions (nextWave) {
+    getEasySpawnConditions () {
         return {
             triggerInfo: {
                 spawnCooldown: PhaserMath.RND.between(1000, 2500),
@@ -135,7 +143,7 @@ export class SpawnSystem {
         };
     }
 
-    getMediumSpawnConditions (nextWave) {
+    getMediumSpawnConditions () {
         let numberOfEnemiesToSpawn;
         let percentage = PhaserMath.RND.frac();
 
@@ -158,7 +166,7 @@ export class SpawnSystem {
         };
     }
 
-    getHardSpawnConditions (nextWave) {
+    getHardSpawnConditions () {
         let numberOfEnemiesToSpawn;
         let percentage = PhaserMath.RND.frac();
 
@@ -181,7 +189,7 @@ export class SpawnSystem {
         };
     }
 
-    getSoulslikeSpawnConditions (nextWave) {
+    getSoulslikeSpawnConditions () {
         let numberOfEnemiesToSpawn;
         let percentage = PhaserMath.RND.frac();
 
