@@ -101,7 +101,9 @@ export class Game extends Scene
     onPlayerDeath(closestEnemy) {
         this._vfxSystem.shakeScreen(ScreenShakeType.PLAYER_DEATH);
         this._statusSystem.loseLife();
-        this._spawnSystem.spawnPlayer(closestEnemy ? { enemy: closestEnemy } : undefined);
+        this.time.delayedCall(2000, () => {
+            this._spawnSystem.spawnPlayer(closestEnemy ? { enemy: closestEnemy } : undefined);
+        });
     }
 
     onShipDestroyed (ship) {
