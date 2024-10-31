@@ -15,8 +15,8 @@
     },
     "homepage": "https://github.com/colinkiama/last-one-flying#readme",
     "scripts": {
-        "dev": "vite --config vite/config.dev.mjs",
-        "build": "vite build --config vite/config.prod.mjs"
+        "dev": "bunx --bun vite --config vite/config.dev.mjs",
+        "build": "bunx --bun vite build --config vite/config.prod.mjs"
     },
     "devDependencies": {
         "terser": "^5.31.0",
