@@ -13,6 +13,7 @@ export class CombatSystem {
     _enemyAutoFireEvent;
     _combatKeys;
     _nextShotTime;
+    _solarBeam;
 
     constructor (scene, player, pools) {
         const { enemyPool, laserBeamPool, enemyLaserBeamPool, explosionPool } = pools;
@@ -25,6 +26,7 @@ export class CombatSystem {
 
         this._combatKeys = createCombatKeys(this.scene.input.keyboard);
         this._nextShotTime = 0;
+        this._solarBeam = scene.add.tileSprite(this._player.x + 100 + this._player.width, this._player.y, 200, 16, 'solar-beam');
     }
 
     activateCollisions () {
@@ -165,6 +167,14 @@ export class CombatSystem {
 
             this.scene.physics.moveToObject(enemy, this._player, 40);
         }
+
+        this._solarBeam.rotation = this._player.rotation;
+        const rotatedShipHeadOffset = new PhaserMath.Vector2(
+            this._player.width * this._player.originX + this._solarBeam.width,
+            0
+        ).rotate(this._player.rotation);
+        this._solarBeam.x = this._player.x + rotatedShipHeadOffset.x;
+        this._solarBeam.y = this._player.y + rotatedShipHeadOffset.y;
     }
 
     destroyShip (ship) {

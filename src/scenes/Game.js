@@ -18,6 +18,8 @@ export class Game extends Scene
     _vfxSystem;
     _scoreSystem;
     _statusSystem;
+    
+    _solarBeam;
 
     constructor ()
     {
