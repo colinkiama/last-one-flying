@@ -19,8 +19,6 @@ export class Game extends Scene
     _scoreSystem;
     _statusSystem;
     
-    _solarBeam;
-
     constructor ()
     {
         super('Game');

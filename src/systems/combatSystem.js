@@ -26,8 +26,6 @@ export class CombatSystem {
 
         this._combatKeys = createCombatKeys(this.scene.input.keyboard);
         this._nextShotTime = 0;
-        this._solarBeam = scene.add.tileSprite(this._player.x + 100 + this._player.width, this._player.y, 200, 16, 'solar-beam');
-        this.scene.physics.add.existing(this._solarBeam);
     }
 
     activateCollisions () {
@@ -82,16 +80,6 @@ export class CombatSystem {
                 this.destroyShip(player);
                 laserBeam.disableBody(true, true);
                 gameLogicEventEmitter.emit(GameLogicEvent.PLAYER_DEATH, closestEnemy);
-            }
-        )
-
-        this.scene.physics.add.overlap(
-            this._enemyPool,
-            this._solarBeam,
-            (solarBeam, enemy) => {
-                console.log("Enemy to destroy from laser beam:", enemy);
-                this.destroyShip(enemy);
-                gameLogicEventEmitter.emit(GameLogicEvent.ENEMY_DEATH);
             }
         )
     }
@@ -178,14 +166,6 @@ export class CombatSystem {
 
             this.scene.physics.moveToObject(enemy, this._player, 40);
         }
-
-        this._solarBeam.rotation = this._player.rotation;
-        const rotatedShipHeadOffset = new PhaserMath.Vector2(
-            this._player.width * this._player.originX + this._solarBeam.width,
-            0
-        ).rotate(this._player.rotation);
-        this._solarBeam.x = this._player.x + rotatedShipHeadOffset.x;
-        this._solarBeam.y = this._player.y + rotatedShipHeadOffset.y;
     }
 
     destroyShip (ship) {
