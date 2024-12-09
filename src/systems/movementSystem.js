@@ -1,5 +1,6 @@
 import { createMovementKeys } from '../utils/input.js';
 import { Math as PhaserMath } from 'phaser';
+import { POINTER_DEADZONE } from '../constants';
 
 export class MovementSystem {
     scene;
@@ -72,8 +73,19 @@ export class MovementSystem {
     }
 
     onPointerMove(pointer) {
-        const targetAngle = Phaser.Math.Angle.Between(this._player.x, this._player.y, pointer.worldX, pointer.worldY);
+        if (this.isInDeadzone(pointer.worldX, pointer.worldY)) {
+            return;
+        }
+        
+        const targetAngle = PhaserMath.Angle.Between(this._player.x, this._player.y, pointer.worldX, pointer.worldY);
         const rotation = this._player.setRotation(targetAngle);
+    }
+
+    isInDeadzone(x, y) {
+        return x >= this._player.x - POINTER_DEADZONE
+            && x <= this._player.x + POINTER_DEADZONE
+            && y >= this._player.y - POINTER_DEADZONE
+            && y <= this._player.y + POINTER_DEADZONE;    
     }
 }
 

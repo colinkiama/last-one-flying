@@ -1,0 +1,1 @@
+export const POINTER_DEADZONE = 32;
