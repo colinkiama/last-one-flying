@@ -78,7 +78,7 @@ export class MovementSystem {
         }
         
         const targetAngle = PhaserMath.Angle.Between(this._player.x, this._player.y, pointer.worldX, pointer.worldY);
-        const rotation = this._player.setRotation(targetAngle);
+        this._player.setRotation(targetAngle);
     }
 
     isInDeadzone(x, y) {
