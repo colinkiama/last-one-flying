@@ -24,6 +24,9 @@ export class HUD extends Scene {
         const { lives } = data;
         crossSceneEventEmitter.on(CrossSceneEvent.UPDATE_SCORE, this.onUpdateScore, this);
         crossSceneEventEmitter.on(CrossSceneEvent.UPDATE_LIVES, this.onUpdateLives, this);
+        // TODO: Make screen shake also occur in HUD.
+        // Pass the intensity values into the HUD via crossSceneEventEmitter so screen shake
+        // can also effect the HUD
         this._score = 0;
         this.anims.create({
             key: 'blink',
@@ -32,7 +35,6 @@ export class HUD extends Scene {
             repeat: -1
         });
 
-        // this._livesText = this.add.text(20, 20, this.createLivesTextString(lives));
         // this.add.text (20, 50, 'Score');
         // this._scoreValueText = this.add.text (20, 70, '0');
 
@@ -62,6 +64,10 @@ export class HUD extends Scene {
     }
 
     onUpdateLives(nextLivesValue) {
-        // this._livesText.text = this.createLivesTextString(String(nextLivesValue));
+        this._healthBar.setLives(nextLivesValue);
+    }
+
+    reset() {
+        this._healthBar.reset();
     }
 }

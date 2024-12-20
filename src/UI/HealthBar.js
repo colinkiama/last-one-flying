@@ -21,4 +21,17 @@ export class HealthBar extends GameObjects.Container {
             );
         }
     }
+
+    setLives(nextLivesValue) {
+        const healthPoints = this._pointPool.getChildren();
+        for (let i = healthPoints.length - 1; i > nextLivesValue - 1; i--) {
+            this._pointPool.killAndHide(healthPoints[i]);
+        }
+
+        for (let i = 0; i < nextLivesValue; i++) {
+            const healthPoint = healthPoints[i];
+            healthPoint.setActive(true);
+            healthPoint.setVisible(true);
+        }
+    }
 }
