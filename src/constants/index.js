@@ -5,3 +5,4 @@ export * from './score.js';
 export * from './spawn.js';
 export * from './status.js';
 export * from './movement.js';
+export * from './HUD.js';
