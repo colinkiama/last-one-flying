@@ -15,8 +15,8 @@ export const HEALTH_ICON_DIMENSIONS = {
     horizontalMargin: 24
 };
 
-export const HEALTH_POINT = {
+export const HEALTH_POINT_DIMENSIONS = {
     width: 53,
     height: 32,
-    horizontalMargin: 8
+    horizontalMargin: 16
 };
