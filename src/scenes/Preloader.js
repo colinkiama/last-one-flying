@@ -33,14 +33,21 @@ export class Preloader extends Scene
         this.load.setPath('assets');
 
         this.load.image('logo', 'logo.png');
-        this.load.spritesheet([
-            { key: 'player', frameConfig: { frameWidth: 32, frameHeight: 32 } }
-        ]);
-
+        this.load.image('player', 'player.png');
         this.load.image('laser-beam', 'laser-beam.png');
         this.load.image('test-enemy', 'test-enemy.png');
         this.load.image('explosion', 'explosion.png');
         this.load.image('basic-enemy', 'basic-enemy.png');
+        this.load.image('health-icon', 'health-icon.png');
+        this.load.image('pause-button', 'pause-button.png');
+        this.load.spritesheet(
+            'health-point',
+            'health-point.png',
+            {
+                frameWidth: 53,
+                frameHeight: 32,
+            }
+        );
     }
 
     create ()
