@@ -6,5 +6,3 @@ export const WaveDifficulty = {
     HARD: 7,
     SOULSLIKE: 13,
 }
-
-

@@ -13,7 +13,6 @@ export class HealthBar extends GameObjects.Container {
         });
 
         for (let i = 0; i < STARTING_LIVES; i++) {
-
             this._pointPool.get(
                 this.x + (HEALTH_POINT_DIMENSIONS.width / 2) + (i * (HEALTH_ICON_DIMENSIONS.width + HEALTH_POINT_DIMENSIONS.horizontalMargin)),
                 this.y,
@@ -25,13 +24,17 @@ export class HealthBar extends GameObjects.Container {
     setLives(nextLivesValue) {
         const healthPoints = this._pointPool.getChildren();
         for (let i = healthPoints.length - 1; i > nextLivesValue - 1; i--) {
-            this._pointPool.killAndHide(healthPoints[i]);
+            const healthPoint = healthPoints[i];
+            healthPoint.dim();
         }
 
         for (let i = 0; i < nextLivesValue; i++) {
             const healthPoint = healthPoints[i];
-            healthPoint.setActive(true);
-            healthPoint.setVisible(true);
+            healthPoint.illuminate();
+            if (nextLivesValue === 1) {
+                healthPoint.flicker();
+            }
         }
+
     }
 }

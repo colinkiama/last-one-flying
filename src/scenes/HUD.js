@@ -29,7 +29,7 @@ export class HUD extends Scene {
         // can also effect the HUD
         this._score = 0;
         this.anims.create({
-            key: 'blink',
+            key: 'flicker',
             frames: this.anims.generateFrameNumbers('health-point', { start: 0, end: 1 }),
             frameRate: 3,
             repeat: -1
