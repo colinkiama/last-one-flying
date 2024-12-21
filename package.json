@@ -20,7 +20,7 @@
         "export": "bun scripts/export.js"
     },
     "devDependencies": {
-        "zip-stream": "^7.0.2",
-        "bun-types": "latest"
+        "bun-types": "latest",
+        "zip-stream": "^7.0.2"
     }
 }
