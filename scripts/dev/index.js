@@ -31,8 +31,7 @@ Options:
 }
 options.port ??= 8000;
 
-const currentDir = import.meta.dir;
-const injection = await Bun.file(`${currentDir}/injection.html`).text();
+const injection = await Bun.file(`${import.meta.dir}/injection.html`).text();
 
 let clients = [];
 let watcher = watch(
@@ -58,13 +57,13 @@ const server = Bun.serve({
     }
 
     let pathname = new URL(req.url).pathname;
-    // URLs with no set pathname will serve index.html by default
+    // URLs with no set pathname will serve /index.html by default
     if (pathname === '/') {
       pathname = "/index.html"
     }
 
-    let filePath = '.' + pathname;
-    let file = Bun.file(filePath);
+    const filePath = '.' + pathname;
+    const file = Bun.file(filePath);
     if (await file.exists()) {
       let content = await file.bytes();
       if (file.type.includes('text/html')) {
