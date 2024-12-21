@@ -57,8 +57,14 @@ const server = Bun.serve({
       else return new Response('Failed to upgrade.', { status: 500 });
     }
 
-    let pathname = '.' + new URL(req.url).pathname;
-    let file = Bun.file(pathname);
+    let pathname = new URL(req.url).pathname;
+    // URLs with no set pathname will serve index.html by default
+    if (pathname === '/') {
+      pathname = "/index.html"
+    }
+
+    let filePath = '.' + pathname;
+    let file = Bun.file(filePath);
     if (await file.exists()) {
       let content = await file.bytes();
       if (file.type.includes('text/html')) {
