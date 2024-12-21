@@ -23,18 +23,19 @@ export class HealthBar extends GameObjects.Container {
 
     setLives(nextLivesValue) {
         const healthPoints = this._pointPool.getChildren();
-        for (let i = healthPoints.length - 1; i > nextLivesValue - 1; i--) {
-            const healthPoint = healthPoints[i];
-            healthPoint.dim();
-        }
+        const length = healthPoints.length;
 
-        for (let i = 0; i < nextLivesValue; i++) {
+        for (let i = 0; i < length; i++) {
             const healthPoint = healthPoints[i];
-            healthPoint.illuminate();
-            if (nextLivesValue === 1) {
+            if (i < nextLivesValue) {
+                healthPoint.illuminate();
+            } else {
+                healthPoint.dim()
+            }
+
+            if (i === 0 && nextLivesValue === 1) {
                 healthPoint.flicker();
             }
         }
-
     }
 }
