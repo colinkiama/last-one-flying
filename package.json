@@ -15,6 +15,11 @@
     },
     "homepage": "https://github.com/colinkiama/last-one-flying#readme",
     "scripts": {
-        "dev": "bunx --bun vite"
+        "dev": "bun run scripts/dev/index.js",
+        "build": "bun scripts/build.js",
+        "export": "bun scripts/export.js"
+    },
+    "devDependencies": {
+        "zip-stream": "^7.0.2"
     }
 }

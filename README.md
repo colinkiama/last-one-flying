@@ -65,6 +65,7 @@ We have provided a default project structure to get you started. This is as foll
 - `src/scenes/` - The Phaser Scenes are in this folder.
 - `style.css` - Some simple CSS rules to help with page layout.
 - `assets` - Contains the static assets used by the game.
+- `scripts/` - Development scripts
 
 ## Handling Assets
 
