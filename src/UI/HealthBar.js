@@ -1,6 +1,7 @@
 import { GameObjects } from "phaser";
-import { HealthPoint } from "./HealthPoint";
-import { STARTING_LIVES, HEALTH_POINT_DIMENSIONS, HEALTH_ICON_DIMENSIONS } from "../constants";
+import { HealthPoint } from "./HealthPoint.js";
+import { STARTING_LIVES } from "../constants/status.js";
+import { HEALTH_ICON_DIMENSIONS, HEALTH_POINT_DIMENSIONS } from "../constants/HUD.js";
 
 export class HealthBar extends GameObjects.Container {
     _pointPool;

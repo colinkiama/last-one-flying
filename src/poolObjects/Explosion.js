@@ -1,5 +1,5 @@
 import { GameObjects } from 'phaser';
-export default class Explosion extends GameObjects.Particles.ParticleEmitter {
+export class Explosion extends GameObjects.Particles.ParticleEmitter {
     timeSinceExplosion;
 
     constructor (config) {

@@ -1,8 +1,20 @@
 import { Scene } from 'phaser';
-import { crossSceneEventEmitter, gameLogicEventEmitter } from '../utils';
-import { SpawnSystem, CombatSystem, MovementSystem, VFXSystem, ScoreSystem, StatusSystem } from '../systems';
-import { LaserBeam, BasicEnemy, Explosion } from '../poolObjects';
-import { CrossSceneEvent, GameLogicEvent, ScreenShakeType, ScoreUpdateType } from '../constants';
+import { crossSceneEventEmitter, gameLogicEventEmitter } from '../utils/events.js';
+
+import { SpawnSystem } from '../systems/spawnSystem.js';
+import { CombatSystem } from '../systems/combatSystem.js';
+import { MovementSystem } from '../systems/movementSystem.js';
+import { VFXSystem } from '../systems/vfxSystem.js';
+import { ScoreSystem } from '../systems/scoreSystem.js';
+import { StatusSystem } from '../systems/statusSystem.js';
+
+import { LaserBeam } from '../poolObjects/LaserBeam.js';
+import { BasicEnemy } from '../poolObjects/BasicEnemy.js';
+import { Explosion } from '../poolObjects/Explosion.js';
+
+import { CrossSceneEvent,GameLogicEvent } from '../constants/events.js'
+import { ScreenShakeType } from '../constants/vfx.js';
+import { ScoreUpdateType } from '../constants/score.js'
 
 export class Game extends Scene
 {

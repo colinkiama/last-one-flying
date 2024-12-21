@@ -2,7 +2,7 @@ import { Physics, Math as PhaserMath } from 'phaser';
 const LASER_SHOT_SPEED = 250;
 const LIFESPAN = 2000; // In milliseconds
 
-export default class BasicEnemy extends Physics.Arcade.Sprite {
+export class BasicEnemy extends Physics.Arcade.Sprite {
     lifespan
 
     constructor (scene) {

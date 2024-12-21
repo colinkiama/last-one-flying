@@ -1,6 +1,6 @@
-import { createMovementKeys } from '../utils/input.js';
 import { Math as PhaserMath } from 'phaser';
-import { POINTER_DEADZONE } from '../constants';
+import { createMovementKeys } from '../utils/input.js';
+import { POINTER_DEADZONE } from '../constants/movement.js';
 
 export class MovementSystem {
     scene;

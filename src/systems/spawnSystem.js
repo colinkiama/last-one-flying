@@ -1,5 +1,6 @@
 import { Math as PhaserMath, Time } from 'phaser';
-import { ENEMY_SPAWN_COOLDOWN, ENEMY_HEIGHT, WaveDifficulty } from '../constants';
+import { WaveDifficulty } from '../constants/spawn.js';
+import { ENEMY_HEIGHT } from '../constants/combat.js';
 
 export class SpawnSystem {
     scene;

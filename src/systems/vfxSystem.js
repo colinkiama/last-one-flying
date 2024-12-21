@@ -1,4 +1,4 @@
-import { ScreenShakeType } from '../constants';
+import { ScreenShakeType } from '../constants/vfx.js';
 
 export class VFXSystem {
     scene;

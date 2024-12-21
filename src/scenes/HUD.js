@@ -1,13 +1,8 @@
 import { Scene } from 'phaser';
-import { crossSceneEventEmitter } from '../utils'
-import { 
-    CrossSceneEvent,
-    HEALTH_ICON_DIMENSIONS,
-    HUD_PADDING,
-    PAUSE_BUTTON_DIMENSIONS
-} from '../constants';
-
-import { HealthBar } from '../UI';
+import { crossSceneEventEmitter } from '../utils/events.js'
+import { CrossSceneEvent } from '../constants/events.js';
+import { HEALTH_ICON_DIMENSIONS, HUD_PADDING, PAUSE_BUTTON_DIMENSIONS } from '../constants/HUD.js' 
+import { HealthBar } from '../UI/HealthBar.js';
 
 export class HUD extends Scene {
     _scoreValueText;

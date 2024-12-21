@@ -1,5 +1,6 @@
-import { gameLogicEventEmitter } from '../utils';
-import { GameLogicEvent, ScoreUpdateType } from '../constants';
+import { gameLogicEventEmitter } from '../utils/events.js';
+import { GameLogicEvent } from '../constants/events.js';
+import { ScoreUpdateType } from '../constants/score.js';
 
 export class ScoreSystem {
     _score;

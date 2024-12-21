@@ -1,5 +1,6 @@
-import { gameLogicEventEmitter } from '../utils';
-import { GameLogicEvent, STARTING_LIVES } from '../constants';
+import { gameLogicEventEmitter } from '../utils/events.js';
+import { GameLogicEvent } from '../constants/events.js';
+import { STARTING_LIVES } from '../constants/status.js';
 
 export class StatusSystem {
     _playerLives;

@@ -1,6 +1,8 @@
-import { gameLogicEventEmitter, createCombatKeys, } from '../utils';
-import { GameLogicEvent, LASER_SHOT_DELAY } from '../constants';
 import { Math as PhaserMath, Time } from 'phaser';
+import { gameLogicEventEmitter } from '../utils/events.js';
+import { createCombatKeys } from '../utils/input.js';
+import { GameLogicEvent } from '../constants/events';
+import { LASER_SHOT_DELAY } from '../constants/combat.js';
 
 export class CombatSystem {
     scene;
