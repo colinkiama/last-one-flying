@@ -1,4 +1,4 @@
-import { GameObjects } from "phaser";
+import { GameObjects } from 'phaser';
 import { HealthPoint } from "./HealthPoint.js";
 import { STARTING_LIVES } from "../constants/status.js";
 import { HEALTH_ICON_DIMENSIONS, HEALTH_POINT_DIMENSIONS } from "../constants/HUD.js";

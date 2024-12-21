@@ -16,7 +16,7 @@ import { CrossSceneEvent,GameLogicEvent } from '../constants/events.js'
 import { ScreenShakeType } from '../constants/vfx.js';
 import { ScoreUpdateType } from '../constants/score.js'
 
-export class Game extends Scene
+export class Battle extends Scene
 {
     _player;
     _enemyPool;

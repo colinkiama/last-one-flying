@@ -1,7 +1,7 @@
 import { Math as PhaserMath, Time } from 'phaser';
 import { gameLogicEventEmitter } from '../utils/events.js';
 import { createCombatKeys } from '../utils/input.js';
-import { GameLogicEvent } from '../constants/events';
+import { GameLogicEvent } from '../constants/events.js';
 import { LASER_SHOT_DELAY } from '../constants/combat.js';
 
 export class CombatSystem {
@@ -162,8 +162,8 @@ export class CombatSystem {
         for (let i = 0; i < activeEnemies.length; i++) {
             const enemy = activeEnemies[i];
 
-            const targetAngle = Phaser.Math.Angle.Between(enemy.x, enemy.y, targetX, targetY);
-            const rotation = Phaser.Math.Angle.RotateTo(enemy.rotation, targetAngle, 0.05 * Math.PI);
+            const targetAngle = PhaserMath.Angle.Between(enemy.x, enemy.y, targetX, targetY);
+            const rotation = PhaserMath.Angle.RotateTo(enemy.rotation, targetAngle, 0.05 * Math.PI);
             enemy.setRotation(rotation);
 
             this.scene.physics.moveToObject(enemy, this._player, 40);
