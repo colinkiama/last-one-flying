@@ -62,7 +62,8 @@ const server = Bun.serve({
     if (await file.exists()) {
       let content = await file.bytes();
       if (file.type.includes('text/html')) {
-        let textContent = Buffer.from(content.buffer).toString();
+        const textDecoder = new TextDecoder();
+        let textContent = textDecoder.decode(content.buffer);
         let idx = textContent.search(/<\/body>/i);
         content = ''.concat(textContent.slice(0, idx), injection, textContent.slice(idx));
       }
