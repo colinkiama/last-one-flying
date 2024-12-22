@@ -12,7 +12,7 @@
         "checkJs": true,
         "lib": ["ESNext"],
         "baseUrl": ".",
-        "typeRoots": ["./.vendor/types"]
+        "typeRoots": ["./.vendor/types"],
     },
     "exclude": ["node_modules"]
 }

@@ -18,7 +18,7 @@ const fileCopyPromises = filePaths.map(filePath => {
 // Wait for all of the files to be copied before continuing
 try {
     const allFileCopiesPromise = Promise.all(fileCopyPromises).then(() => {
-        console.log("Successfully copied files to '/dist'");
+        console.log(`Successfully copied files to ${OUTPUT_DIRECTORY_NAME}`);
     }, (err => {
         errorsFound = true;
         throw err;
@@ -26,10 +26,10 @@ try {
 
     await allFileCopiesPromise;
 } catch (err) {
-    console.error("Failed to copy files to '/dist'");
+    console.error(`Failed to copy files to ${OUTPUT_DIRECTORY_NAME}`);
     throw err;
 }
 
 if (!errorsFound) {
-    console.log("Finished copying all game code files to '/dist");
+    console.log(`Finished copying all game code files to ${OUTPUT_DIRECTORY_NAME}`);
 }

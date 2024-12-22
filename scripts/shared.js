@@ -14,7 +14,7 @@ export const GAME_DIR_PATHS = [
     "./src/"
 ];
 
-export const OUTPUT_DIRECTORY_NAME = './dist/';
+export const OUTPUT_DIRECTORY_NAME = 'dist/';
 
 export async function getFilesToCopy() {
     const filePathSearchPromises = GAME_DIR_PATHS.map((dirPath) => readdir(dirPath, { recursive: true, withFileTypes: true }));
