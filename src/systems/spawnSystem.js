@@ -4,23 +4,20 @@ import { ENEMY_HEIGHT } from '../constants/combat.js';
 
 export class SpawnSystem {
     scene;
-    // TODO: Figure out a better way to create a player so you don't have to
-    // make the player field public here.
-    player;
+    _player;
     _enemyGroup;
     _last_enemy_hit_time;
     _enemySpawnTimerEvent;
     _enemySpawnCondition;
     _currentEnemyWave;
 
-    constructor (scene, enemyGroup) {
+    constructor (scene, player, enemyGroup) {
         this.scene = scene;
-        this.player = this.spawnPlayer();
+        this._player = player;
         this._enemyGroup = enemyGroup;
         this._last_enemy_hit_time = 0;
         this._currentEnemyWave = 0;
         this._enemySpawnCondition = this.getEasySpawnConditions();
-
     }
 
     activateEnemySpawnTimer() {
@@ -66,8 +63,8 @@ export class SpawnSystem {
 
         const minDistanceToPlayer = 200;
         // 50% of being left of player or right of player.
-        const xPosition1 = PhaserMath.RND.between(0, this.player.x - minDistanceToPlayer);
-        const xPosition2 = PhaserMath.RND.between(this.player.x + minDistanceToPlayer, this.scene.cameras.main.width);
+        const xPosition1 = PhaserMath.RND.between(0, this._player.x - minDistanceToPlayer);
+        const xPosition2 = PhaserMath.RND.between(this._player.x + minDistanceToPlayer, this.scene.cameras.main.width);
 
 
         let enemyX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
@@ -79,7 +76,6 @@ export class SpawnSystem {
             if (!enemy) {
                 break;
             }
-
 
             const spawnOffsetX = PhaserMath.RND.between(0,250);
             const spawnOffsetY = PhaserMath.RND.between(0,250);
@@ -93,12 +89,9 @@ export class SpawnSystem {
 
     spawnPlayer (payload) {
         const { enemy: enemy = null } = payload ?? {};
-        if (!this.player) {
-            return this.scene.physics.add.sprite(320, 180, 'player').setBodySize(32,24, 8).setOrigin(0.5, 0.5);
-        }
 
         if (!enemy) {
-            this.player.enableBody(true, 320, PhaserMath.RND.between(100, 300), true, true);
+            this._player.spawn(320, PhaserMath.RND.between(100, 300))
             return;
         }
 
@@ -109,9 +102,9 @@ export class SpawnSystem {
         const xPosition2 = PhaserMath.RND.between(enemy.x + minDistanceFromEnemy, this.scene.cameras.main.width);
 
         let playerX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
-        let playerY = PhaserMath.RND.between(this.player.height, this.scene.cameras.main.height - this.player.height);
+        let playerY = PhaserMath.RND.between(this._player.height, this.scene.cameras.main.height - this._player.height);
 
-        this.player.enableBody(true, playerX, playerY, true, true);
+        this._player.spawn(playerX, playerY);
     }
 
     updateLastEnemyHitTime (time) {

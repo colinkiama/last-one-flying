@@ -1,11 +1,12 @@
 import { join } from "path";
 import { readdir } from "node:fs/promises";
 
+export const PRODUCTION_FILES_DIRECTORY_NAME = 'prod/';
+export const OUTPUT_DIRECTORY_NAME = 'dist/';
 
 export const GAME_FILE_PATHS = [
     "vendor/phaser.esm.min.js",
     "favicon.png",
-    "index.html",
     "style.css"
 ];
 
@@ -14,7 +15,11 @@ export const GAME_DIR_PATHS = [
     "./src/"
 ];
 
-export const OUTPUT_DIRECTORY_NAME = 'dist/';
+export const GAME_PROD_FILE_REPLACEMENTS = [
+    { input: `${PRODUCTION_FILES_DIRECTORY_NAME}/index.html`, output: 'index.html'}
+];
+
+
 
 export async function getFilesToCopy() {
     const filePathSearchPromises = GAME_DIR_PATHS.map((dirPath) => readdir(dirPath, { recursive: true, withFileTypes: true }));

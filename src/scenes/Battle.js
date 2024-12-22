@@ -15,6 +15,8 @@ import { Explosion } from '../poolObjects/Explosion.js';
 import { CrossSceneEvent,GameLogicEvent } from '../constants/events.js'
 import { ScreenShakeType } from '../constants/vfx.js';
 import { ScoreUpdateType } from '../constants/score.js'
+import { Player } from '../gameObjects/Player.js';
+
 
 export class Battle extends Scene
 {
@@ -66,8 +68,9 @@ export class Battle extends Scene
         });
 
         this._scoreSystem = new ScoreSystem();
-        this._spawnSystem = new SpawnSystem(this, this._enemyPool);
-        this._player = this._spawnSystem.player;
+        this._player = new Player(this);
+        console.log("Player:", this._player);
+        this._spawnSystem = new SpawnSystem(this, this._player, this._enemyPool);
         this._movementSystem = new MovementSystem(this, this._player);
         this._combatSystem = new CombatSystem(this, this._player, {
             enemyPool: this._enemyPool,
