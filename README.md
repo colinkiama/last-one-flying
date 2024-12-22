@@ -9,8 +9,9 @@ An arcade survival shooter made with Phaser 3
 
 ## Development Commands
 
-**Note**: This is a #nobuild project. There's no build step. The instructions here explain how to copy the game code files to a different location to
-be ready for deployment.
+**Note**: This is a #nobuild project. There are no build steps required to start developing the project however, for production environments, optimised files can be used to save space and improve loading times.
+
+The following instructions in this sect explain how to copy the game code files to a different location to be ready for production environments.
 
 ### Automated
 
@@ -25,27 +26,25 @@ be ready for deployment.
 
 ### Manual
 
-#### Build
+If you don't want to use `bun`, these instructions tell you how to perform the tasks that the development scripts automate:
 
-Copy the following files and directories into an directory (TODO: Create a `build` and `export` scripts that perform these operations automatically):
+#### Production Environment Setup
+
+Copy the following files and directories into an directory, to prepare the game for a production environment:
 
 - `assets/`
 - `src/`
-- `vendor/`
+- `vendor/phaser.esm.min.js` (This is the minified version)
 - `favicon.png`
-- `index.html`
 - `style.css`
+
+**Important**: Then, copy `prod/index.html` to the root of the directory (`your_prod_directory/index.html`).
+
+`prod/index.html` refers to `vendor/phaser.esm.min.js` instead of `vendor/phaser.esm.js`.
 
 #### Export
 
-Compress the following files and directories in the root of a .zip file:
-
-- `assets/`
-- `src/`
-- `vendor/`
-- `favicon.png`
-- `index.html`
-- `style.css`
+Compress all the contents from `your_prod_directory/` in the production environment setup instructions into a .zip file:
 
 ## Writing Code
 
