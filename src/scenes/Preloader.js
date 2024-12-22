@@ -51,8 +51,6 @@ export class Preloader extends Scene
         );
 
         this.load.image("font", 'fonts/usuzi-bitmap.png');
-        this.load.image("font-bold", 'fonts/usuzi-bold-bitmap.png');
-        
     }
 
     create ()
