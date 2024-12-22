@@ -40,14 +40,7 @@ export class MovementSystem {
         const verticalBoundaries = [Math.PI / 2, -Math.PI / 2 ];
         const horizontalBoundaries = [0, -Math.PI, Math.PI];
 
-        const verticalDifferences = verticalBoundaries.map(
-            (num) => Math.abs(this._player.rotation - num)
-        );
-        const horizontalDifferences = horizontalBoundaries.map(
-            (num) => Math.abs(this._player.rotation - num)
-        );
-
-        let verticalDifference, horizontalDifference = Math.MAX;
+        let verticalDifference, horizontalDifference = Number.MAX_VALUE;
 
         verticalDifference = verticalBoundaries.map(
             (num) => Math.abs(this._player.rotation - num)
