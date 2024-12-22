@@ -1,4 +1,5 @@
-import { Scene } from 'phaser';
+import { Scene, GameObjects } from 'phaser';
+
 
 export class Preloader extends Scene
 {
@@ -48,6 +49,10 @@ export class Preloader extends Scene
                 frameHeight: 32,
             }
         );
+
+        this.load.image("font", 'fonts/usuzi-bitmap.png');
+        this.load.image("font-bold", 'fonts/usuzi-bold-bitmap.png');
+        
     }
 
     create ()
@@ -57,6 +62,19 @@ export class Preloader extends Scene
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         // this.scene.start('MainMenu');
+        
+        const fontConfig = {
+            image: 'font',
+            width: 30,
+            height: 38,
+            chars: GameObjects.RetroFont.TEXT_SET1,
+            charsPerRow: 19,
+        };
+        
+        this.cache.bitmapFont.add("font", 
+            GameObjects.RetroFont.Parse(this, fontConfig)
+        );
+
         this.scene.start('Game');
     }
 }

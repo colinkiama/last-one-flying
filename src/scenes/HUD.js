@@ -1,4 +1,4 @@
-import { Scene } from 'phaser';
+import { Scene, Display } from 'phaser';
 import { crossSceneEventEmitter } from '../utils/events.js'
 import { CrossSceneEvent } from '../constants/events.js';
 import { HEALTH_ICON_DIMENSIONS, HUD_PADDING, PAUSE_BUTTON_DIMENSIONS } from '../constants/HUD.js' 
@@ -6,7 +6,6 @@ import { HealthBar } from '../UI/HealthBar.js';
 
 export class HUD extends Scene {
     _scoreValueText;
-    _livesText;
     _pauseButton;
     _healthIcon;
     _healthBar;
@@ -30,9 +29,6 @@ export class HUD extends Scene {
             repeat: -1
         });
 
-        // this.add.text (20, 50, 'Score');
-        // this._scoreValueText = this.add.text (20, 70, '0');
-
         this._pauseButton = this.add.image(
             HUD_PADDING.horizontalPadding + PAUSE_BUTTON_DIMENSIONS.width / 2,
             HUD_PADDING.verticalPadding + PAUSE_BUTTON_DIMENSIONS.height / 2,
@@ -48,6 +44,15 @@ export class HUD extends Scene {
             this._healthIcon.x + HEALTH_ICON_DIMENSIONS.width / 2 + HEALTH_ICON_DIMENSIONS.horizontalMargin,
             this._pauseButton.y
         );
+        
+        const scoreLabel = this.add.bitmapText (0, 0, 'font', 'Score', 14, 2).setOrigin(1, 0);
+        scoreLabel.x = this.cameras.main.width - HUD_PADDING.horizontalPadding;
+        scoreLabel.y = HUD_PADDING.verticalPadding;
+        
+        this._scoreValueText = this.add.bitmapText (0, 0, 'font', '0', 18, 2).setOrigin(1, 0);
+        this._scoreValueText.x = this.cameras.main.width - HUD_PADDING.horizontalPadding;
+        this._scoreValueText.y = scoreLabel.y + (scoreLabel.height / 2) + 8
+        
     }
 
     createLivesTextString(value) {
@@ -55,7 +60,7 @@ export class HUD extends Scene {
     }
 
     onUpdateScore(nextPointsValue) {
-        // this._scoreValueText.text = String(nextPointsValue);
+        this._scoreValueText.text = String(nextPointsValue);
     }
 
     onUpdateLives(nextLivesValue) {
