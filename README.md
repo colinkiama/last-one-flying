@@ -1,39 +1,61 @@
-# Phaser Vite Template
+# Last One Flying
 
-This is a Phaser 3 project template that uses Vite for bundling. It supports hot-reloading for quick development workflow and includes scripts to generate production-ready builds.
-
-**[This Template is also available as a TypeScript version.](https://github.com/phaserjs/template-vite-ts)**
-
-### Versions
-
-This template has been updated for:
-
-- [Phaser 3.80.1](https://github.com/phaserjs/phaser)
-- [Vite 5.2.11](https://github.com/vitejs/vite)
-
-![screenshot](screenshot.png)
+An arcade survival shooter made with Phaser 3
 
 ## Requirements
 
-[Bun](https://bun.sh/) is required to install dependencies and run scripts via `bun`.
+- A http server. Run the server in the root of the project
+- [Bun](https://bun.sh) (Optional - Used for automated build instructions if you don't want to copy files over manually)
 
-## Available Commands
+## Development Commands
+
+**Note**: This is a #nobuild project. There's no build step. The instructions here explain how to copy the game code files to a different location to
+be ready for deployment.
+
+### Automated
+
+**Note**: You must successfully run `bun install` at least once first. Otherwise, the other build commands will not work.
 
 | Command | Description |
 |---------|-------------|
 | `bun install` | Install project dependencies |
 | `bun run dev` | Launch a development web server |
-| `bun run build` | Create a production build in the `dist` folder |
+| `bun run prod` | Copy game files into `dist` folder |
+| `bun run export` | Run `bun run build` then create a `.zip` file containing a copy of the contents of the `dist` folder |
+
+### Manual
+
+#### Build
+
+Copy the following files and directories into an directory (TODO: Create a `build` and `export` scripts that perform these operations automatically):
+
+- `assets/`
+- `src/`
+- `vendor/`
+- `favicon.png`
+- `index.html`
+- `style.css`
+
+#### Export
+
+Compress the following files and directories in the root of a .zip file:
+
+- `assets/`
+- `src/`
+- `vendor/`
+- `favicon.png`
+- `index.html`
+- `style.css`
 
 ## Writing Code
 
-After cloning the repo, run `bun install` from your project directory. Then, you can start the local development server by running `bun run dev`.
+After cloning the repo, run `bun install` from your project directory. Then, you can start the local development server by running `bun run dev` (or use your own http server).
 
-The local development server runs on `http://localhost:8080` by default. Please see the Vite documentation if you wish to change this, or add SSL support.
+The local development server runs on `http://localhost:8080` by default. Please see the [alive-server](https://github.com/ljcp/alive-server) documentation if you wish to change this, or add SSL support.
 
-Once the server is running you can edit any of the files in the `src` folder. Vite will automatically recompile your code and then reload the browser.
+Once the server is running you can edit any of the files in the project folder. This will reload the browser.
 
-## Template Project Structure
+## Project Structure
 
 We have provided a default project structure to get you started. This is as follows:
 
@@ -41,20 +63,13 @@ We have provided a default project structure to get you started. This is as foll
 - `src` - Contains the game source code.
 - `src/main.js` - The main entry point. This contains the game configuration and starts the game.
 - `src/scenes/` - The Phaser Scenes are in this folder.
-- `public/style.css` - Some simple CSS rules to help with page layout.
-- `public/assets` - Contains the static assets used by the game.
+- `style.css` - Some simple CSS rules to help with page layout.
+- `assets` - Contains the static assets used by the game.
+- `scripts/` - Development scripts
 
 ## Handling Assets
 
-Vite supports loading assets via JavaScript module `import` statements.
-
-This template provides support for both embedding assets and also loading them from a static folder. To embed an asset, you can import it at the top of the JavaScript file you are using it in:
-
-```js
-import logoImg from './assets/logo.png'
-```
-
-To load static files such as audio files, videos, etc place them into the `public/assets` folder. Then you can use this path in the Loader calls within Phaser:
+To load static files such as audio files, videos, etc place them into the `assets` folder. Then you can use this path in the Loader calls within Phaser:
 
 ```js
 preload ()
@@ -65,37 +80,18 @@ preload ()
 
     //  This is an example of loading a static image
     //  from the public/assets folder:
-    this.load.image('background', 'assets/bg.png');
+    this.load.image('background', 'assets/bg');
 }
 ```
 
-When you issue the `npm run build` command, all static assets are automatically copied to the `dist/assets` folder.
-
 ## Deploying to Production
 
-After you run the `npm run build` command, your code will be built into a single bundle and saved to the `dist` folder, along with any other assets your project imported, or stored in the public assets folder.
+After you run the `bun run prod` command, your game's code will be copied to the `dist` directory.
 
 In order to deploy your game, you will need to upload *all* of the contents of the `dist` folder to a public facing web server.
 
-## Customizing the Template
+You can run the `bun run export` command to create a `.zip` file of the game's code, to upload to platforms like https://itch.io.
 
-### Vite
+## Extra Notes
 
-If you want to customize your build, such as adding plugin (i.e. for loading CSS or fonts), you can modify the `vite/config.*.mjs` file for cross-project changes, or you can modify and/or create new configuration files and target them in specific npm tasks inside of `package.json`. Please see the [Vite documentation](https://vitejs.dev/) for more information.
-
-## Join the Phaser Community!
-
-We love to see what developers like you create with Phaser! It really motivates us to keep improving. So please join our community and show-off your work 😄
-
-**Visit:** The [Phaser website](https://phaser.io) and follow on [Phaser Twitter](https://twitter.com/phaser_)<br />
-**Play:** Some of the amazing games [#madewithphaser](https://twitter.com/search?q=%23madewithphaser&src=typed_query&f=live)<br />
-**Learn:** [API Docs](https://newdocs.phaser.io), [Support Forum](https://phaser.discourse.group/) and [StackOverflow](https://stackoverflow.com/questions/tagged/phaser-framework)<br />
-**Discord:** Join us on [Discord](https://discord.gg/phaser)<br />
-**Code:** 2000+ [Examples](https://labs.phaser.io)<br />
-**Read:** The [Phaser World](https://phaser.io/community/newsletter) Newsletter<br />
-
-Created by [Phaser Studio](mailto:support@phaser.io). Powered by coffee, anime, pixels and love.
-
-The Phaser logo and characters are &copy; 2011 - 2024 Phaser Studio Inc.
-
-All rights reserved.
+Made with [Phaser](https://phaser.io)

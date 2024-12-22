@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "skipLibCheck": true,
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "target": "ESNext",
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "allowImportingTsExtensions": true,
+        "noEmit": true,
+        "allowJs": true,
+        "checkJs": true,
+        "lib": ["ESNext"],
+        "baseUrl": ".",
+        "typeRoots": ["./.vendor/types"],
+    },
+    "exclude": ["node_modules"]
+}

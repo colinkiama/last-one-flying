@@ -71,7 +71,7 @@ export class SpawnSystem {
 
 
         let enemyX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
-        let enemyY = Phaser.Math.RND.between(ENEMY_HEIGHT, this.scene.cameras.main.height - ENEMY_HEIGHT);
+        let enemyY = PhaserMath.RND.between(ENEMY_HEIGHT, this.scene.cameras.main.height - ENEMY_HEIGHT);
 
         const enemiesToSpawn = spawnInfo.numberOfEnemiesToSpawn;
         for (let i = 0; i < enemiesToSpawn; i++) {
@@ -109,7 +109,7 @@ export class SpawnSystem {
         const xPosition2 = PhaserMath.RND.between(enemy.x + minDistanceFromEnemy, this.scene.cameras.main.width);
 
         let playerX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
-        let playerY = Phaser.Math.RND.between(this.player.height, this.scene.cameras.main.height - this.player.height);
+        let playerY = PhaserMath.RND.between(this.player.height, this.scene.cameras.main.height - this.player.height);
 
         this.player.enableBody(true, playerX, playerY, true, true);
     }
