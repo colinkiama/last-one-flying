@@ -15,7 +15,7 @@
     },
     "homepage": "https://github.com/colinkiama/last-one-flying#readme",
     "scripts": {
-        "dev": "bun run scripts/dev/index.js",
+        "dev": "bun scripts/dev/index.js",
         "prod": "bun scripts/prod.js",
         "export-internal": "bun scripts/export.js",
         "export": "npm-run-all -s prod export-internal"
