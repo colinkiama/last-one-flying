@@ -68,7 +68,6 @@ export class Battle extends Scene {
 
     this._scoreSystem = new ScoreSystem();
     this._player = new Player(this);
-    console.log('Player:', this._player);
     this._spawnSystem = new SpawnSystem(this, this._player, this._enemyPool);
     this._movementSystem = new MovementSystem(this, this._player);
     this._combatSystem = new CombatSystem(this, this._player, {
