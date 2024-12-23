@@ -10,15 +10,6 @@ export class Player extends Physics.Arcade.Image {
     scene.physics.world.enable(this);
   }
 
-  addedToScene() {
-    super.addedToScene();
-    console.log('Added to scene!');
-  }
-
-  removedFromScene() {
-    super.removedFromScene();
-  }
-
   spawn(x, y) {
     this.enableBody(true, x, y, true, true);
   }
