@@ -5,10 +5,6 @@ const LIFESPAN = 2000; // In milliseconds
 export class LaserBeam extends Physics.Arcade.Image {
   lifespan;
 
-  constructor(scene) {
-    super(scene, 0, 0, 'laser-beam');
-  }
-
   fire(x, y, config) {
     const { isVertical = false, rotation = 0 } = config || {
       isVertical: false,

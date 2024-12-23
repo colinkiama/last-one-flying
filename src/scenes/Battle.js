@@ -19,6 +19,7 @@ import { CrossSceneEvent, GameLogicEvent } from '../constants/events.js';
 import { ScreenShakeType } from '../constants/vfx.js';
 import { ScoreUpdateType } from '../constants/score.js';
 import { Player } from '../gameObjects/Player.js';
+import { PLAYER_STARTING_POSITION } from '../constants/spawn.js';
 
 export class Battle extends Scene {
   _player;
@@ -67,12 +68,16 @@ export class Battle extends Scene {
     });
 
     this._scoreSystem = new ScoreSystem();
-    this._player = new Player(this);
+    this._player = new Player(
+      this,
+      PLAYER_STARTING_POSITION.x,
+      PLAYER_STARTING_POSITION.y,
+      'player',
+    );
     this._spawnSystem = new SpawnSystem(this, this._player, this._enemyPool);
     this._movementSystem = new MovementSystem(this, this._player);
     this._combatSystem = new CombatSystem(this, this._player, {
       enemyPool: this._enemyPool,
-      explosionPool: this._explosionPool,
       laserBeamPool: this._laserPool,
       enemyLaserBeamPool: this._enemyLaserPool,
     });

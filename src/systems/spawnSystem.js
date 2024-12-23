@@ -84,13 +84,15 @@ export class SpawnSystem {
 
     const enemiesToSpawn = spawnInfo.numberOfEnemiesToSpawn;
     for (let i = 0; i < enemiesToSpawn; i++) {
-      const enemy = this._enemyGroup.get();
+      const spawnOffsetX = PhaserMath.RND.between(0, 250);
+      const spawnOffsetY = PhaserMath.RND.between(0, 250);
+
+      const enemy = this._enemyGroup.get(0, 0, 'basic-enemy');
+
       if (!enemy) {
         break;
       }
 
-      const spawnOffsetX = PhaserMath.RND.between(0, 250);
-      const spawnOffsetY = PhaserMath.RND.between(0, 250);
       enemy.spawn(enemyX + spawnOffsetX, enemyY + spawnOffsetY);
     }
 

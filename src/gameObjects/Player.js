@@ -1,11 +1,8 @@
 import { Physics } from 'phaser';
 
-const STARTING_X = 320;
-const STARTING_Y = 180;
-
 export class Player extends Physics.Arcade.Image {
-  constructor(scene) {
-    super(scene, STARTING_X, STARTING_Y, 'player');
+  constructor(scene, x, y, texture, frame) {
+    super(scene, x, y, texture, frame);
     scene.add.existing(this);
     scene.physics.world.enable(this);
   }

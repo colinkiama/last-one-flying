@@ -10,8 +10,6 @@ export class VFXSystem {
     this._explosionPool = explosionPool;
   }
 
-  // TODO: Screen Shake methods...
-
   makeShipExplosion(ship) {
     // In scenarios where there are no inactive items in the explosions pool, you
     // don't display an explosion.

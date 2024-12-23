@@ -8,7 +8,6 @@ export class CombatSystem {
   scene;
   _player;
   _enemyPool;
-  _explosionPool;
   _laserBeamPool;
   _enemyLaserBeamPool;
 
@@ -18,12 +17,10 @@ export class CombatSystem {
   _solarBeam;
 
   constructor(scene, player, pools) {
-    const { enemyPool, laserBeamPool, enemyLaserBeamPool, explosionPool } =
-      pools;
+    const { enemyPool, laserBeamPool, enemyLaserBeamPool } = pools;
     this.scene = scene;
     this._player = player;
     this._enemyPool = enemyPool;
-    this._explosionPool = explosionPool;
     this._laserBeamPool = laserBeamPool;
     this._enemyLaserBeamPool = enemyLaserBeamPool;
 
@@ -111,7 +108,11 @@ export class CombatSystem {
         const activeEnemies = this._enemyPool.getMatching('active', true);
         for (let i = 0; i < activeEnemies.length; i++) {
           const enemy = activeEnemies[i];
-          const enemyLaserBeam = this._enemyLaserBeamPool.get();
+          const enemyLaserBeam = this._enemyLaserBeamPool.get(
+            0,
+            0,
+            'laser-beam',
+          );
 
           if (enemyLaserBeam) {
             const rotatedShipHeadOffset = new PhaserMath.Vector2(
@@ -142,7 +143,7 @@ export class CombatSystem {
 
     if (shootButtonPressed && this.scene.time.now >= this._nextShotTime) {
       this._nextShotTime = this.scene.time.now + LASER_SHOT_DELAY;
-      const laserBeam = this._laserBeamPool.get();
+      const laserBeam = this._laserBeamPool.get(0, 0, 'laser-beam');
       if (laserBeam) {
         const rotatedShipHeadOffset = new PhaserMath.Vector2(
           this._player.width * this._player.originX + laserBeam.width,
