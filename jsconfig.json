@@ -1,17 +1,17 @@
 {
-    "compilerOptions": {
-        "skipLibCheck": true,
-        "module": "ESNext",
-        "moduleResolution": "bundler",
-        "target": "ESNext",
-        "isolatedModules": true,
-        "esModuleInterop": true,
-        "allowImportingTsExtensions": true,
-        "noEmit": true,
-        "allowJs": true,
-        "checkJs": true,
-        "lib": ["ESNext"],
-        "typeRoots": ["./.vendor/types"],
-    },
-    "exclude": ["node_modules"]
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": true,
+    "lib": ["ESNext"],
+    "typeRoots": ["./.vendor/types"]
+  },
+  "exclude": ["node_modules"]
 }

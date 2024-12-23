@@ -3,207 +3,227 @@ import { WaveDifficulty } from '../constants/spawn.js';
 import { ENEMY_HEIGHT } from '../constants/combat.js';
 
 export class SpawnSystem {
-    scene;
-    _player;
-    _enemyGroup;
-    _last_enemy_hit_time;
-    _enemySpawnTimerEvent;
-    _enemySpawnCondition;
-    _currentEnemyWave;
+  scene;
+  _player;
+  _enemyGroup;
+  _last_enemy_hit_time;
+  _enemySpawnTimerEvent;
+  _enemySpawnCondition;
+  _currentEnemyWave;
 
-    constructor (scene, player, enemyGroup) {
-        this.scene = scene;
-        this._player = player;
-        this._enemyGroup = enemyGroup;
-        this._last_enemy_hit_time = 0;
-        this._currentEnemyWave = 0;
-        this._enemySpawnCondition = this.getEasySpawnConditions();
+  constructor(scene, player, enemyGroup) {
+    this.scene = scene;
+    this._player = player;
+    this._enemyGroup = enemyGroup;
+    this._last_enemy_hit_time = 0;
+    this._currentEnemyWave = 0;
+    this._enemySpawnCondition = this.getEasySpawnConditions();
+  }
+
+  activateEnemySpawnTimer() {
+    if (this._enemySpawnTimerEvent) {
+      return;
     }
 
-    activateEnemySpawnTimer() {
-        if (this._enemySpawnTimerEvent) {
-            return;
-        }
+    this._enemySpawnTimerEvent = new Time.TimerEvent({
+      delay: 100,
+      startAt: 100,
+      loop: true,
+      callback: () => {
+        this.spawnEnemies();
+      },
+    });
 
-        this._enemySpawnTimerEvent = new Time.TimerEvent({
-            delay: 100,
-            startAt: 100,
-            loop: true,
-            callback: () => {
-                this.spawnEnemies();
-            }
-        })
+    this.scene.time.addEvent(this._enemySpawnTimerEvent);
+  }
 
-        this.scene.time.addEvent(this._enemySpawnTimerEvent);
+  deactivateEnemySpawnTimer() {
+    if (!this._enemySpawnTimerEvent) {
+      return;
     }
 
-    deactivateEnemySpawnTimer() {
-        if (!this._enemySpawnTimerEvent) {
-            return;
-        }
+    this.scene.time.removeEvent(this._enemySpawnTimerEvent);
+  }
 
-        this.scene.time.removeEvent(this._enemySpawnTimerEvent);
+  reset() {
+    this._currentEnemyWave = 0;
+    this._enemySpawnCondition = this.getEasySpawnConditions();
+    this.spawnPlayer();
+    this.scene.time.addEvent(this._enemySpawnTimerEvent);
+  }
+
+  spawnEnemies() {
+    const { triggerInfo, spawnInfo } = this._enemySpawnCondition;
+    const activeEnemies = this._enemyGroup.getMatching('active', true);
+    if (
+      activeEnemies.length > 0 ||
+      this.scene.time.now - this._last_enemy_hit_time <
+        triggerInfo.spawnCooldown
+    ) {
+      return;
     }
 
-    reset() {
-        this._currentEnemyWave = 0;
-        this._enemySpawnCondition = this.getEasySpawnConditions();
-        this.spawnPlayer();
-        this.scene.time.addEvent(this._enemySpawnTimerEvent)
+    this._currentEnemyWave++;
+
+    const minDistanceToPlayer = 200;
+    // 50% of being left of player or right of player.
+    const xPosition1 = PhaserMath.RND.between(
+      0,
+      this._player.x - minDistanceToPlayer,
+    );
+    const xPosition2 = PhaserMath.RND.between(
+      this._player.x + minDistanceToPlayer,
+      this.scene.cameras.main.width,
+    );
+
+    const enemyX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
+    const enemyY = PhaserMath.RND.between(
+      ENEMY_HEIGHT,
+      this.scene.cameras.main.height - ENEMY_HEIGHT,
+    );
+
+    const enemiesToSpawn = spawnInfo.numberOfEnemiesToSpawn;
+    for (let i = 0; i < enemiesToSpawn; i++) {
+      const enemy = this._enemyGroup.get();
+      if (!enemy) {
+        break;
+      }
+
+      const spawnOffsetX = PhaserMath.RND.between(0, 250);
+      const spawnOffsetY = PhaserMath.RND.between(0, 250);
+      enemy.spawn(enemyX + spawnOffsetX, enemyY + spawnOffsetY);
     }
 
-    spawnEnemies () {
-        const { triggerInfo, spawnInfo } = this._enemySpawnCondition;
-        const activeEnemies = this._enemyGroup.getMatching('active', true);
-        if (activeEnemies.length > 0 || (this.scene.time.now - this._last_enemy_hit_time) < triggerInfo.spawnCooldown) {
-            return;
-        }
+    // Set new spawn condition here:
+    this._enemySpawnCondition = this.prepareNextSpawnCondition();
+  }
 
-        this._currentEnemyWave++;
+  spawnPlayer(payload) {
+    const { enemy = null } = payload ?? {};
 
-        const minDistanceToPlayer = 200;
-        // 50% of being left of player or right of player.
-        const xPosition1 = PhaserMath.RND.between(0, this._player.x - minDistanceToPlayer);
-        const xPosition2 = PhaserMath.RND.between(this._player.x + minDistanceToPlayer, this.scene.cameras.main.width);
-
-
-        let enemyX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
-        let enemyY = PhaserMath.RND.between(ENEMY_HEIGHT, this.scene.cameras.main.height - ENEMY_HEIGHT);
-
-        const enemiesToSpawn = spawnInfo.numberOfEnemiesToSpawn;
-        for (let i = 0; i < enemiesToSpawn; i++) {
-            const enemy = this._enemyGroup.get();
-            if (!enemy) {
-                break;
-            }
-
-            const spawnOffsetX = PhaserMath.RND.between(0,250);
-            const spawnOffsetY = PhaserMath.RND.between(0,250);
-            enemy.spawn(enemyX + spawnOffsetX, enemyY + spawnOffsetY);
-        }
-
-        // Set new spawn condition here:
-        this._enemySpawnCondition = this.prepareNextSpawnCondition();
-
+    if (!enemy) {
+      this._player.spawn(320, PhaserMath.RND.between(100, 300));
+      return;
     }
 
-    spawnPlayer (payload) {
-        const { enemy: enemy = null } = payload ?? {};
+    const minDistanceFromEnemy = 200;
 
-        if (!enemy) {
-            this._player.spawn(320, PhaserMath.RND.between(100, 300))
-            return;
-        }
+    // 50% of being left or right of enemy.
+    const xPosition1 = PhaserMath.RND.between(
+      0,
+      enemy.x - minDistanceFromEnemy,
+    );
+    const xPosition2 = PhaserMath.RND.between(
+      enemy.x + minDistanceFromEnemy,
+      this.scene.cameras.main.width,
+    );
 
-        const minDistanceFromEnemy = 200;
+    const playerX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
+    const playerY = PhaserMath.RND.between(
+      this._player.height,
+      this.scene.cameras.main.height - this._player.height,
+    );
 
-        // 50% of being left or right of enemy.
-        const xPosition1 = PhaserMath.RND.between(0, enemy.x - minDistanceFromEnemy);
-        const xPosition2 = PhaserMath.RND.between(enemy.x + minDistanceFromEnemy, this.scene.cameras.main.width);
+    this._player.spawn(playerX, playerY);
+  }
 
-        let playerX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
-        let playerY = PhaserMath.RND.between(this._player.height, this.scene.cameras.main.height - this._player.height);
+  updateLastEnemyHitTime(time) {
+    this._last_enemy_hit_time = time;
+  }
 
-        this._player.spawn(playerX, playerY);
+  prepareNextSpawnCondition() {
+    const nextWave = this._currentEnemyWave + 1;
+
+    if (nextWave >= WaveDifficulty.SOULSLIKE) {
+      return this.getSoulslikeSpawnConditions();
     }
 
-    updateLastEnemyHitTime (time) {
-        this._last_enemy_hit_time = time;
+    if (nextWave >= WaveDifficulty.HARD) {
+      return this.getHardSpawnConditions();
     }
 
-    prepareNextSpawnCondition () {
-        const nextWave = this._currentEnemyWave + 1;
-
-        if (nextWave >= WaveDifficulty.SOULSLIKE) {
-            return this.getSoulslikeSpawnConditions();
-        } else if (nextWave >= WaveDifficulty.HARD) {
-           return this.getHardSpawnConditions();
-        } else if (nextWave >= WaveDifficulty.MEDIUM) {
-            return this.getMediumSpawnConditions();
-        } else {
-            // Assume wave difficulty is easy
-            return this.getEasySpawnConditions();
-        }
+    if (nextWave >= WaveDifficulty.MEDIUM) {
+      return this.getMediumSpawnConditions();
     }
 
-    getEasySpawnConditions () {
-        return {
-            triggerInfo: {
-                spawnCooldown: PhaserMath.RND.between(1000, 2500),
-            },
-            spawnInfo: {
-                numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 3)
-            }
-        };
+    // Assume wave difficulty is easy
+    return this.getEasySpawnConditions();
+  }
+
+  getEasySpawnConditions() {
+    return {
+      triggerInfo: {
+        spawnCooldown: PhaserMath.RND.between(1000, 2500),
+      },
+      spawnInfo: {
+        numberOfEnemiesToSpawn: PhaserMath.RND.between(1, 3),
+      },
+    };
+  }
+
+  getMediumSpawnConditions() {
+    let numberOfEnemiesToSpawn;
+    const percentage = PhaserMath.RND.frac();
+
+    if (percentage < 0.6) {
+      numberOfEnemiesToSpawn = PhaserMath.RND.between(4, 6);
+    } else if (percentage < 0.9) {
+      numberOfEnemiesToSpawn = PhaserMath.RND.between(1, 3);
+    } else {
+      numberOfEnemiesToSpawn = PhaserMath.RND.between(7, 10);
     }
 
-    getMediumSpawnConditions () {
-        let numberOfEnemiesToSpawn;
-        let percentage = PhaserMath.RND.frac();
+    return {
+      triggerInfo: {
+        spawnCooldown: PhaserMath.RND.between(1000, 2500),
+      },
+      spawnInfo: {
+        numberOfEnemiesToSpawn,
+      },
+    };
+  }
 
-        if (percentage < 0.6) {
-            numberOfEnemiesToSpawn = PhaserMath.RND.between(4, 6);
-        } else if (percentage < 0.9) {
-            numberOfEnemiesToSpawn = PhaserMath.RND.between(1, 3);
-        } else {
-            numberOfEnemiesToSpawn = PhaserMath.RND.between(7, 10);
-        }
+  getHardSpawnConditions() {
+    let numberOfEnemiesToSpawn;
+    const percentage = PhaserMath.RND.frac();
 
-
-        return {
-            triggerInfo: {
-                spawnCooldown: PhaserMath.RND.between(1000, 2500),
-            },
-            spawnInfo: {
-                numberOfEnemiesToSpawn
-            }
-        };
+    if (percentage < 0.55) {
+      numberOfEnemiesToSpawn = PhaserMath.RND.between(4, 6);
+    } else if (percentage < 0.95) {
+      numberOfEnemiesToSpawn = PhaserMath.RND.between(7, 10);
+    } else {
+      numberOfEnemiesToSpawn = PhaserMath.RND.between(1, 3);
     }
 
-    getHardSpawnConditions () {
-        let numberOfEnemiesToSpawn;
-        let percentage = PhaserMath.RND.frac();
+    return {
+      triggerInfo: {
+        spawnCooldown: PhaserMath.RND.between(1000, 2500),
+      },
+      spawnInfo: {
+        numberOfEnemiesToSpawn,
+      },
+    };
+  }
 
-        if (percentage < 0.55) {
-            numberOfEnemiesToSpawn = PhaserMath.RND.between(4, 6);
-        } else if (percentage < 0.95) {
-            numberOfEnemiesToSpawn = PhaserMath.RND.between(7, 10);
-        } else {
-            numberOfEnemiesToSpawn = PhaserMath.RND.between(1, 3);
-        }
+  getSoulslikeSpawnConditions() {
+    let numberOfEnemiesToSpawn;
+    const percentage = PhaserMath.RND.frac();
 
-
-        return {
-            triggerInfo: {
-                spawnCooldown: PhaserMath.RND.between(1000, 2500),
-            },
-            spawnInfo: {
-                numberOfEnemiesToSpawn
-            }
-        };
+    if (percentage < 0.6) {
+      numberOfEnemiesToSpawn = PhaserMath.RND.between(7, 10);
+    } else if (percentage < 0.95) {
+      numberOfEnemiesToSpawn = PhaserMath.RND.between(4, 6);
+    } else {
+      numberOfEnemiesToSpawn = PhaserMath.RND.between(1, 3);
     }
 
-    getSoulslikeSpawnConditions () {
-        let numberOfEnemiesToSpawn;
-        let percentage = PhaserMath.RND.frac();
-
-        if (percentage < 0.6) {
-            numberOfEnemiesToSpawn = PhaserMath.RND.between(7, 10);
-        } else if (percentage < 0.95) {
-            numberOfEnemiesToSpawn = PhaserMath.RND.between(4, 6);
-        } else {
-            numberOfEnemiesToSpawn = PhaserMath.RND.between(1, 3);
-        }
-
-
-        return {
-            triggerInfo: {
-                spawnCooldown: PhaserMath.RND.between(1000, 2500),
-            },
-            spawnInfo: {
-                numberOfEnemiesToSpawn
-            }
-        };
-    }
+    return {
+      triggerInfo: {
+        spawnCooldown: PhaserMath.RND.between(1000, 2500),
+      },
+      spawnInfo: {
+        numberOfEnemiesToSpawn,
+      },
+    };
+  }
 }
-

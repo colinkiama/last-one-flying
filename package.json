@@ -1,29 +1,30 @@
 {
-    "name": "last-one-flying",
-    "description": "An arcade survival shooter made with Phaser 3.",
-    "version": "0.3.0",
-    "type": "module",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/colinkiama/last-one-flying.git"
-    },
-    "author": "Colin Kiama <colinkiama@gmail.com> (https://colinkiama.com)",
-    "license": "MIT",
-    "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
-    "bugs": {
-        "url": "https://github.com/colinkiama/last-one-flying/issues"
-    },
-    "homepage": "https://github.com/colinkiama/last-one-flying#readme",
-    "scripts": {
-        "dev": "bun scripts/dev/index.js",
-        "prod": "bun scripts/prod.js",
-        "export-internal": "bun scripts/export.js",
-        "export": "npm-run-all -s prod export-internal"
-    },
-    "devDependencies": {
-        "@types/archiver": "^6.0.3",
-        "archiver": "^7.0.1",
-        "bun-types": "latest",
-        "npm-run-all": "^4.1.5"
-    }
+  "name": "last-one-flying",
+  "description": "An arcade survival shooter made with Phaser 3.",
+  "version": "0.3.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/colinkiama/last-one-flying.git"
+  },
+  "author": "Colin Kiama <colinkiama@gmail.com> (https://colinkiama.com)",
+  "license": "MIT",
+  "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
+  "bugs": {
+    "url": "https://github.com/colinkiama/last-one-flying/issues"
+  },
+  "homepage": "https://github.com/colinkiama/last-one-flying#readme",
+  "scripts": {
+    "dev": "bun scripts/dev/index.js",
+    "prod": "bun scripts/prod.js",
+    "export-internal": "bun scripts/export.js",
+    "export": "npm-run-all -s prod export-internal"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@types/archiver": "^6.0.3",
+    "archiver": "^7.0.1",
+    "bun-types": "latest",
+    "npm-run-all": "^4.1.5"
+  }
 }

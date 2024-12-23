@@ -1,4 +1,4 @@
 export const ScoreUpdateType = {
-    ENEMY_HIT: 'enemy-hit',
-    RESET: 'reset',
+  ENEMY_HIT: 'enemy-hit',
+  RESET: 'reset',
 };
