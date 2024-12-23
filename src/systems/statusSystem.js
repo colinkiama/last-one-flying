@@ -1,12 +1,13 @@
 import { gameLogicEventEmitter } from '../utils/events.js';
 import { GameLogicEvent } from '../constants/events.js';
-import { STARTING_LIVES } from '../constants/status.js';
 
 export class StatusSystem {
   _playerLives;
+  _startingLives;
 
-  constructor() {
-    this._playerLives = STARTING_LIVES;
+  constructor(lives) {
+    this._startingLives = lives;
+    this._playerLives = lives;
   }
 
   loseLife() {
@@ -29,7 +30,7 @@ export class StatusSystem {
   }
 
   reset() {
-    this.updatePlayerLives(STARTING_LIVES);
+    this.updatePlayerLives(this._startingLives);
   }
 
   getLives() {

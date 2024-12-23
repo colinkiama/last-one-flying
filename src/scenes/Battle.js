@@ -20,6 +20,7 @@ import { ScreenShakeType } from '../constants/vfx.js';
 import { ScoreUpdateType } from '../constants/score.js';
 import { Player } from '../gameObjects/Player.js';
 import { PLAYER_STARTING_POSITION } from '../constants/spawn.js';
+import { STARTING_LIVES } from '../constants/status.js';
 
 export class Battle extends Scene {
   _player;
@@ -86,7 +87,7 @@ export class Battle extends Scene {
       explosionPool: this._explosionPool,
     });
 
-    this._statusSystem = new StatusSystem();
+    this._statusSystem = new StatusSystem(STARTING_LIVES);
 
     this._combatSystem.activateCollisions();
     this._combatSystem.startEnemyAI();

@@ -13,5 +13,5 @@
     "lib": ["ESNext"],
     "typeRoots": ["./.vendor/types"]
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"]
 }

@@ -64,6 +64,7 @@ export class HUD extends Scene {
         HEALTH_ICON_DIMENSIONS.width / 2 +
         HEALTH_ICON_DIMENSIONS.horizontalMargin,
       this._pauseButton.y,
+      lives,
     );
 
     const scoreLabel = this.add

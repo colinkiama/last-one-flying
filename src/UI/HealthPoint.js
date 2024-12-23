@@ -14,4 +14,8 @@ export class HealthPoint extends GameObjects.Sprite {
     this.stop();
     this.setFrame(1);
   }
+
+  isLit() {
+    return this.frame.name === this.texture.firstFrame;
+  }
 }
