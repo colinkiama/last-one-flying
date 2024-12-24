@@ -5,14 +5,24 @@ export class VFXSystem {
   _explosionPool;
 
   constructor(scene, pools) {
-    const { explosionPool } = pools;
+    const internalPools = pools || {};
+    const { explosionPool = undefined } = internalPools;
     this.scene = scene;
-    this._explosionPool = explosionPool;
+
+    if (explosionPool) {
+      this._explosionPool = explosionPool;
+    }
   }
 
   makeShipExplosion(ship) {
     // In scenarios where there are no inactive items in the explosions pool, you
     // don't display an explosion.
+    if (!this._explosionPool) {
+      throw new Error(
+        'Cannot create ship explosions without explosion pool being defined in VFXSystem constructor',
+      );
+    }
+
     const explosion = this._explosionPool.get();
     if (!explosion) {
       return;
