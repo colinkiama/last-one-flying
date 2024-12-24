@@ -199,9 +199,12 @@ export class Battle extends Scene {
   }
 
   reset() {
+    // TODO: Clear combat pools before delay call.
     this.clearPools();
 
-    this.time.delayedCall(500, () => {
+    this.time.delayedCall(1000, () => {
+      // TODO: Clear VFX pools here so players can at least see
+      // the conclusion of the visual effects before the game resets
       this._statusSystem.reset();
       this._scoreSystem.reset();
       this._spawnSystem.reset();
