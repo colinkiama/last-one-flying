@@ -34,15 +34,17 @@ export class HealthBar extends GameObjects.Container {
   }
 
   setLives(nextLivesValue) {
-    this._lives = this._updateLives(nextLivesValue);
+    const healthPoints = this._pointPool.getChildren();
+    this._lives = this._updateLives(nextLivesValue, healthPoints);
+    if (nextLivesValue === 1) {
+      healthPoints[0].flicker();
+    }
   }
 
-  _updateLives(nextLivesValue) {
+  _updateLives(nextLivesValue, healthPoints) {
     if (this._lives === nextLivesValue) {
       return this._lives;
     }
-
-    const healthPoints = this._pointPool.getChildren();
 
     // Handle special case
     if (!healthPoints[0].isLit()) {
@@ -69,14 +71,14 @@ export class HealthBar extends GameObjects.Container {
     const isReversed = difference < 0;
 
     for (let i = 0; i < loopEnd; i++) {
-      const element =
+      const healthPoint =
         healthPoints[
           lastLitElementIndex + (isReversed ? 0 : 1) + i * (isReversed ? -1 : 1)
         ];
       if (isReversed) {
-        element.dim();
+        healthPoint.dim();
       } else {
-        element.illuminate();
+        healthPoint.illuminate();
       }
     }
 

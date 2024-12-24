@@ -33,9 +33,6 @@ export class HUD extends Scene {
       this.onUpdateLives,
       this,
     );
-    // TODO: Make screen shake also occur in HUD.
-    // Pass the intensity values into the HUD via crossSceneEventEmitter so screen shake
-    // can also effect the HUD
 
     crossSceneEventEmitter.on(
       CrossSceneEvent.SHAKE_SCREEN,
@@ -104,9 +101,5 @@ export class HUD extends Scene {
 
   onUpdateLives(nextLivesValue) {
     this._healthBar.setLives(nextLivesValue);
-  }
-
-  reset() {
-    this._healthBar.reset();
   }
 }
