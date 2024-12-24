@@ -3,6 +3,7 @@ import {
   crossSceneEventEmitter,
   gameLogicEventEmitter,
 } from '../utils/events.js';
+import { tour } from '../utils/pool.js';
 
 import { SpawnSystem } from '../systems/spawnSystem.js';
 import { CombatSystem } from '../systems/combatSystem.js';
@@ -199,7 +200,7 @@ export class Battle extends Scene {
   }
 
   reset() {
-    this.clearCombatPools();
+    this.clearPhysicsPools();
 
     this.time.delayedCall(1000, () => {
       this.clearVFXPools();
@@ -209,21 +210,25 @@ export class Battle extends Scene {
     });
   }
 
-  clearCombatPools() {
-    clearPools([this._enemyPool, this._laserPool, this._enemyLaserPool]);
+  clearPhysicsPools() {
+    tour(
+      [this._enemyPool, this._laserPool, this._enemyLaserPool],
+      (member) => member.disableBody(true, true),
+      {
+        property: 'active',
+        value: true,
+      },
+    );
   }
 
   clearVFXPools() {
-    clearPools([this._explosionPool]);
-  }
-}
-
-function clearPools(pools) {
-  for (const pool of pools) {
-    const activeElements = pool.getMatching('active', true);
-    for (let i = activeElements.length - 1; i > -1; i--) {
-      const element = activeElements[i];
-      pool.killAndHide(element);
-    }
+    tour(
+      [this._explosionPool],
+      (member) => member.setActive(false).setVisible(false),
+      {
+        property: 'active',
+        value: true,
+      },
+    );
   }
 }
