@@ -5,7 +5,8 @@ An arcade survival shooter made with Phaser 3
 ## Requirements
 
 - A http server. Run the server in the root of the project
-- [Bun](https://bun.sh) (Optional - Used for automated build instructions if you don't want to copy files over manually)
+- [Bun](https://bun.sh) (Optional) - Used for automated build instructions if you don't want to copy files over manually
+- [Butler](https://itchio.itch.io/butler) (Optional) - Used for automated build instructions if you want to publish builds to https://itch.io from the command line.
 
 ## Development Commands
 
@@ -21,8 +22,9 @@ The following instructions in this sect explain how to copy the game code files 
 |---------|-------------|
 | `bun install` | Install project dependencies |
 | `bun run dev` | Launch a development web server |
-| `bun run prod` | Copy game files into `dist` folder |
-| `bun run export` | Run `bun run build` then create a `.zip` file containing a copy of the contents of the `dist` folder |
+| `bun run prod` | Copy game files into the `dist` directory |
+| `bun run export` | Run `bun run prod` then create a `.zip` file containing a copy of the contents of the `dist` directory |
+| `bun run publish` | Run `bun run prod` then push the publish the contents of the `dist` directory to itch.io via the [butler](https://itchio.itch.io/butler) CLI tool |
 
 ### Manual
 

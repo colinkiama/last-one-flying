@@ -18,7 +18,9 @@
     "dev": "bun scripts/dev/index.js",
     "prod": "bun scripts/prod.js",
     "export-internal": "bun scripts/export.js",
-    "export": "npm-run-all -s prod export-internal"
+    "publish-internal": "bun scripts/publish.js",
+    "export": "npm-run-all -s prod export-internal",
+    "publish": "npm-run-all -s prod publish-internal"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
