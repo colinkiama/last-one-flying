@@ -2,8 +2,9 @@ import { createWriteStream } from 'node:fs';
 import { OUTPUT_DIRECTORY_NAME } from './shared';
 import { join, resolve as resolvePath } from 'node:path';
 import { create } from 'archiver';
+import { name, version } from '../package.json';
 
-const ouptutFilename = join(OUTPUT_DIRECTORY_NAME, '/game.zip');
+const ouptutFilename = join(OUTPUT_DIRECTORY_NAME, `/${name}-${version}.zip`);
 console.log(
   `Creating ${ouptutFilename} from files in ${OUTPUT_DIRECTORY_NAME} ...`,
 );
