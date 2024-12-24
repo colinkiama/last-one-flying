@@ -199,32 +199,31 @@ export class Battle extends Scene {
   }
 
   reset() {
-    // TODO: Clear combat pools before delay call.
-    this.clearPools();
+    this.clearCombatPools();
 
     this.time.delayedCall(1000, () => {
-      // TODO: Clear VFX pools here so players can at least see
-      // the conclusion of the visual effects before the game resets
+      this.clearVFXPools();
       this._statusSystem.reset();
       this._scoreSystem.reset();
       this._spawnSystem.reset();
     });
   }
 
-  clearPools() {
-    const pools = [
-      this._enemyPool,
-      this._explosionPool,
-      this._laserPool,
-      this._enemyLaserPool,
-    ];
+  clearCombatPools() {
+    clearPools([this._enemyPool, this._laserPool, this._enemyLaserPool]);
+  }
 
-    for (const pool of pools) {
-      const activeElements = pool.getMatching('active', true);
-      for (let i = activeElements.length - 1; i > -1; i--) {
-        const element = activeElements[i];
-        pool.killAndHide(element);
-      }
+  clearVFXPools() {
+    clearPools([this._explosionPool]);
+  }
+}
+
+function clearPools(pools) {
+  for (const pool of pools) {
+    const activeElements = pool.getMatching('active', true);
+    for (let i = activeElements.length - 1; i > -1; i--) {
+      const element = activeElements[i];
+      pool.killAndHide(element);
     }
   }
 }
