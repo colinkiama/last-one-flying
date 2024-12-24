@@ -137,15 +137,14 @@ export class CombatSystem {
   }
 
   update() {
-    if (this._player.active === false) {
-      return;
-    }
-
     const { shoot } = this._combatKeys;
     const activePointer = this.scene.input.activePointer;
     const shootButtonPressed = shoot.isDown || activePointer.primaryDown;
+    const shotDelayTmeElapsed = this.scene.time.now >= this._nextShotTime;
+    const canShoot =
+      this._player.active && shootButtonPressed && shotDelayTmeElapsed;
 
-    if (shootButtonPressed && this.scene.time.now >= this._nextShotTime) {
+    if (canShoot) {
       this._nextShotTime = this.scene.time.now + LASER_SHOT_DELAY;
       const laserBeam = this._laserBeamPool.get(0, 0, 'laser-beam');
       if (laserBeam) {
