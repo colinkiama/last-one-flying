@@ -141,7 +141,7 @@ export class CombatSystem {
       return;
     }
 
-    const { shoot, useAbility, cycleAbilities } = this._combatKeys;
+    const { shoot } = this._combatKeys;
     const activePointer = this.scene.input.activePointer;
     const shootButtonPressed = shoot.isDown || activePointer.primaryDown;
 

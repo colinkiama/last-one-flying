@@ -12,7 +12,5 @@ export function createMovementKeys(keyboardPlugin) {
 export function createCombatKeys(keyboardPlugin) {
   return keyboardPlugin.addKeys({
     shoot: Input.Keyboard.KeyCodes.J,
-    useAbility: Input.Keyboard.KeyCodes.K,
-    cycleAbilities: Input.Keyboard.KeyCodes.L,
   });
 }
