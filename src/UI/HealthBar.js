@@ -50,7 +50,7 @@ export class HealthBar extends GameObjects.Container {
         healthPoints[i].illuminate();
       }
 
-      return;
+      return nextLivesValue;
     }
 
     // Binary search solution
