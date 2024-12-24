@@ -28,7 +28,6 @@ export class HealthBar extends GameObjects.Container {
               HEALTH_POINT_DIMENSIONS.horizontalMargin),
         this.y,
         'health-point',
-        i < this._lives ? 0 : 1,
       );
     }
   }
@@ -43,7 +42,7 @@ export class HealthBar extends GameObjects.Container {
 
   _updateLives(nextLivesValue, healthPoints) {
     if (this._lives === nextLivesValue) {
-      return this._lives;
+      return nextLivesValue;
     }
 
     // Handle special case
@@ -64,7 +63,7 @@ export class HealthBar extends GameObjects.Container {
 
     if (difference === 0) {
       // There's no change
-      return this._lives;
+      return nextLivesValue;
     }
 
     const loopEnd = Math.abs(difference);
