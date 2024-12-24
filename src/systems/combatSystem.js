@@ -137,6 +137,10 @@ export class CombatSystem {
   }
 
   update() {
+    if (this._player.active === false) {
+      return;
+    }
+
     const { shoot, useAbility, cycleAbilities } = this._combatKeys;
     const activePointer = this.scene.input.activePointer;
     const shootButtonPressed = shoot.isDown || activePointer.primaryDown;
@@ -150,7 +154,6 @@ export class CombatSystem {
           0,
         ).rotate(this._player.rotation);
 
-        // TODO: Replace with emitted "player-fire" event
         gameLogicEventEmitter.emit(GameLogicEvent.PLAYER_FIRE);
         laserBeam.fire(
           this._player.x + rotatedShipHeadOffset.x,
