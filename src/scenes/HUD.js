@@ -7,12 +7,14 @@ import {
   PAUSE_BUTTON_DIMENSIONS,
 } from '../constants/HUD.js';
 import { HealthBar } from '../UI/HealthBar.js';
+import { VFXSystem } from '../systems/vfxSystem.js';
 
 export class HUD extends Scene {
   _scoreValueText;
   _pauseButton;
   _healthIcon;
   _healthBar;
+  _vfxSystem;
 
   constructor() {
     super('HUD');
@@ -25,6 +27,7 @@ export class HUD extends Scene {
       this.onUpdateScore,
       this,
     );
+
     crossSceneEventEmitter.on(
       CrossSceneEvent.UPDATE_LIVES,
       this.onUpdateLives,
@@ -33,6 +36,12 @@ export class HUD extends Scene {
     // TODO: Make screen shake also occur in HUD.
     // Pass the intensity values into the HUD via crossSceneEventEmitter so screen shake
     // can also effect the HUD
+
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.SHAKE_SCREEN,
+      this.onScreenShakeRequest,
+      this,
+    );
     this._score = 0;
     this.anims.create({
       key: 'flicker',
@@ -79,6 +88,10 @@ export class HUD extends Scene {
     this._scoreValueText.x =
       this.cameras.main.width - HUD_PADDING.horizontalPadding;
     this._scoreValueText.y = scoreLabel.y + scoreLabel.height / 2 + 8;
+    this._vfxSystem = new VFXSystem(this);
+  }
+  onScreenShakeRequest(screenShakeType) {
+    this._vfxSystem.shakeScreen(screenShakeType);
   }
 
   createLivesTextString(value) {

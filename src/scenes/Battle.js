@@ -131,20 +131,39 @@ export class Battle extends Scene {
       this,
     );
     gameLogicEventEmitter.on(GameLogicEvent.GAME_OVER, this.onGameOver, this);
+
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.SHAKE_SCREEN,
+      this.onScreenShakeRequested,
+      this,
+    );
+  }
+
+  onScreenShakeRequested(screenShakeType) {
+    this._vfxSystem.shakeScreen(screenShakeType);
   }
 
   onPlayerFire() {
-    this._vfxSystem.shakeScreen(ScreenShakeType.PLAYER_FIRE);
+    crossSceneEventEmitter.emit(
+      CrossSceneEvent.SHAKE_SCREEN,
+      ScreenShakeType.PLAYER_FIRE,
+    );
   }
 
   onEnemyDeath() {
-    this._vfxSystem.shakeScreen(ScreenShakeType.ENEMY_DEATH);
+    crossSceneEventEmitter.emit(
+      CrossSceneEvent.SHAKE_SCREEN,
+      ScreenShakeType.ENEMY_DEATH,
+    );
     this._scoreSystem.update(ScoreUpdateType.ENEMY_HIT);
     this._spawnSystem.updateLastEnemyHitTime(this.time.now);
   }
 
   onPlayerDeath(closestEnemy) {
-    this._vfxSystem.shakeScreen(ScreenShakeType.PLAYER_DEATH);
+    crossSceneEventEmitter.emit(
+      CrossSceneEvent.SHAKE_SCREEN,
+      ScreenShakeType.PLAYER_DEATH,
+    );
     this._statusSystem.loseLife();
     if (this._statusSystem.getLives() < 1) {
       return;

@@ -1,6 +1,7 @@
 export const CrossSceneEvent = {
   UPDATE_SCORE: 'update-score',
   UPDATE_LIVES: 'update-lives',
+  SHAKE_SCREEN: 'shake-screen',
 };
 
 export const GameLogicEvent = {
