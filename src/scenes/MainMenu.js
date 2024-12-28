@@ -14,7 +14,8 @@ export class MainMenu extends Scene {
         fontSize: 24,
         color: '#ffffff',
       })
-      .setOrigin(0.5, 0);
+      .setOrigin(0.5, 0)
+      .setInteractive();
 
     const creditsButton = this.add
       .text(320, playButton.y + 32, 'Credits', {
@@ -22,7 +23,8 @@ export class MainMenu extends Scene {
         fontSize: 24,
         color: '#ffffff',
       })
-      .setOrigin(0.5, 0);
+      .setOrigin(0.5, 0)
+      .setInteractive();
 
     const footerText = this.add
       .text(320, 340, 'Colin Kiama - 2024', {
@@ -30,9 +32,18 @@ export class MainMenu extends Scene {
         fontSize: 16,
         color: '#ffffff',
       })
-      .setOrigin(0.5, 1);
+      .setOrigin(0.5, 1)
+      .setInteractive();
 
-    this.input.once('pointerdown', () => {
+    playButton.on('pointerover', () => {
+      playButton.setColor('#aaaaaa');
+    });
+
+    playButton.on('pointerout', () => {
+      playButton.setColor('#ffffff');
+    });
+
+    playButton.on('pointerup', (_pointer, _localX, _localY, event) => {
       this.scene.start('Game');
     });
   }
