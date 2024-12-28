@@ -76,7 +76,7 @@ export class HUD extends Scene {
     const scoreLabel = this.add
       .text(0, 0, 'Score', {
         fontFamily: 'usuzi',
-        fontSize: 14,
+        fontSize: 16,
         color: '#ffffff',
       })
       .setOrigin(1, 0);
@@ -90,7 +90,7 @@ export class HUD extends Scene {
         '0',
         {
           fontFamily: 'usuzi',
-          fontSize: 18,
+          fontSize: 24,
           color: '#ffffff',
         },
       )
