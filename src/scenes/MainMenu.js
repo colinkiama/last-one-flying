@@ -6,9 +6,7 @@ export class MainMenu extends Scene {
   }
 
   create() {
-    this.add.image(320, 180, 'background');
-
-    this.add.image(320, 180, 'logo');
+    this.add.image(320, 112, 'logo');
 
     this.add
       .text(320, 260, 'Main Menu', {
@@ -21,8 +19,8 @@ export class MainMenu extends Scene {
       })
       .setOrigin(0.5);
 
-    this.input.once('pointerdown', () => {
-      this.scene.start('Game');
-    });
+    // this.input.once('pointerdown', () => {
+    //   this.scene.start('Game');
+    // });
   }
 }
