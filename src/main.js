@@ -13,7 +13,7 @@ const config = {
   width: 640,
   height: 360,
   parent: 'game-container',
-  backgroundColor: '#028af8',
+  backgroundColor: '#000000',
   disableContextMenu: true,
   pixelArt: true,
   scale: {

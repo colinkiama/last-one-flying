@@ -6,8 +6,13 @@ export class Preloader extends Scene {
   }
 
   init() {
-    //  We loaded this image in our Boot Scene, so we can display it here
-    this.add.image(512, 384, 'background');
+    //  Inject our CSS (for Usuzi Font)
+    const element = document.createElement('style');
+    document.head.appendChild(element);
+    const sheet = element.sheet;
+    const styles =
+      '@font-face { font-family: "usuzi"; src: url("assets/fonts/usuzi.woff2") format("woff"); }\n';
+    sheet.insertRule(styles, 0);
 
     //  A simple progress bar. This is the outline of the bar.
     this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
@@ -23,13 +28,14 @@ export class Preloader extends Scene {
   }
 
   preload() {
+    this.load.script('webfont', 'vendor/webfontloader.js');
+
     //  Load the assets for the game - Replace with your own assets
     this.load.setPath('assets');
 
-    this.load.image('logo', 'logo.png');
+    this.load.image('logo', 'last-one-flying-logo.png');
     this.load.image('player', 'player.png');
     this.load.image('laser-beam', 'laser-beam.png');
-    this.load.image('test-enemy', 'test-enemy.png');
     this.load.image('explosion', 'explosion.png');
     this.load.image('basic-enemy', 'basic-enemy.png');
     this.load.image('health-icon', 'health-icon.png');
@@ -38,8 +44,6 @@ export class Preloader extends Scene {
       frameWidth: 53,
       frameHeight: 32,
     });
-
-    this.load.image('font', 'fonts/usuzi-bitmap.png');
   }
 
   create() {
@@ -49,19 +53,13 @@ export class Preloader extends Scene {
     //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
     // this.scene.start('MainMenu');
 
-    const fontConfig = {
-      image: 'font',
-      width: 30,
-      height: 38,
-      chars: GameObjects.RetroFont.TEXT_SET1,
-      charsPerRow: 19,
-    };
-
-    this.cache.bitmapFont.add(
-      'font',
-      GameObjects.RetroFont.Parse(this, fontConfig),
-    );
-
-    this.scene.start('Game');
+    WebFont.load({
+      custom: {
+        families: ['usuzi'],
+      },
+      active: () => {
+        this.scene.start('MainMenu');
+      },
+    });
   }
 }
