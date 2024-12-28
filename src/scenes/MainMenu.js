@@ -55,7 +55,6 @@ export class MainMenu extends Scene {
 
 function onButtonHover() {
   this.setColor(COLORS.hoverForeground);
-  document.curso;
 }
 
 function onButtonOut() {
