@@ -74,17 +74,28 @@ export class HUD extends Scene {
     );
 
     const scoreLabel = this.add
-      .bitmapText(0, 0, 'font', 'Score', 14, 2)
+      .text(0, 0, 'Score', {
+        fontFamily: 'usuzi',
+        fontSize: 14,
+        color: '#ffffff',
+      })
       .setOrigin(1, 0);
     scoreLabel.x = this.cameras.main.width - HUD_PADDING.horizontalPadding;
     scoreLabel.y = HUD_PADDING.verticalPadding;
 
     this._scoreValueText = this.add
-      .bitmapText(0, 0, 'font', '0', 18, 2)
+      .text(
+        this.cameras.main.width - HUD_PADDING.horizontalPadding,
+        scoreLabel.y + scoreLabel.height / 2 + 8,
+        '0',
+        {
+          fontFamily: 'usuzi',
+          fontSize: 18,
+          color: '#ffffff',
+        },
+      )
       .setOrigin(1, 0);
-    this._scoreValueText.x =
-      this.cameras.main.width - HUD_PADDING.horizontalPadding;
-    this._scoreValueText.y = scoreLabel.y + scoreLabel.height / 2 + 8;
+
     this._vfxSystem = new VFXSystem(this);
   }
   onScreenShakeRequest(screenShakeType) {

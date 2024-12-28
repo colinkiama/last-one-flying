@@ -10,7 +10,7 @@
     "noEmit": true,
     "allowJs": true,
     "checkJs": true,
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM"],
     "typeRoots": ["./.vendor/types"]
   },
   "exclude": ["node_modules", "dist"]
