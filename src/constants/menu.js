@@ -4,3 +4,7 @@ export const COLORS = {
 };
 
 export const WEBSITE_URL = 'https://colinkiama.com';
+
+export const MENU_ITEM_CONFIG = {
+  cursor: 'pointer',
+};

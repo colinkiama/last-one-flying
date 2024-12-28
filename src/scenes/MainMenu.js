@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { COLORS, WEBSITE_URL } from '../constants/menu.js';
+import { COLORS, WEBSITE_URL, MENU_ITEM_CONFIG } from '../constants/menu.js';
 
 export class MainMenu extends Scene {
   constructor() {
@@ -16,7 +16,7 @@ export class MainMenu extends Scene {
         color: COLORS.foreground,
       })
       .setOrigin(0.5, 0)
-      .setInteractive();
+      .setInteractive(MENU_ITEM_CONFIG);
 
     playButton.on('pointerover', onButtonHover);
     playButton.on('pointerout', onButtonOut);
@@ -31,7 +31,7 @@ export class MainMenu extends Scene {
         color: COLORS.foreground,
       })
       .setOrigin(0.5, 0)
-      .setInteractive();
+      .setInteractive(MENU_ITEM_CONFIG);
 
     creditsButton.on('pointerover', onButtonHover);
     creditsButton.on('pointerout', onButtonOut);
@@ -43,7 +43,7 @@ export class MainMenu extends Scene {
         color: COLORS.foreground,
       })
       .setOrigin(0.5, 1)
-      .setInteractive();
+      .setInteractive(MENU_ITEM_CONFIG);
 
     footerText.on('pointerover', onButtonHover);
     footerText.on('pointerout', onButtonOut);
@@ -55,6 +55,7 @@ export class MainMenu extends Scene {
 
 function onButtonHover() {
   this.setColor(COLORS.hoverForeground);
+  document.curso;
 }
 
 function onButtonOut() {
