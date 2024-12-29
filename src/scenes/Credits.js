@@ -14,7 +14,7 @@ export class Credits extends Scene {
 
   create() {
     const title = this.add
-      .text(320, 40, 'Credits', {
+      .text(320, 60, 'Credits', {
         fontFamily: 'usuzi',
         fontSize: 40,
       })
