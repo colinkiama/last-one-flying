@@ -102,7 +102,7 @@ export class CombatSystem {
     }
 
     this._enemyAutoFireEvent = new Time.TimerEvent({
-      delay: 2000,
+      delay: 1500,
       loop: true,
       callback: () => {
         const activeEnemies = this._enemyPool.getMatching('active', true);
@@ -189,7 +189,7 @@ export class CombatSystem {
       );
       enemy.setRotation(rotation);
 
-      this.scene.physics.moveToObject(enemy, this._player, 40);
+      this.scene.physics.moveToObject(enemy, this._player, 100);
     }
   }
 

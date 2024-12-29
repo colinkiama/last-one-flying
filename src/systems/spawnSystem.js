@@ -65,17 +65,29 @@ export class SpawnSystem {
 
     this._currentEnemyWave++;
 
-    const minDistanceToPlayer = 200;
-    // 50% of being left of player or right of player.
-    const xPosition1 = PhaserMath.RND.between(
-      0,
-      this._player.x - minDistanceToPlayer,
-    );
-    const xPosition2 = PhaserMath.RND.between(
-      this._player.x + minDistanceToPlayer,
-      this.scene.cameras.main.width,
+    const minDistanceToPlayer = 300;
+
+    const upperBoundLeftSpawn = this._player.x - minDistanceToPlayer;
+    const xPosition1 = PhaserMath.Clamp(
+      PhaserMath.RND.between(
+        -this.scene.cameras.main.width / 2,
+        upperBoundLeftSpawn,
+      ),
+      PhaserMath.MIN_SAFE_INTEGER,
+      upperBoundLeftSpawn,
     );
 
+    const lowerBoundRightSpawnX = this._player.x + minDistanceToPlayer;
+    const xPosition2 = PhaserMath.Clamp(
+      PhaserMath.RND.between(
+        lowerBoundRightSpawnX,
+        this.scene.cameras.main.width / 2,
+      ),
+      lowerBoundRightSpawnX,
+      PhaserMath.MAX_SAFE_INTEGER,
+    );
+
+    // 50% of being left of player or right of player.
     const enemyX = PhaserMath.RND.frac() >= 0.5 ? xPosition2 : xPosition1;
     const enemyY = PhaserMath.RND.between(
       ENEMY_HEIGHT,
