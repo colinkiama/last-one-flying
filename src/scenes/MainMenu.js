@@ -1,5 +1,10 @@
 import { Scene } from 'phaser';
-import { COLORS, WEBSITE_URL, MENU_ITEM_CONFIG } from '../constants/menu.js';
+import {
+  COLORS,
+  WEBSITE_URL,
+  MENU_ITEM_CONFIG,
+  HOVER_TWEEN_CONFIG,
+} from '../constants/menu.js';
 
 export class MainMenu extends Scene {
   constructor() {
@@ -10,10 +15,7 @@ export class MainMenu extends Scene {
     const logo = this.add.image(320, 60, 'logo').setOrigin(0.5, 0);
     const hoverTween = this.tweens.add({
       targets: logo,
-      y: '-=10',
-      duration: 1000,
-      yoyo: true,
-      repeat: -1,
+      ...HOVER_TWEEN_CONFIG,
     });
 
     const playButton = this.add
@@ -62,6 +64,9 @@ export class MainMenu extends Scene {
 
     creditsButton.on('pointerover', onButtonHover);
     creditsButton.on('pointerout', onButtonOut);
+    creditsButton.on('pointerup', () => {
+      this.scene.start('Credits');
+    });
 
     const footerText = this.add
       .text(320, 340, 'Colin Kiama - 2024', {
