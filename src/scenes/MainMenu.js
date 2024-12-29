@@ -13,7 +13,7 @@ export class MainMenu extends Scene {
 
   create() {
     const logo = this.add.image(320, 60, 'logo').setOrigin(0.5, 0);
-    const hoverTween = this.tweens.add({
+    this.tweens.add({
       targets: logo,
       ...HOVER_TWEEN_CONFIG,
     });

@@ -20,7 +20,7 @@ export class Credits extends Scene {
       })
       .setOrigin(0.5, 0);
 
-    const hoverTween = this.tweens.add({
+    this.tweens.add({
       targets: title,
       ...HOVER_TWEEN_CONFIG,
     });
