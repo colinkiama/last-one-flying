@@ -111,7 +111,7 @@ export class CombatSystem {
           const enemyLaserBeam = this._enemyLaserBeamPool.get(
             0,
             0,
-            'laser-beam',
+            'enemy-laser-beam',
           );
 
           if (enemyLaserBeam) {
