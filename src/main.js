@@ -3,6 +3,7 @@ import { Battle } from './scenes/Battle.js';
 import { GameOver } from './scenes/GameOver.js';
 import { MainMenu } from './scenes/MainMenu.js';
 import { Preloader } from './scenes/Preloader.js';
+import { Credits } from './scenes/Credits.js';
 import { HUD } from './scenes/HUD.js';
 import { AUTO, Scale, Game } from 'phaser';
 
@@ -23,7 +24,7 @@ const config = {
   physics: {
     default: 'arcade',
   },
-  scene: [Boot, Preloader, MainMenu, Battle, HUD, GameOver],
+  scene: [Boot, Preloader, MainMenu, Battle, Credits, HUD, GameOver],
 };
 
 export default new Game(config);
