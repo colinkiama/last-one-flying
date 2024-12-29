@@ -13,6 +13,7 @@ import { ScoreSystem } from '../systems/scoreSystem.js';
 import { StatusSystem } from '../systems/statusSystem.js';
 
 import { LaserBeam } from '../poolObjects/LaserBeam.js';
+import { PlayerLaserBeam } from '../poolObjects/PlayerLaserBeam.js';
 import { BasicEnemy } from '../poolObjects/BasicEnemy.js';
 import { Explosion } from '../poolObjects/Explosion.js';
 
@@ -46,7 +47,7 @@ export class Battle extends Scene {
     this.cameras.main.setBackgroundColor(0x000000);
 
     this._laserPool = this.physics.add.group({
-      classType: LaserBeam,
+      classType: PlayerLaserBeam,
       maxSize: 50,
       runChildUpdate: true,
     });
