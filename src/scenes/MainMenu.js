@@ -8,6 +8,13 @@ export class MainMenu extends Scene {
 
   create() {
     const logo = this.add.image(320, 60, 'logo').setOrigin(0.5, 0);
+    const hoverTween = this.tweens.add({
+      targets: logo,
+      y: '-=10',
+      duration: 1000,
+      yoyo: true,
+      repeat: -1,
+    });
 
     const playButton = this.add
       .text(320, logo.y + logo.height + 32, 'Play', {
