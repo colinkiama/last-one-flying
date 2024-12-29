@@ -165,6 +165,10 @@ export class CombatSystem {
       }
     }
 
+    if (!this._player.active) {
+      return;
+    }
+
     this.followPlayer();
   }
 
