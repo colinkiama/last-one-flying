@@ -6,6 +6,7 @@ export const OUTPUT_DIRECTORY_NAME = 'dist/';
 
 export const GAME_FILE_PATHS = [
   'vendor/phaser.esm.min.js',
+  'vendor/rexvirtualjoystickplugin.esm.min.js',
   'vendor/webfontloader.js',
   'favicon.png',
   'style.css',

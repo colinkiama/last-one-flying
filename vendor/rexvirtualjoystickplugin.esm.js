@@ -1,6 +1,6 @@
 /* MIT License
 
-Copyright (c) 2021 Rex 
+Copyright (c) 2018 Rex 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,9 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. 
 
-Source: https://github.com/rexrainbow/phaser3-rex-notes/blob/master/dist/rexvirtualjoystickplugin.js
-
-*/
+Source: https://github.com/rexrainbow/phaser3-rex-notes/blob/master/dist/rexvirtualjoystickplugin.js */
 import { Events, Geom, Input, Math as PhaserMath, Plugins, Utils } from 'phaser'
 
 const Key = Input.Keyboard.Key;
