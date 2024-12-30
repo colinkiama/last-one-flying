@@ -6,6 +6,7 @@ import { Preloader } from './scenes/Preloader.js';
 import { Credits } from './scenes/Credits.js';
 import { HUD } from './scenes/HUD.js';
 import { AUTO, Scale, Game } from 'phaser';
+import { VirtualJoyStickPlugin } from 'virtualjoystick';
 
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -25,6 +26,15 @@ const config = {
     default: 'arcade',
   },
   scene: [Boot, Preloader, MainMenu, Battle, Credits, HUD, GameOver],
+  plugins: {
+    global: [
+      {
+        key: 'rexVirtualJoystick',
+        plugin: VirtualJoyStickPlugin,
+        start: true,
+      },
+    ],
+  },
 };
 
 export default new Game(config);

@@ -37,6 +37,7 @@ export class Battle extends Scene {
   _vfxSystem;
   _scoreSystem;
   _statusSystem;
+  _joystick;
 
   constructor() {
     super('Game');
@@ -45,6 +46,13 @@ export class Battle extends Scene {
   create() {
     this.subscribeToEvents();
     this.cameras.main.setBackgroundColor(0x000000);
+
+    this._joystick = this.plugins.get('rexVirtualJoystick').add(this, {
+      x: 200,
+      y: 200,
+      radius: 50,
+      enable: false,
+    });
 
     this._laserPool = this.physics.add.group({
       classType: PlayerLaserBeam,
