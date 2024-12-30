@@ -135,8 +135,8 @@ class CursorKeys {
         this.cursorKeys = {};
         this.noKeyDown = true;
 
-        for (var i = 0, cnt = KeyNames.length; i < cnt; i++) {
-            var keyName = KeyNames[i];
+        for (let i = 0, cnt = KeyNames.length; i < cnt; i++) {
+            let keyName = KeyNames[i];
             this.addKey(keyName);
             this.cursorKeys[keyName] = this.keys[keyName];
         }
@@ -145,7 +145,7 @@ class CursorKeys {
 
     shutdown(fromScene) {
         this.scene = undefined;
-        for (var key in this.keys) {
+        for (let key in this.keys) {
             this.keys[key].destroy();
         }
         this.keys = undefined;
@@ -161,7 +161,7 @@ class CursorKeys {
     }
 
     setKeyState(keyName, isDown) {
-        var key = this.keys[keyName];
+        let key = this.keys[keyName];
 
         if (!key.enabled) {
             return this;
@@ -185,7 +185,7 @@ class CursorKeys {
 
     clearAllKeysState() {
         this.noKeyDown = true;
-        for (var keyName in this.keys) {
+        for (let keyName in this.keys) {
             this.setKeyState(keyName, false);
         }
         return this;
@@ -232,7 +232,7 @@ class CursorKeys {
     }
 
     addKeys(keyNames) {
-        for (var i = 0, cnt = keyNames.length; i < cnt; i++) {
+        for (let i = 0, cnt = keyNames.length; i < cnt; i++) {
             this.addKey(keyNames[i]);
         }
         return this;
@@ -257,10 +257,10 @@ class VectorToCursorKeys extends CursorKeys {
         this.setMode(GetValue$2(o, 'dir', '8dir'));
         this.setDistanceThreshold(GetValue$2(o, 'forceMin', 16));
 
-        var startX = GetValue$2(o, "start.x", null);
-        var startY = GetValue$2(o, "start.y", null);
-        var endX = GetValue$2(o, "end.x", null);
-        var endY = GetValue$2(o, "end.y", null);
+        let startX = GetValue$2(o, "start.x", null);
+        let startY = GetValue$2(o, "start.y", null);
+        let endX = GetValue$2(o, "end.x", null);
+        let endY = GetValue$2(o, "end.y", null);
         this.setVector(startX, startY, endX, endY);
         return this;
     }
@@ -368,8 +368,8 @@ class VectorToCursorKeys extends CursorKeys {
 
         // Update keys' state
         this.noKeyDown = true;
-        var dirStates = AngleToDirections(this.angle, this.dirMode, true);
-        for (var dir in dirStates) {
+        let dirStates = AngleToDirections(this.angle, this.dirMode, true);
+        for (let dir in dirStates) {
             this.setKeyState(dir, dirStates[dir]);
         }
 
@@ -397,7 +397,7 @@ class VectorToCursorKeys extends CursorKeys {
     }
 
     get octant() {
-        var octant = 0;
+        let octant = 0;
         if (this.rightKeyDown) {
             octant = (this.downKeyDown) ? 45 : 0;
         } else if (this.downKeyDown) {
@@ -413,13 +413,13 @@ class VectorToCursorKeys extends CursorKeys {
 
 class TouchCursor extends VectorToCursorKeys {
     constructor(gameObject, config) {
-        var scene = gameObject.scene;
+        let scene = gameObject.scene;
         super(scene, config);
         //this.resetFromJSON(config); // this function had been called in super(config)
 
         // Event emitter
-        var eventEmitter = GetValue$1(config, 'eventEmitter', undefined);
-        var EventEmitterClass = GetValue$1(config, 'EventEmitterClass', undefined);
+        let eventEmitter = GetValue$1(config, 'eventEmitter', undefined);
+        let EventEmitterClass = GetValue$1(config, 'EventEmitterClass', undefined);
         this.setEventEmitter(eventEmitter, EventEmitterClass);
 
         this.scene = scene;
@@ -441,7 +441,7 @@ class TouchCursor extends VectorToCursorKeys {
     }
 
     toJSON() {
-        var o = super.toJSON();
+        let o = super.toJSON();
         o.radius = this.radius;
 
         return o;
@@ -517,17 +517,17 @@ class TouchCursor extends VectorToCursorKeys {
             return;
         }
 
-        var worldXY = GetPointerWorldXY(pointer, this.mainCamera, true);
+        let worldXY = GetPointerWorldXY(pointer, this.mainCamera, true);
         if (!worldXY) {
             // Pointer is outside of any camera, no worldX/worldY available
             return;
         }
 
         // Vector of world position
-        var camera = pointer.camera;
-        var gameObject = this.gameObject;
-        var startX = gameObject.x - (camera.scrollX * (gameObject.scrollFactorX - 1));
-        var startY = gameObject.y - (camera.scrollY * (gameObject.scrollFactorY - 1));
+        let camera = pointer.camera;
+        let gameObject = this.gameObject;
+        let startX = gameObject.x - (camera.scrollX * (gameObject.scrollFactorX - 1));
+        let startY = gameObject.y - (camera.scrollY * (gameObject.scrollFactorY - 1));
 
         this.setVector(startX, startY, worldXY.x, worldXY.y);
 
@@ -548,7 +548,7 @@ class TouchCursor extends VectorToCursorKeys {
     }
 
     forceUpdate() {
-        var pointer = this.pointer;
+        let pointer = this.pointer;
         if (!pointer || !pointer.isDown) {
             return this;
         }
@@ -571,8 +571,8 @@ class VirtualJoyStick {
         }
 
         // Event emitter
-        var eventEmitter = GetValue(config, 'eventEmitter', undefined);
-        var EventEmitterClass = GetValue(config, 'EventEmitterClass', undefined);
+        let eventEmitter = GetValue(config, 'eventEmitter', undefined);
+        let EventEmitterClass = GetValue(config, 'EventEmitterClass', undefined);
         this.setEventEmitter(eventEmitter, EventEmitterClass);
         config.eventEmitter = this.getEventEmitter();
 
@@ -585,8 +585,8 @@ class VirtualJoyStick {
         this.addBase(GetValue(config, 'base', undefined), config);
         this.addThumb(GetValue(config, 'thumb', undefined));
 
-        var x = GetValue(config, 'x', 0);
-        var y = GetValue(config, 'y', 0);
+        let x = GetValue(config, 'x', 0);
+        let y = GetValue(config, 'y', 0);
         this.base.setPosition(x, y);
         this.thumb.setPosition(x, y);
 
@@ -791,13 +791,13 @@ class VirtualJoyStick {
 
     // Internal method
     update() {
-        var touchCursor = this.touchCursor;
+        let touchCursor = this.touchCursor;
         // Start from (0,0)
-        var dx, dy;
-        var dirMode = touchCursor.dirMode;
+        let dx, dy;
+        let dirMode = touchCursor.dirMode;
         if (touchCursor.anyKeyDown) {
             if (touchCursor.force > this.radius) { // Exceed radius
-                var rad = touchCursor.rotation;
+                let rad = touchCursor.rotation;
 
                 // NOT 'up&down'
                 dx = (dirMode !== 0) ? Math.cos(rad) * this.radius : 0;
@@ -838,7 +838,7 @@ export class VirtualJoyStickPlugin extends Plugins.BasePlugin {
     }
 
     start() {
-        var eventEmitter = this.game.events;
+        let eventEmitter = this.game.events;
         eventEmitter.on('destroy', this.destroy, this);
     }
 
@@ -924,7 +924,7 @@ function AngleToDirections (angle, dirMode, out) {
 };
 
 function GetPointerWorldXY (pointer, targetCamera, out) {
-    var camera = pointer.camera;
+    let camera = pointer.camera;
     if (!camera) {
         return null;
     }
