@@ -24,6 +24,7 @@ import { Player } from '../gameObjects/Player.js';
 import { PLAYER_STARTING_POSITION } from '../constants/spawn.js';
 import { STARTING_LIVES } from '../constants/status.js';
 import { TOUCH_CONTROLS_KEY } from '../constants/data.js';
+import { MIN_JOYSTICK_FORCE } from '../constants/movement.js';
 
 export class Battle extends Scene {
   _player;
@@ -49,10 +50,10 @@ export class Battle extends Scene {
     this.cameras.main.setBackgroundColor(0x000000);
 
     this._joystick = this.plugins.get('rexVirtualJoystick').add(this, {
-      x: 200,
-      y: 200,
+      x: 150,
+      y: 270,
       radius: 50,
-      enable: true,
+      enable: false,
     });
 
     const isTouchControlsEnabled = this.registry.get(TOUCH_CONTROLS_KEY);

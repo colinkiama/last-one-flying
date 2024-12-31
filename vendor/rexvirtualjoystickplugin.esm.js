@@ -871,7 +871,6 @@ export class VirtualJoyStickPlugin extends Plugins.BasePlugin {
     addVectorToCursorKeys(config) {
         return new VectorToCursorKeys(undefined, config);
     }
-
 }
 
 
