@@ -1,4 +1,4 @@
-import { Scene } from 'phaser';
+import { Scene, Data } from 'phaser';
 import {
   crossSceneEventEmitter,
   gameLogicEventEmitter,
@@ -23,6 +23,7 @@ import { ScoreUpdateType } from '../constants/score.js';
 import { Player } from '../gameObjects/Player.js';
 import { PLAYER_STARTING_POSITION } from '../constants/spawn.js';
 import { STARTING_LIVES } from '../constants/status.js';
+import { TOUCH_CONTROLS_KEY } from '../constants/data.js';
 
 export class Battle extends Scene {
   _player;
@@ -51,8 +52,10 @@ export class Battle extends Scene {
       x: 200,
       y: 200,
       radius: 50,
-      enable: false,
+      enable: true,
     });
+
+    this._joystick.visible = this.registry.get(TOUCH_CONTROLS_KEY);
 
     this._laserPool = this.physics.add.group({
       classType: PlayerLaserBeam,
@@ -86,7 +89,12 @@ export class Battle extends Scene {
       'player',
     );
     this._spawnSystem = new SpawnSystem(this, this._player, this._enemyPool);
-    this._movementSystem = new MovementSystem(this, this._player);
+    this._movementSystem = new MovementSystem(
+      this,
+      this._player,
+      this._joystick,
+    );
+
     this._combatSystem = new CombatSystem(this, this._player, {
       enemyPool: this._enemyPool,
       laserBeamPool: this._laserPool,
@@ -102,7 +110,7 @@ export class Battle extends Scene {
     this._combatSystem.activateCollisions();
     this._combatSystem.startEnemyAI();
     this._spawnSystem.activateEnemySpawnTimer();
-    this._movementSystem.activatePointerMovement();
+    // this._movementSystem.activatePointerMovement();
 
     this.scene.launch('HUD', {
       lives: this._statusSystem.getLives(),
@@ -147,6 +155,25 @@ export class Battle extends Scene {
       this.onScreenShakeRequested,
       this,
     );
+
+    this.registry.events.on(Data.Events.CHANGE_DATA, (parent, key, value) => {
+      this.onDataChanged(parent, key, value);
+    });
+
+    this.registry.events.on(Data.Events.SET_DATA, (parent, key, value) => {
+      this.onDataChanged(parent, key, value);
+    });
+  }
+
+  onDataChanged(_parent, key, value) {
+    console.log('Joystick visibility change!');
+    switch (key) {
+      case TOUCH_CONTROLS_KEY:
+        this._joystick.visible = value;
+        break;
+      default:
+        break;
+    }
   }
 
   onScreenShakeRequested(screenShakeType) {

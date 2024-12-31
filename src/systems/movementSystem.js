@@ -6,15 +6,22 @@ export class MovementSystem {
   scene;
   _player;
   _movementKeys;
+  _joystick;
 
-  constructor(scene, player) {
+  constructor(scene, player, joystick) {
     this.scene = scene;
     this._player = player;
     this._movementKeys = createMovementKeys(this.scene.input.keyboard);
+    this._joystick = joystick;
   }
 
   activatePointerMovement() {
     this.scene.input.on('pointermove', this.onPointerMove.bind(this));
+  }
+
+  activateJoystickMovement() {
+    if (this.scene) {
+    }
   }
 
   handlePlayerMovement() {

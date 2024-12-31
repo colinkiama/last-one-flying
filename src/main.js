@@ -6,6 +6,7 @@ import { Preloader } from './scenes/Preloader.js';
 import { Credits } from './scenes/Credits.js';
 import { HUD } from './scenes/HUD.js';
 import { AUTO, Scale, Game } from 'phaser';
+import { TOUCH_CONTROLS_KEY } from './constants/data.js';
 import { VirtualJoyStickPlugin } from 'virtualjoystick';
 
 //  Find out more information about the Game Config at:
@@ -37,4 +38,27 @@ const config = {
   },
 };
 
-export default new Game(config);
+const game = new Game(config);
+
+document.body.addEventListener('pointerdown', onPointerDown);
+
+function onPointerDown(event) {
+  const currentValue = game.registry.get(TOUCH_CONTROLS_KEY);
+  const pointerType = event.pointerType;
+  if (!currentValue && pointerType === 'touch') {
+    game.registry.set(TOUCH_CONTROLS_KEY, true);
+    document.addEventListener('keydown', onKeyDown);
+  } else if (currentValue) {
+    game.registry.set(TOUCH_CONTROLS_KEY, false);
+  }
+}
+
+function onKeyDown(event) {
+  const currentValue = game.registry.get(TOUCH_CONTROLS_KEY);
+  if (currentValue) {
+    document.removeEventListener('keydown', onKeyDown);
+    game.registry.set(TOUCH_CONTROLS_KEY, false);
+  }
+}
+
+export default game;
