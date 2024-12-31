@@ -166,7 +166,6 @@ export class Battle extends Scene {
   }
 
   onDataChanged(_parent, key, value) {
-    console.log('Joystick visibility change!');
     switch (key) {
       case TOUCH_CONTROLS_KEY:
         this._joystick.visible = value;
