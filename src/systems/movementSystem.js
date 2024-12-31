@@ -69,7 +69,6 @@ export class MovementSystem {
   }
 
   handleJoystickMovement() {
-    // If pushed down without being dragged, there's an excessive large force!
     if (this._joystick.force > MIN_JOYSTICK_FORCE) {
       this._player.setRotation(this._joystick.rotation);
       this.scene.physics.velocityFromRotation(
@@ -80,6 +79,7 @@ export class MovementSystem {
     } else {
       this._player.setVelocity(0);
     }
+
     this.updatePlayerBody();
   }
 
