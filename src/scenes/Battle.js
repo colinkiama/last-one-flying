@@ -242,7 +242,7 @@ export class Battle extends Scene {
 
   update() {
     this._movementSystem.handlePlayerMovement();
-    this._combatSystem.update();
+    this._combatSystem.update(this._movementSystem.movementType);
   }
 
   reset() {

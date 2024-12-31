@@ -3,6 +3,7 @@ import { gameLogicEventEmitter } from '../utils/events.js';
 import { createCombatKeys } from '../utils/input.js';
 import { GameLogicEvent } from '../constants/events.js';
 import { LASER_SHOT_DELAY } from '../constants/combat.js';
+import { MovementType } from '../constants/movement.js';
 
 export class CombatSystem {
   scene;
@@ -136,10 +137,13 @@ export class CombatSystem {
     this.scene.time.addEvent(this._enemyAutoFireEvent);
   }
 
-  update() {
+  update(movementType) {
     const { shoot } = this._combatKeys;
     const activePointer = this.scene.input.activePointer;
-    const shootButtonPressed = shoot.isDown || activePointer.primaryDown;
+    const shootButtonPressed =
+      shoot.isDown || movementType === MovementType.NON_TOUCH
+        ? activePointer.primaryDown
+        : false;
     const shotDelayTmeElapsed = this.scene.time.now >= this._nextShotTime;
     const canShoot =
       this._player.active && shootButtonPressed && shotDelayTmeElapsed;

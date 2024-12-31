@@ -20,6 +20,10 @@ export class MovementSystem {
     this._joystick = joystick;
   }
 
+  get movementType() {
+    return this._movementType;
+  }
+
   activatePointerMovement() {
     this.scene.input.on('pointermove', this.onPointerMove, this);
     this._movementType = MovementType.NON_TOUCH;
