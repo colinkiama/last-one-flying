@@ -141,9 +141,10 @@ export class CombatSystem {
     const { shoot } = this._combatKeys;
     const activePointer = this.scene.input.activePointer;
     const shootButtonPressed =
-      shoot.isDown || movementType === MovementType.NON_TOUCH
+      shoot.isDown ||
+      (movementType === MovementType.NON_TOUCH
         ? activePointer.primaryDown
-        : false;
+        : false);
     const shotDelayTmeElapsed = this.scene.time.now >= this._nextShotTime;
     const canShoot =
       this._player.active && shootButtonPressed && shotDelayTmeElapsed;
