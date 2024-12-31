@@ -16,12 +16,13 @@ export class MovementSystem {
   }
 
   activatePointerMovement() {
-    this.scene.input.on('pointermove', this.onPointerMove.bind(this));
+    this._joystick.off('update', this.onJoystickUpdate, this);
+    this.scene.input.on('pointermove', this.onPointerMove, this);
   }
 
   activateJoystickMovement() {
-    if (this.scene) {
-    }
+    this.scene.input.off('pointermove', this.onPointerMove, this);
+    this._joystick.on('update', this.onJoystickUpdate, this);
   }
 
   handlePlayerMovement() {
@@ -80,6 +81,8 @@ export class MovementSystem {
 
     this.scene.physics.world.wrap(this._player, this._player.width / 2);
   }
+
+  onJoystickUpdate() {}
 
   onPointerMove(pointer) {
     if (this.isInDeadzone(pointer.worldX, pointer.worldY)) {

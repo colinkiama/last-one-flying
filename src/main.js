@@ -48,7 +48,7 @@ function onPointerDown(event) {
   if (!currentValue && pointerType === 'touch') {
     game.registry.set(TOUCH_CONTROLS_KEY, true);
     document.addEventListener('keydown', onKeyDown);
-  } else if (currentValue) {
+  } else if (currentValue && pointerType !== 'touch') {
     game.registry.set(TOUCH_CONTROLS_KEY, false);
   }
 }

@@ -55,7 +55,8 @@ export class Battle extends Scene {
       enable: true,
     });
 
-    this._joystick.visible = this.registry.get(TOUCH_CONTROLS_KEY);
+    const isTouchControlsEnabled = this.registry.get(TOUCH_CONTROLS_KEY);
+    this._joystick.visible = isTouchControlsEnabled;
 
     this._laserPool = this.physics.add.group({
       classType: PlayerLaserBeam,
@@ -110,7 +111,11 @@ export class Battle extends Scene {
     this._combatSystem.activateCollisions();
     this._combatSystem.startEnemyAI();
     this._spawnSystem.activateEnemySpawnTimer();
-    // this._movementSystem.activatePointerMovement();
+    if (isTouchControlsEnabled) {
+      this._movementSystem.activateJoystickMovement();
+    } else {
+      this._movementSystem.activatePointerMovement();
+    }
 
     this.scene.launch('HUD', {
       lives: this._statusSystem.getLives(),
@@ -169,6 +174,11 @@ export class Battle extends Scene {
     switch (key) {
       case TOUCH_CONTROLS_KEY:
         this._joystick.visible = value;
+        if (value) {
+          this._movementSystem.activateJoystickMovement();
+        } else {
+          this._movementSystem.activatePointerMovement();
+        }
         break;
       default:
         break;
