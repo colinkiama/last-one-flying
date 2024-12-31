@@ -28,6 +28,9 @@ export const CREDITS_LIST_ITEMS = [
         name: 'Ajmal Rizni',
       },
       {
+        name: 'Ugur Saglik',
+      },
+      {
         name: 'That one tall bloke',
       },
     ],
