@@ -31,7 +31,6 @@ export class TouchControlsSystem {
   }
 
   setupEvents() {
-    console.log('Buttons:', this.buttons);
     this.buttons.fire
       .setInteractive()
       .on('pointerdown', () => {
