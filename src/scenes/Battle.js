@@ -54,7 +54,7 @@ export class Battle extends Scene {
       y: 270,
       radius: 50,
       base: this.add.arc(0, 0, 60).setStrokeStyle(2, 0xffffff),
-      thumb: this.add.arc(0, 0, 50).setStrokeStyle(2, 0xffffff),
+      thumb: this.add.arc(0, 0, 40).setStrokeStyle(2, 0xffffff),
       enable: false,
     });
 
