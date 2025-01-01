@@ -24,7 +24,7 @@ import { Player } from '../gameObjects/Player.js';
 import { PLAYER_STARTING_POSITION } from '../constants/spawn.js';
 import { STARTING_LIVES } from '../constants/status.js';
 import { TOUCH_CONTROLS_KEY } from '../constants/data.js';
-import { MIN_JOYSTICK_FORCE } from '../constants/movement.js';
+import { TouchControlsSystem } from '../systems/touchControlsSystem.js';
 
 export class Battle extends Scene {
   _player;
@@ -39,7 +39,7 @@ export class Battle extends Scene {
   _vfxSystem;
   _scoreSystem;
   _statusSystem;
-  _joystick;
+  _touchControlsSystem;
 
   constructor() {
     super('Game');
@@ -49,7 +49,7 @@ export class Battle extends Scene {
     this.subscribeToEvents();
     this.cameras.main.setBackgroundColor(0x000000);
 
-    this._joystick = this.plugins.get('rexVirtualJoystick').add(this, {
+    const joystick = this.plugins.get('rexVirtualJoystick').add(this, {
       x: 150,
       y: 270,
       radius: 50,
@@ -57,7 +57,16 @@ export class Battle extends Scene {
     });
 
     const isTouchControlsEnabled = this.registry.get(TOUCH_CONTROLS_KEY);
-    this._joystick.visible = isTouchControlsEnabled;
+    const fireButton = this.add
+      .circle(400, 300, 50)
+      .setStrokeStyle(2, 0xffffff);
+
+    const touchButtons = {
+      fire: fireButton,
+    };
+
+    this._touchControlsSystem = new TouchControlsSystem(joystick, touchButtons);
+    this._touchControlsSystem.visible = isTouchControlsEnabled;
 
     this._laserPool = this.physics.add.group({
       classType: PlayerLaserBeam,
@@ -94,14 +103,19 @@ export class Battle extends Scene {
     this._movementSystem = new MovementSystem(
       this,
       this._player,
-      this._joystick,
+      this._touchControlsSystem,
     );
 
-    this._combatSystem = new CombatSystem(this, this._player, {
-      enemyPool: this._enemyPool,
-      laserBeamPool: this._laserPool,
-      enemyLaserBeamPool: this._enemyLaserPool,
-    });
+    this._combatSystem = new CombatSystem(
+      this,
+      this._player,
+      {
+        enemyPool: this._enemyPool,
+        laserBeamPool: this._laserPool,
+        enemyLaserBeamPool: this._enemyLaserPool,
+      },
+      this._touchControlsSystem,
+    );
 
     this._vfxSystem = new VFXSystem(this, {
       explosionPool: this._explosionPool,
@@ -163,6 +177,7 @@ export class Battle extends Scene {
     );
 
     this.registry.events.on(Data.Events.CHANGE_DATA, (parent, key, value) => {
+      console.log('Change data:');
       this.onDataChanged(parent, key, value);
     });
 
@@ -174,12 +189,13 @@ export class Battle extends Scene {
   onDataChanged(_parent, key, value) {
     switch (key) {
       case TOUCH_CONTROLS_KEY:
-        this._joystick.visible = value;
         if (value) {
           this._movementSystem.activateJoystickMovement();
         } else {
           this._movementSystem.activatePointerMovement();
         }
+
+        this._touchControlsSystem.visible = value;
         break;
       default:
         break;

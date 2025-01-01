@@ -16,8 +16,9 @@ export class CombatSystem {
   _combatKeys;
   _nextShotTime;
   _solarBeam;
+  _touchControlsSystem;
 
-  constructor(scene, player, pools) {
+  constructor(scene, player, pools, touchControlsSystem) {
     const { enemyPool, laserBeamPool, enemyLaserBeamPool } = pools;
     this.scene = scene;
     this._player = player;
@@ -25,6 +26,7 @@ export class CombatSystem {
     this._laserBeamPool = laserBeamPool;
     this._enemyLaserBeamPool = enemyLaserBeamPool;
 
+    this._touchControlsSystem = touchControlsSystem;
     this._combatKeys = createCombatKeys(this.scene.input.keyboard);
     this._nextShotTime = 0;
   }
@@ -140,11 +142,13 @@ export class CombatSystem {
   update(movementType) {
     const { shoot } = this._combatKeys;
     const activePointer = this.scene.input.activePointer;
+
     const shootButtonPressed =
       shoot.isDown ||
-      (movementType === MovementType.NON_TOUCH
-        ? activePointer.primaryDown
-        : false);
+      (movementType === MovementType.TOUCH
+        ? this._touchControlsSystem.isFireButtonDown
+        : activePointer.primaryDown);
+
     const shotDelayTmeElapsed = this.scene.time.now >= this._nextShotTime;
     const canShoot =
       this._player.active && shootButtonPressed && shotDelayTmeElapsed;

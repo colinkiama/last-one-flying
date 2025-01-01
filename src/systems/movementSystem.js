@@ -13,11 +13,11 @@ export class MovementSystem {
   _joystick;
   _movementType;
 
-  constructor(scene, player, joystick) {
+  constructor(scene, player, movementSystem) {
     this.scene = scene;
     this._player = player;
     this._movementKeys = createMovementKeys(this.scene.input.keyboard);
-    this._joystick = joystick;
+    this._joystick = movementSystem.joystick;
   }
 
   get movementType() {
