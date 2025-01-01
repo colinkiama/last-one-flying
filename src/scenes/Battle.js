@@ -53,6 +53,8 @@ export class Battle extends Scene {
       x: 150,
       y: 270,
       radius: 50,
+      base: this.add.arc(0, 0, 60).setStrokeStyle(2, 0xffffff),
+      thumb: this.add.arc(0, 0, 50).setStrokeStyle(2, 0xffffff),
       enable: false,
     });
 
@@ -177,7 +179,6 @@ export class Battle extends Scene {
     );
 
     this.registry.events.on(Data.Events.CHANGE_DATA, (parent, key, value) => {
-      console.log('Change data:');
       this.onDataChanged(parent, key, value);
     });
 
