@@ -64,4 +64,10 @@ function onKeyDown(event) {
   }
 }
 
+game.scale.on('orientationchange', (_orientation) => {
+  // Ensure that the game canvas always fits the screen
+  // whenever the orientation changes
+  game.scale.setGameSize(640, 360);
+});
+
 export default game;
