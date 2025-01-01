@@ -1,23 +1,50 @@
 import { Math as PhaserMath } from 'phaser';
 import { createMovementKeys } from '../utils/input.js';
-import { POINTER_DEADZONE } from '../constants/movement.js';
+import {
+  MIN_JOYSTICK_FORCE,
+  MovementType,
+  POINTER_DEADZONE,
+} from '../constants/movement.js';
 
 export class MovementSystem {
   scene;
   _player;
   _movementKeys;
+  _joystick;
+  _movementType;
 
-  constructor(scene, player) {
+  constructor(scene, player, movementSystem) {
     this.scene = scene;
     this._player = player;
     this._movementKeys = createMovementKeys(this.scene.input.keyboard);
+    this._joystick = movementSystem.joystick;
+  }
+
+  get movementType() {
+    return this._movementType;
   }
 
   activatePointerMovement() {
-    this.scene.input.on('pointermove', this.onPointerMove.bind(this));
+    this.scene.input.on('pointermove', this.onPointerMove, this);
+    this._movementType = MovementType.NON_TOUCH;
+  }
+
+  activateJoystickMovement() {
+    this.scene.input.off('pointermove', this.onPointerMove, this);
+    this._movementType = MovementType.TOUCH;
   }
 
   handlePlayerMovement() {
+    if (this._movementType === MovementType.TOUCH) {
+      this.handleJoystickMovement();
+    } else {
+      this.handleKeyMovement();
+    }
+
+    this.updatePlayerBody();
+  }
+
+  handleKeyMovement() {
     const { up, down, left, right } = this._movementKeys;
 
     if (left.isDown) {
@@ -43,7 +70,24 @@ export class MovementSystem {
     } else {
       this._player.setVelocity(0);
     }
+  }
 
+  handleJoystickMovement() {
+    if (this._joystick.force > MIN_JOYSTICK_FORCE) {
+      this._player.setRotation(this._joystick.rotation);
+      this.scene.physics.velocityFromRotation(
+        this._player.rotation,
+        300,
+        this._player.body.velocity,
+      );
+    } else {
+      this._player.setVelocity(0);
+    }
+
+    this.updatePlayerBody();
+  }
+
+  updatePlayerBody() {
     // Set body size based on rotation boundaries (due to limitation of arcade physics body not supporting rotation)
     const verticalBoundaries = [Math.PI / 2, -Math.PI / 2];
     const horizontalBoundaries = [0, -Math.PI, Math.PI];

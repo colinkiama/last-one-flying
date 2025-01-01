@@ -3,6 +3,7 @@ import { gameLogicEventEmitter } from '../utils/events.js';
 import { createCombatKeys } from '../utils/input.js';
 import { GameLogicEvent } from '../constants/events.js';
 import { LASER_SHOT_DELAY } from '../constants/combat.js';
+import { MovementType } from '../constants/movement.js';
 
 export class CombatSystem {
   scene;
@@ -15,8 +16,9 @@ export class CombatSystem {
   _combatKeys;
   _nextShotTime;
   _solarBeam;
+  _touchControlsSystem;
 
-  constructor(scene, player, pools) {
+  constructor(scene, player, pools, touchControlsSystem) {
     const { enemyPool, laserBeamPool, enemyLaserBeamPool } = pools;
     this.scene = scene;
     this._player = player;
@@ -24,6 +26,7 @@ export class CombatSystem {
     this._laserBeamPool = laserBeamPool;
     this._enemyLaserBeamPool = enemyLaserBeamPool;
 
+    this._touchControlsSystem = touchControlsSystem;
     this._combatKeys = createCombatKeys(this.scene.input.keyboard);
     this._nextShotTime = 0;
   }
@@ -136,10 +139,16 @@ export class CombatSystem {
     this.scene.time.addEvent(this._enemyAutoFireEvent);
   }
 
-  update() {
+  update(movementType) {
     const { shoot } = this._combatKeys;
     const activePointer = this.scene.input.activePointer;
-    const shootButtonPressed = shoot.isDown || activePointer.primaryDown;
+
+    const shootButtonPressed =
+      shoot.isDown ||
+      (movementType === MovementType.TOUCH
+        ? this._touchControlsSystem.isFireButtonDown
+        : activePointer.primaryDown);
+
     const shotDelayTmeElapsed = this.scene.time.now >= this._nextShotTime;
     const canShoot =
       this._player.active && shootButtonPressed && shotDelayTmeElapsed;

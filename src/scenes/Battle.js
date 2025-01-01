@@ -1,4 +1,4 @@
-import { Scene } from 'phaser';
+import { Scene, Data } from 'phaser';
 import {
   crossSceneEventEmitter,
   gameLogicEventEmitter,
@@ -23,6 +23,8 @@ import { ScoreUpdateType } from '../constants/score.js';
 import { Player } from '../gameObjects/Player.js';
 import { PLAYER_STARTING_POSITION } from '../constants/spawn.js';
 import { STARTING_LIVES } from '../constants/status.js';
+import { TOUCH_CONTROLS_KEY } from '../constants/data.js';
+import { TouchControlsSystem } from '../systems/touchControlsSystem.js';
 
 export class Battle extends Scene {
   _player;
@@ -37,6 +39,7 @@ export class Battle extends Scene {
   _vfxSystem;
   _scoreSystem;
   _statusSystem;
+  _touchControlsSystem;
 
   constructor() {
     super('Game');
@@ -45,6 +48,27 @@ export class Battle extends Scene {
   create() {
     this.subscribeToEvents();
     this.cameras.main.setBackgroundColor(0x000000);
+
+    const joystick = this.plugins.get('rexVirtualJoystick').add(this, {
+      x: 150,
+      y: 270,
+      radius: 50,
+      base: this.add.arc(0, 0, 60).setStrokeStyle(2, 0xffffff),
+      thumb: this.add.arc(0, 0, 40).setStrokeStyle(2, 0xffffff),
+      enable: false,
+    });
+
+    const isTouchControlsEnabled = this.registry.get(TOUCH_CONTROLS_KEY);
+    const fireButton = this.add
+      .circle(490, 270, 50)
+      .setStrokeStyle(2, 0xffffff);
+
+    const touchButtons = {
+      fire: fireButton,
+    };
+
+    this._touchControlsSystem = new TouchControlsSystem(joystick, touchButtons);
+    this._touchControlsSystem.visible = isTouchControlsEnabled;
 
     this._laserPool = this.physics.add.group({
       classType: PlayerLaserBeam,
@@ -78,12 +102,22 @@ export class Battle extends Scene {
       'player',
     );
     this._spawnSystem = new SpawnSystem(this, this._player, this._enemyPool);
-    this._movementSystem = new MovementSystem(this, this._player);
-    this._combatSystem = new CombatSystem(this, this._player, {
-      enemyPool: this._enemyPool,
-      laserBeamPool: this._laserPool,
-      enemyLaserBeamPool: this._enemyLaserPool,
-    });
+    this._movementSystem = new MovementSystem(
+      this,
+      this._player,
+      this._touchControlsSystem,
+    );
+
+    this._combatSystem = new CombatSystem(
+      this,
+      this._player,
+      {
+        enemyPool: this._enemyPool,
+        laserBeamPool: this._laserPool,
+        enemyLaserBeamPool: this._enemyLaserPool,
+      },
+      this._touchControlsSystem,
+    );
 
     this._vfxSystem = new VFXSystem(this, {
       explosionPool: this._explosionPool,
@@ -94,7 +128,11 @@ export class Battle extends Scene {
     this._combatSystem.activateCollisions();
     this._combatSystem.startEnemyAI();
     this._spawnSystem.activateEnemySpawnTimer();
-    this._movementSystem.activatePointerMovement();
+    if (isTouchControlsEnabled) {
+      this._movementSystem.activateJoystickMovement();
+    } else {
+      this._movementSystem.activatePointerMovement();
+    }
 
     this.scene.launch('HUD', {
       lives: this._statusSystem.getLives(),
@@ -139,6 +177,30 @@ export class Battle extends Scene {
       this.onScreenShakeRequested,
       this,
     );
+
+    this.registry.events.on(Data.Events.CHANGE_DATA, (parent, key, value) => {
+      this.onDataChanged(parent, key, value);
+    });
+
+    this.registry.events.on(Data.Events.SET_DATA, (parent, key, value) => {
+      this.onDataChanged(parent, key, value);
+    });
+  }
+
+  onDataChanged(_parent, key, value) {
+    switch (key) {
+      case TOUCH_CONTROLS_KEY:
+        if (value) {
+          this._movementSystem.activateJoystickMovement();
+        } else {
+          this._movementSystem.activatePointerMovement();
+        }
+
+        this._touchControlsSystem.visible = value;
+        break;
+      default:
+        break;
+    }
   }
 
   onScreenShakeRequested(screenShakeType) {
@@ -197,7 +259,7 @@ export class Battle extends Scene {
 
   update() {
     this._movementSystem.handlePlayerMovement();
-    this._combatSystem.update();
+    this._combatSystem.update(this._movementSystem.movementType);
   }
 
   reset() {
