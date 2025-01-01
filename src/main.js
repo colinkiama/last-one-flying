@@ -26,6 +26,9 @@ const config = {
   physics: {
     default: 'arcade',
   },
+  input: {
+    activePointers: 2,
+  },
   scene: [Boot, Preloader, MainMenu, Battle, Credits, HUD, GameOver],
   plugins: {
     global: [

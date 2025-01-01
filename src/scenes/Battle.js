@@ -60,7 +60,7 @@ export class Battle extends Scene {
 
     const isTouchControlsEnabled = this.registry.get(TOUCH_CONTROLS_KEY);
     const fireButton = this.add
-      .circle(490, 270, 40)
+      .circle(490, 270, 50)
       .setStrokeStyle(2, 0xffffff);
 
     const touchButtons = {
