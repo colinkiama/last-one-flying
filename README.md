@@ -93,6 +93,11 @@ In order to deploy your game, you will need to upload *all* of the contents of t
 
 You can run the `bun run export` command to create a `.zip` file of the game's code, to upload to platforms like https://itch.io.
 
+
+![](https://github.com/user-attachments/assets/fb97f990-b61a-4457-be59-7532a899111b)
+
 ## Extra Notes
 
 Made with [Phaser](https://phaser.io)
+
+
