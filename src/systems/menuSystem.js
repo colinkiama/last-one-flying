@@ -16,5 +16,8 @@
  * @typedef {Object} Menu
  * @property {string} parent - `key` of the previous menu that led to this one
  * @property {MenuTitle} title - The content that appears on the top of the menu
- *
+ * @property {string} summary
+ * @property {Array<MenuItem>} items
+ * @property {(Array<MenuItem>|undefined)} footerItems
  */
+
