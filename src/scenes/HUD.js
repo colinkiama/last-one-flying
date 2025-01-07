@@ -50,11 +50,17 @@ export class HUD extends Scene {
       repeat: -1,
     });
 
-    this._pauseButton = this.add.image(
-      HUD_PADDING.horizontalPadding + PAUSE_BUTTON_DIMENSIONS.width / 2,
-      HUD_PADDING.verticalPadding + PAUSE_BUTTON_DIMENSIONS.height / 2,
-      'pause-button',
-    );
+    this._pauseButton = this.add
+      .image(
+        HUD_PADDING.horizontalPadding + PAUSE_BUTTON_DIMENSIONS.width / 2,
+        HUD_PADDING.verticalPadding + PAUSE_BUTTON_DIMENSIONS.height / 2,
+        'pause-button',
+      )
+      .setInteractive()
+      .on('pointerup', () => {
+        this.scene.launch('PauseMenu');
+      });
+
     this._healthIcon = this.add.image(
       this._pauseButton.x +
         PAUSE_BUTTON_DIMENSIONS.width / 2 +

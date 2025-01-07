@@ -4,6 +4,7 @@ import { GameOver } from './scenes/GameOver.js';
 import { MainMenu } from './scenes/MainMenu.js';
 import { Preloader } from './scenes/Preloader.js';
 import { Credits } from './scenes/Credits.js';
+import { PauseMenu } from './scenes/PauseMenu.js';
 import { HUD } from './scenes/HUD.js';
 import { AUTO, Scale, Game } from 'phaser';
 import { TOUCH_CONTROLS_KEY } from './constants/data.js';
@@ -29,7 +30,7 @@ const config = {
   input: {
     activePointers: 2,
   },
-  scene: [Boot, Preloader, MainMenu, Battle, Credits, HUD, GameOver],
+  scene: [Boot, Preloader, MainMenu, Battle, Credits, HUD, PauseMenu, GameOver],
   plugins: {
     global: [
       {
