@@ -3,7 +3,7 @@ import { Scene } from 'phaser';
  * @typedef {Object} MenuItem
  * @property {boolean} [isInteractive] Determines if an item is selectable or not
  * @property {string} label
- * @property {function(): void} action Logic to run when item is selected
+ * @property {function(): void} [action] Logic to run when item is selected
  */
 
 /**
