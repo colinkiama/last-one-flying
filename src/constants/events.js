@@ -2,6 +2,8 @@ export const CrossSceneEvent = {
   UPDATE_SCORE: 'update-score',
   UPDATE_LIVES: 'update-lives',
   SHAKE_SCREEN: 'shake-screen',
+  PAUSE_GAME: 'pause-game',
+  RESUME_GAME: 'resume-game',
 };
 
 export const GameLogicEvent = {

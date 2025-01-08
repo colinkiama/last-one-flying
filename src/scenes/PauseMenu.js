@@ -6,6 +6,9 @@ import {
   HOVER_TWEEN_CONFIG,
 } from '../constants/menu.js';
 
+import { crossSceneEventEmitter } from '../utils/events.js';
+import { CrossSceneEvent } from '../constants/events.js';
+
 export class PauseMenu extends Scene {
   constructor() {
     super('PauseMenu');
@@ -24,8 +27,8 @@ export class PauseMenu extends Scene {
       ...HOVER_TWEEN_CONFIG,
     });
 
-    const playButton = this.add
-      .text(320, title.y + title.height + 32, 'Play', {
+    const resumeButton = this.add
+      .text(320, title.y + title.height + 32, 'Resume', {
         fontFamily: 'usuzi',
         fontSize: 24,
         color: COLORS.foreground,
@@ -33,16 +36,17 @@ export class PauseMenu extends Scene {
       .setOrigin(0.5, 0)
       .setInteractive(MENU_ITEM_CONFIG);
 
-    playButton.on('pointerover', onButtonHover);
-    playButton.on('pointerout', onButtonOut);
-    playButton.on('pointerup', (_pointer, _localX, _localY, event) => {
-      this.scene.start('Game');
+    resumeButton.on('pointerover', onButtonHover);
+    resumeButton.on('pointerout', onButtonOut);
+    resumeButton.on('pointerup', (_pointer, _localX, _localY, event) => {
+      crossSceneEventEmitter.emit(CrossSceneEvent.RESUME_GAME);
+      this.scene.stop(this);
     });
 
     // TODO: Set text based on sound playback prefernce value
     // in local storage
     const soundToggleButton = this.add
-      .text(320, playButton.y + 32, 'Sound: On', {
+      .text(320, resumeButton.y + 32, 'Sound: On', {
         fontFamily: 'usuzi',
         fontSize: 24,
         color: COLORS.foreground,

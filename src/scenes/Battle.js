@@ -178,6 +178,18 @@ export class Battle extends Scene {
       this,
     );
 
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.PAUSE_GAME,
+      this.onPauseGame,
+      this,
+    );
+
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.RESUME_GAME,
+      this.onResumeGame,
+      this,
+    );
+
     this.registry.events.on(Data.Events.CHANGE_DATA, (parent, key, value) => {
       this.onDataChanged(parent, key, value);
     });
@@ -185,6 +197,14 @@ export class Battle extends Scene {
     this.registry.events.on(Data.Events.SET_DATA, (parent, key, value) => {
       this.onDataChanged(parent, key, value);
     });
+  }
+
+  onResumeGame() {
+    this.scene.resume(this);
+  }
+
+  onPauseGame() {
+    this.scene.pause(this);
   }
 
   onDataChanged(_parent, key, value) {

@@ -1,4 +1,4 @@
-import { Scene, Display } from 'phaser';
+import { Scene } from 'phaser';
 import { crossSceneEventEmitter } from '../utils/events.js';
 import { CrossSceneEvent } from '../constants/events.js';
 import {
@@ -58,6 +58,7 @@ export class HUD extends Scene {
       )
       .setInteractive()
       .on('pointerup', () => {
+        crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
         this.scene.launch('PauseMenu');
       });
 
