@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { HOVER_TWEEN_CONFIG } from '../constants/menu.js';
 /**
  * @typedef {Object} MenuItem
  * @property {boolean} [isInteractive] Determines if an item is selectable or not
@@ -25,9 +26,11 @@ import { Scene } from 'phaser';
 
 export class MenuSystem {
   scene;
+  /** @type {Map<string, Menu>} */
   menuMap;
   firstMenuKey;
   _currentMenuContainer;
+  _titleTween;
 
   /**
    * @param {Scene} scene
@@ -38,12 +41,22 @@ export class MenuSystem {
     this.scene = scene;
     this.firstMenuKey = firstMenuKey;
     this.menuMap = new Map();
+    this._titleTween;
 
     for (const menu of menus) {
       this.menuMap.set(menu.key, menu);
     }
 
-    console.log('MenuSystem:', this);
+    console.log('Menu map:', this.menuMap);
+
+    if (this.menuMap.size > 1) {
+      return;
+    }
+
+    this._currentMenuContainer = this.scene.add.container(0, 0);
+    this._currentMenuContainer.add(
+      this._renderMenu(this.menuMap.get(firstMenuKey)),
+    );
   }
 
   /**
@@ -53,7 +66,46 @@ export class MenuSystem {
 
   pop() {}
 
+  /**
+   *
+   * @param {Menu} menu
+   * @param {*} options
+   * @returns
+   */
   _renderMenu(menu, options) {
     // TODO: Create menu to show on screen
+    console.log('Menu:', menu);
+    const title = createTitle(this.scene, menu.title);
+    this._titleTween = this.scene.tweens.add({
+      targets: title,
+      ...HOVER_TWEEN_CONFIG,
+    });
+
+    // const menuItems = menu.items.map((menuItem) =>
+    //   renderMenuItem(this.scene, menuItem),
+    // );
+    // const footerItems = renderFooterItems(this.scene, menu.footerItems);
+    // return [title, ...menuItems, ...footerItems];
+    return [title];
+  }
+}
+
+/**
+ *
+ * @param {Scene} scene
+ * @param {MenuTitle} titleData
+ */
+function createTitle(scene, titleData) {
+  switch (titleData.type) {
+    case 'text': {
+      return scene.add
+        .text(320, 60, 'Pause', {
+          fontFamily: 'usuzi',
+          fontSize: 40,
+        })
+        .setOrigin(0.5, 0);
+    }
+    default:
+      throw new Error(`Unknown menu title type: ${titleData.type}`);
   }
 }
