@@ -1,4 +1,4 @@
-import { Scene } from 'phaser';
+import { GameObjects, Scene } from 'phaser';
 import {
   COLORS,
   HOVER_TWEEN_CONFIG,
@@ -72,7 +72,11 @@ export class MenuSystem {
   /**
    * @param {string} key - Key of menu to switch to
    */
-  push(key) {}
+  push(key) {
+    const nextMenuContainer = this.scene.add.container(0, 0);
+    const nextMenu = this.menuMap.get(key);
+    nextMenuContainer.add(this._renderMenu(nextMenu));
+  }
 
   pop() {}
 
@@ -84,7 +88,7 @@ export class MenuSystem {
    */
   _renderMenu(menu, options) {
     // TODO: Create menu to show on screen
-    const title = createTitle(this.scene, menu.title);
+    const title = this._createTitle(menu.title);
     this._titleTween = this.scene.tweens.add({
       targets: title,
       ...HOVER_TWEEN_CONFIG,
@@ -93,8 +97,7 @@ export class MenuSystem {
     let lastRenderedItem = title;
 
     const menuItems = menu.items.map((menuItem, index) => {
-      const renderedItem = renderMenuItem(
-        this.scene,
+      const renderedItem = this._renderMenuItem(
         menuItem,
         lastRenderedItem,
         index,
@@ -108,67 +111,71 @@ export class MenuSystem {
     // return [title, ...menuItems, ...footerItems];
     return [title, ...menuItems];
   }
-}
 
-/**
- *
- * @param {Scene} scene
- * @param {MenuItem} menuItem
- * @param {*} lastRenderedItem
- */
-function renderMenuItem(scene, menuItem, lastRenderedItem, index) {
-  const y = lastRenderedItem.y + (index === 0 ? 60 : 32);
-
-  const menuItemGameObject = scene.add
-    .text(scene.cameras.main.width / 2, y, menuItem.label, {
-      fontFamily: 'usuzi',
-      fontSize: 24,
-      color: COLORS.foreground,
-    })
-    .setOrigin(0.5, 0);
-
-  if (menuItem.isInteractive === undefined || menuItem.isInteractive) {
-    menuItemGameObject.setInteractive(MENU_ITEM_CONFIG);
-    menuItemGameObject.on('pointerover', onButtonHover);
-    menuItemGameObject.on('pointerout', onButtonOut);
-    if (menuItem.action) {
-      setupMenuAction(scene, menuItemGameObject, menuItem);
+  /**
+   *
+   * @param {MenuTitle} titleData
+   */
+  _createTitle(titleData) {
+    switch (titleData.type) {
+      case 'text': {
+        return this.scene.add
+          .text(320, 60, 'Pause', {
+            fontFamily: 'usuzi',
+            fontSize: 40,
+          })
+          .setOrigin(0.5, 0);
+      }
+      default:
+        throw new Error(`Unknown menu title type: ${titleData.type}`);
     }
   }
 
-  return menuItemGameObject;
-}
+  /**
+   *
+   * @param {MenuItem} menuItem
+   * @param {*} lastRenderedItem
+   */
+  _renderMenuItem(menuItem, lastRenderedItem, index) {
+    const y = lastRenderedItem.y + (index === 0 ? 60 : 32);
 
-/**
- *
- * @param {Scene} scene
- * @param {MenuTitle} titleData
- */
-function createTitle(scene, titleData) {
-  switch (titleData.type) {
-    case 'text': {
-      return scene.add
-        .text(320, 60, 'Pause', {
-          fontFamily: 'usuzi',
-          fontSize: 40,
-        })
-        .setOrigin(0.5, 0);
+    const menuItemGameObject = this.scene.add
+      .text(this.scene.cameras.main.width / 2, y, menuItem.label, {
+        fontFamily: 'usuzi',
+        fontSize: 24,
+        color: COLORS.foreground,
+      })
+      .setOrigin(0.5, 0);
+
+    if (menuItem.isInteractive === undefined || menuItem.isInteractive) {
+      menuItemGameObject.setInteractive(MENU_ITEM_CONFIG);
+      menuItemGameObject.on('pointerover', onButtonHover);
+      menuItemGameObject.on('pointerout', onButtonOut);
+      if (menuItem.action) {
+        this._setupMenuAction(menuItemGameObject, menuItem);
+      }
     }
-    default:
-      throw new Error(`Unknown menu title type: ${titleData.type}`);
-  }
-}
 
-function setupMenuAction(scene, gameObject, menuItem) {
-  const { type, value } = menuItem.action;
-  switch (type) {
-    case 'push':
-      break;
-    case 'pop':
-      break;
-    case 'custom':
-      gameObject.on('pointerup', value, scene);
-      break;
+    return menuItemGameObject;
+  }
+
+  /**
+   *
+   * @param {GameObjects.GameObject} gameObject
+   * @param {MenuItem} menuItem
+   */
+  _setupMenuAction(gameObject, menuItem) {
+    const { type, value } = menuItem.action;
+    switch (type) {
+      case 'push':
+        this.push(value);
+        break;
+      case 'pop':
+        break;
+      case 'custom':
+        gameObject.on('pointerup', value, this.scene);
+        break;
+    }
   }
 }
 
