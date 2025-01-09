@@ -4,16 +4,24 @@ import {
   HOVER_TWEEN_CONFIG,
   MENU_ITEM_CONFIG,
 } from '../constants/menu.js';
+
+/**
+ * @typedef {Object} MenuAction
+ * @property {'push'|'pop'|'custom'} type
+ * @property {*} [value] When the value of `type` is `push`, `value` is expected to be a key of a menu to navigate to.
+ * When the value of `type` is `custom`, `value` is expected to be a function.
+ */
+
 /**
  * @typedef {Object} MenuItem
  * @property {boolean} [isInteractive] Determines if an item is selectable or not
  * @property {string} label
- * @property {function(): void} [action] Logic to run when item is selected
+ * @property {MenuAction} [action] Logic to run when item is selected
  */
 
 /**
  * @typedef {Object} MenuTitle
- * @property {"text"|"image"} type
+ * @property {'text'|'image'} type
  * @property {string} value When `type` = "text"
  * it's the value of the text. When `type` = "image", it's the key of the image.
  */
@@ -51,7 +59,7 @@ export class MenuSystem {
       this.menuMap.set(menu.key, menu);
     }
 
-    if (this.menuMap.size > 1) {
+    if (this.menuMap.size < 1) {
       return;
     }
 
@@ -98,7 +106,7 @@ export class MenuSystem {
 
     // const footerItems = renderFooterItems(this.scene, menu.footerItems);
     // return [title, ...menuItems, ...footerItems];
-    return [title];
+    return [title, ...menuItems];
   }
 }
 
@@ -111,7 +119,7 @@ export class MenuSystem {
 function renderMenuItem(scene, menuItem, lastRenderedItem, index) {
   const y = lastRenderedItem.y + (index === 0 ? 60 : 32);
 
-  const renderedMenuItem = scene.add
+  const menuItemGameObject = scene.add
     .text(scene.cameras.main.width / 2, y, menuItem.label, {
       fontFamily: 'usuzi',
       fontSize: 24,
@@ -120,15 +128,15 @@ function renderMenuItem(scene, menuItem, lastRenderedItem, index) {
     .setOrigin(0.5, 0);
 
   if (menuItem.isInteractive === undefined || menuItem.isInteractive) {
-    renderedMenuItem.setInteractive(MENU_ITEM_CONFIG);
-    renderedMenuItem.on('pointerover', onButtonHover);
-    renderedMenuItem.on('pointerout', onButtonOut);
+    menuItemGameObject.setInteractive(MENU_ITEM_CONFIG);
+    menuItemGameObject.on('pointerover', onButtonHover);
+    menuItemGameObject.on('pointerout', onButtonOut);
     if (menuItem.action) {
-      renderedMenuItem.on('pointerup', menuItem.action, scene);
+      setupMenuAction(scene, menuItemGameObject, menuItem);
     }
   }
 
-  return renderedMenuItem;
+  return menuItemGameObject;
 }
 
 /**
@@ -148,6 +156,19 @@ function createTitle(scene, titleData) {
     }
     default:
       throw new Error(`Unknown menu title type: ${titleData.type}`);
+  }
+}
+
+function setupMenuAction(scene, gameObject, menuItem) {
+  const { type, value } = menuItem.action;
+  switch (type) {
+    case 'push':
+      break;
+    case 'pop':
+      break;
+    case 'custom':
+      gameObject.on('pointerup', value, scene);
+      break;
   }
 }
 

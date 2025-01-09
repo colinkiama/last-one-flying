@@ -30,13 +30,27 @@ export class PauseMenu extends Scene {
           items: [
             {
               label: 'Resume',
-              action: resumeGame,
+              action: {
+                type: 'custom',
+                value: resumeGame,
+              },
             },
             {
               label: 'Sound: On',
             },
             {
               label: 'Back To Main Menu',
+            },
+          ],
+        },
+        {
+          key: 'quit-game-confirmation',
+          title: { type: 'text', value: 'All Progress Will Be Lost!' },
+          parent: 'pause',
+          summary: 'Are you sure?',
+          items: [
+            {
+              label: 'no',
             },
           ],
         },
