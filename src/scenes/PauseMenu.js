@@ -11,6 +11,7 @@ import { CrossSceneEvent } from '../constants/events.js';
 import { MenuSystem } from '../systems/menuSystem.js';
 
 export class PauseMenu extends Scene {
+  /** @type {MenuSystem} */
   _menuSystem;
 
   constructor() {
@@ -18,8 +19,8 @@ export class PauseMenu extends Scene {
   }
 
   create() {
-    this._menuSystem = new MenuSystem(
-      this,
+    this._menuSystem = new MenuSystem(this);
+    this._menuSystem.start(
       [
         {
           key: 'pause',
@@ -30,20 +31,14 @@ export class PauseMenu extends Scene {
           items: [
             {
               label: 'Resume',
-              action: {
-                type: 'custom',
-                value: resumeGame,
-              },
+              action: this.resumeGame,
             },
             {
               label: 'Sound: On',
             },
             {
               label: 'Back To Main Menu',
-              action: {
-                type: 'push',
-                value: 'quit-game-confirmation',
-              },
+              action: this.showQuitGameConfirmation,
             },
           ],
         },
@@ -55,16 +50,11 @@ export class PauseMenu extends Scene {
           items: [
             {
               label: 'no',
-              action: {
-                type: 'pop',
-              },
+              action: this.popMenu,
             },
             {
               label: 'yes',
-              action: {
-                type: 'custom',
-                value: quitGame,
-              },
+              action: this.quitGame,
             },
           ],
         },
@@ -72,14 +62,22 @@ export class PauseMenu extends Scene {
       'pause',
     );
   }
-}
 
-function resumeGame() {
-  crossSceneEventEmitter.emit(CrossSceneEvent.RESUME_GAME);
-  this.scene.stop(this);
-}
+  resumeGame() {
+    crossSceneEventEmitter.emit(CrossSceneEvent.RESUME_GAME);
+    this.scene.stop(this);
+  }
 
-function quitGame() {
-  crossSceneEventEmitter.emit(CrossSceneEvent.QUIT_GAME);
-  this.scene.stop(this);
+  quitGame() {
+    crossSceneEventEmitter.emit(CrossSceneEvent.QUIT_GAME);
+    this.scene.stop(this);
+  }
+
+  showQuitGameConfirmation() {
+    this._menuSystem.push('quit-game-confirmation');
+  }
+
+  popMenu() {
+    this._menuSystem.pop();
+  }
 }
