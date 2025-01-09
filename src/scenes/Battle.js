@@ -42,7 +42,7 @@ export class Battle extends Scene {
   _touchControlsSystem;
 
   constructor() {
-    super('Game');
+    super('Battle');
   }
 
   create() {

@@ -30,7 +30,7 @@ export class MainMenu extends Scene {
     playButton.on('pointerover', onButtonHover);
     playButton.on('pointerout', onButtonOut);
     playButton.on('pointerup', (_pointer, _localX, _localY, event) => {
-      this.scene.start('Game');
+      this.scene.start('Battle');
     });
 
     // TODO: Set text based on sound playback prefernce value

@@ -109,7 +109,7 @@ export class MenuSystem {
  * @param {*} lastRenderedItem
  */
 function renderMenuItem(scene, menuItem, lastRenderedItem, index) {
-  const y = lastRenderedItem.y + (index === 0 ? 80 : 32);
+  const y = lastRenderedItem.y + (index === 0 ? 60 : 32);
 
   const renderedMenuItem = scene.add
     .text(scene.cameras.main.width / 2, y, menuItem.label, {
