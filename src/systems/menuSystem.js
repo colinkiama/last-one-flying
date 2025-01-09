@@ -1,5 +1,9 @@
 import { Scene } from 'phaser';
-import { HOVER_TWEEN_CONFIG } from '../constants/menu.js';
+import {
+  COLORS,
+  HOVER_TWEEN_CONFIG,
+  MENU_ITEM_CONFIG,
+} from '../constants/menu.js';
 /**
  * @typedef {Object} MenuItem
  * @property {boolean} [isInteractive] Determines if an item is selectable or not
@@ -47,8 +51,6 @@ export class MenuSystem {
       this.menuMap.set(menu.key, menu);
     }
 
-    console.log('Menu map:', this.menuMap);
-
     if (this.menuMap.size > 1) {
       return;
     }
@@ -74,20 +76,59 @@ export class MenuSystem {
    */
   _renderMenu(menu, options) {
     // TODO: Create menu to show on screen
-    console.log('Menu:', menu);
     const title = createTitle(this.scene, menu.title);
     this._titleTween = this.scene.tweens.add({
       targets: title,
       ...HOVER_TWEEN_CONFIG,
     });
 
-    // const menuItems = menu.items.map((menuItem) =>
-    //   renderMenuItem(this.scene, menuItem),
-    // );
+    let lastRenderedItem = title;
+
+    const menuItems = menu.items.map((menuItem, index) => {
+      const renderedItem = renderMenuItem(
+        this.scene,
+        menuItem,
+        lastRenderedItem,
+        index,
+      );
+
+      lastRenderedItem = renderedItem;
+      return renderedItem;
+    });
+
     // const footerItems = renderFooterItems(this.scene, menu.footerItems);
     // return [title, ...menuItems, ...footerItems];
     return [title];
   }
+}
+
+/**
+ *
+ * @param {Scene} scene
+ * @param {MenuItem} menuItem
+ * @param {*} lastRenderedItem
+ */
+function renderMenuItem(scene, menuItem, lastRenderedItem, index) {
+  const y = lastRenderedItem.y + (index === 0 ? 80 : 32);
+
+  const renderedMenuItem = scene.add
+    .text(scene.cameras.main.width / 2, y, menuItem.label, {
+      fontFamily: 'usuzi',
+      fontSize: 24,
+      color: COLORS.foreground,
+    })
+    .setOrigin(0.5, 0);
+
+  if (menuItem.isInteractive === undefined || menuItem.isInteractive) {
+    renderedMenuItem.setInteractive(MENU_ITEM_CONFIG);
+    renderedMenuItem.on('pointerover', onButtonHover);
+    renderedMenuItem.on('pointerout', onButtonOut);
+    if (menuItem.action) {
+      renderedMenuItem.on('pointerup', menuItem.action, scene);
+    }
+  }
+
+  return renderedMenuItem;
 }
 
 /**
@@ -108,4 +149,12 @@ function createTitle(scene, titleData) {
     default:
       throw new Error(`Unknown menu title type: ${titleData.type}`);
   }
+}
+
+function onButtonHover() {
+  this.setColor(COLORS.hoverForeground);
+}
+
+function onButtonOut() {
+  this.setColor(COLORS.foreground);
 }

@@ -30,9 +30,7 @@ export class PauseMenu extends Scene {
           items: [
             {
               label: 'Resume',
-              action: () => {
-                crossSceneEventEmitter.emit(CrossSceneEvent.RESUME_GAME);
-              },
+              action: resumeGame,
             },
             {
               label: 'Sound: On',
@@ -46,4 +44,9 @@ export class PauseMenu extends Scene {
       'pause',
     );
   }
+}
+
+function resumeGame() {
+  crossSceneEventEmitter.emit(CrossSceneEvent.RESUME_GAME);
+  this.scene.stop(this);
 }
