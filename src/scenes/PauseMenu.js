@@ -40,6 +40,10 @@ export class PauseMenu extends Scene {
             },
             {
               label: 'Back To Main Menu',
+              action: {
+                type: 'push',
+                value: 'quit-game-confirmation',
+              },
             },
           ],
         },
@@ -51,6 +55,16 @@ export class PauseMenu extends Scene {
           items: [
             {
               label: 'no',
+              action: {
+                type: 'pop',
+              },
+            },
+            {
+              label: 'yes',
+              action: {
+                type: 'custom',
+                value: quitGame,
+              },
             },
           ],
         },
@@ -62,5 +76,10 @@ export class PauseMenu extends Scene {
 
 function resumeGame() {
   crossSceneEventEmitter.emit(CrossSceneEvent.RESUME_GAME);
+  this.scene.stop(this);
+}
+
+function quitGame() {
+  crossSceneEventEmitter.emit(CrossSceneEvent.QUIT_GAME);
   this.scene.stop(this);
 }

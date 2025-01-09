@@ -190,6 +190,8 @@ export class Battle extends Scene {
       this,
     );
 
+    crossSceneEventEmitter.on(CrossSceneEvent.QUIT_GAME, this.onQuitGame, this);
+
     this.registry.events.on(Data.Events.CHANGE_DATA, (parent, key, value) => {
       this.onDataChanged(parent, key, value);
     });
@@ -197,6 +199,14 @@ export class Battle extends Scene {
     this.registry.events.on(Data.Events.SET_DATA, (parent, key, value) => {
       this.onDataChanged(parent, key, value);
     });
+  }
+
+  onQuitGame() {
+    // TODO:
+    // - Tell HUD to unsubscribe from all events and send HUD_DESTROYED message back
+    // - On HUD_DESTROYED message, unsubscribe from all events in this scene
+    // - Start main menu scene, destroying this scene
+    console.log('Quit game!');
   }
 
   onResumeGame() {

@@ -4,6 +4,7 @@ export const CrossSceneEvent = {
   SHAKE_SCREEN: 'shake-screen',
   PAUSE_GAME: 'pause-game',
   RESUME_GAME: 'resume-game',
+  QUIT_GAME: 'quit-game',
 };
 
 export const GameLogicEvent = {
