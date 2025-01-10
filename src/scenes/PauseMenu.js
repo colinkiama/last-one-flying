@@ -77,7 +77,7 @@ export class PauseMenu extends Scene {
     this._menuSystem.push('quit-game-confirmation');
   }
 
-  popMenu() {
-    this._menuSystem.pop();
+  async popMenu() {
+    await this._menuSystem.pop();
   }
 }

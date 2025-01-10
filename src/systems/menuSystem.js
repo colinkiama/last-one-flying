@@ -103,6 +103,7 @@ export class MenuSystem {
     await pushTweenPromise;
     this._currentMenuContainer.destroy();
     this._currentMenuContainer = nextMenuContainer;
+    this._currentMenu = nextMenu;
   }
 
   shutDownCurrentMenu() {
@@ -126,7 +127,37 @@ export class MenuSystem {
     // 3. TODO: Disable menu footer item events
   }
 
-  pop() {}
+  async pop() {
+    this.shutDownCurrentMenu();
+    const nextMenuContainer = this.scene.add.container(0, 0);
+    const nextMenu = this.menuMap.get(this._currentMenu.parent);
+
+    nextMenuContainer.add(this._renderMenu(nextMenu));
+
+    const sceneWidth = this.scene.cameras.main.width;
+    const popTweenPromise = new Promise((resolve) =>
+      this.scene.tweens.addMultiple([
+        {
+          targets: [this._currentMenuContainer],
+          x: sceneWidth,
+          duration: 500,
+          ease: 'back',
+        },
+        {
+          targets: [nextMenuContainer],
+          x: { from: -sceneWidth, to: 0 },
+          duration: 500,
+          ease: 'back',
+          onComplete: () => resolve(),
+        },
+      ]),
+    );
+
+    await popTweenPromise;
+    this._currentMenuContainer.destroy();
+    this._currentMenuContainer = nextMenuContainer;
+    this._currentMenu = nextMenu;
+  }
 
   /**
    *
