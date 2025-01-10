@@ -1,4 +1,4 @@
-import { Scene } from 'phaser';
+import { GameObjects, Scene, Tweens } from 'phaser';
 import {
   COLORS,
   HOVER_TWEEN_CONFIG,
@@ -33,8 +33,13 @@ export class MenuSystem {
   scene;
   /** @type {Map<string, Menu>} */
   menuMap;
+  /** @type {string} */
   firstMenuKey;
+  /** @type {Menu} */
+  _currentMenu;
+  /** @type {GameObjects.Container} */
   _currentMenuContainer;
+  /** @type {Tweens.Tween} */
   _titleTween;
 
   /**
@@ -61,20 +66,45 @@ export class MenuSystem {
       return;
     }
 
+    this._currentMenu = this.menuMap.get(firstMenuKey);
     this._currentMenuContainer = this.scene.add.container(0, 0);
-    this._currentMenuContainer.add(
-      this._renderMenu(this.menuMap.get(firstMenuKey)),
-    );
+    this._currentMenuContainer.add(this._renderMenu(this._currentMenu));
   }
 
   /**
    * @param {string} key - Key of menu to switch to
    */
   push(key) {
+    this.shutDownCurrentMenu();
     const nextMenuContainer = this.scene.add.container(0, 0);
     const nextMenu = this.menuMap.get(key);
     console.log('Next menu:', nextMenu);
+
     nextMenuContainer.add(this._renderMenu(nextMenu));
+
+    this._currentMenuContainer.destroy();
+    this._currentMenuContainer = nextMenuContainer;
+  }
+
+  shutDownCurrentMenu() {
+    // 1. Disable title tween
+    this._titleTween.destroy();
+
+    // 2. Disable menu item events
+    const menuItemsLength = this._currentMenu.items.length;
+    for (let i = 0; i < menuItemsLength; i++) {
+      const menuItem = this._currentMenu.items[i];
+      if (menuItem.isInteractive) {
+        const menuItemGameObject = this._currentMenuContainer.getAt(i);
+        menuItemGameObject.off('pointerover', onButtonHover);
+        menuItemGameObject.off('pointerout', onButtonOut);
+        if (menuItem.action) {
+          menuItemGameObject.off('pointerup', menuItem.action, this.scene);
+        }
+      }
+    }
+
+    // 3. TODO: Disable menu footer item events
   }
 
   pop() {}
@@ -141,7 +171,9 @@ export class MenuSystem {
    * @param {*} lastRenderedItem
    */
   _renderMenuItem(menuItem, lastRenderedItem, index) {
-    const y = lastRenderedItem.y + (index === 0 ? 60 : 32);
+    const y =
+      lastRenderedItem.y +
+      (index === 0 ? lastRenderedItem.height / 2 + 60 : 32);
 
     const menuItemGameObject = this.scene.add
       .text(this.scene.cameras.main.width / 2, y, menuItem.label, {
