@@ -74,14 +74,33 @@ export class MenuSystem {
   /**
    * @param {string} key - Key of menu to switch to
    */
-  push(key) {
+  async push(key) {
     this.shutDownCurrentMenu();
     const nextMenuContainer = this.scene.add.container(0, 0);
     const nextMenu = this.menuMap.get(key);
-    console.log('Next menu:', nextMenu);
 
     nextMenuContainer.add(this._renderMenu(nextMenu));
 
+    const sceneWidth = this.scene.cameras.main.width;
+    const pushTweenPromise = new Promise((resolve) =>
+      this.scene.tweens.addMultiple([
+        {
+          targets: [this._currentMenuContainer],
+          x: -sceneWidth,
+          duration: 500,
+          ease: 'back',
+        },
+        {
+          targets: [nextMenuContainer],
+          x: { from: sceneWidth, to: 0 },
+          duration: 500,
+          ease: 'back',
+          onComplete: () => resolve(),
+        },
+      ]),
+    );
+
+    await pushTweenPromise;
     this._currentMenuContainer.destroy();
     this._currentMenuContainer = nextMenuContainer;
   }
@@ -119,7 +138,7 @@ export class MenuSystem {
     // TODO: Create menu to show on screen
     const title = this._createTitle(menu.title);
     this._titleTween = this.scene.tweens.add({
-      targets: title,
+      targets: [title],
       ...HOVER_TWEEN_CONFIG,
     });
 
