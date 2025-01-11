@@ -131,8 +131,7 @@ export class HUD extends Scene {
   }
 
   onPause() {
-    crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
-    this.scene.launch('PauseMenu');
+    this.scene.launch(SceneKey.PAUSE_MENU);
   }
 
   unsubscribeFromEvents() {

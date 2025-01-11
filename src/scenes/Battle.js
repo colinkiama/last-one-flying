@@ -141,6 +141,8 @@ export class Battle extends Scene {
   }
 
   subscribeToEvents() {
+    this.input.keyboard.on('keyup-P', this.onPauseRequested, this);
+
     gameLogicEventEmitter.on(
       GameLogicEvent.PLAYER_FIRE,
       this.onPlayerFire,
@@ -205,7 +207,13 @@ export class Battle extends Scene {
     this.events.once('shutdown', this.unsubscribeFromEvents, this);
   }
 
+  onPauseRequested() {
+    this.scene.launch(SceneKey.PAUSE_MENU);
+  }
+
   unsubscribeFromEvents() {
+    this.input.keyboard.off('keyup-P', this.onPauseRequested, this);
+
     gameLogicEventEmitter.off(
       GameLogicEvent.PLAYER_FIRE,
       this.onPlayerFire,
