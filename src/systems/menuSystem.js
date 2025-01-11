@@ -187,6 +187,7 @@ export class MenuSystem {
         menuItem,
         lastRenderedItem,
         index,
+        !!menu.summary,
       );
 
       lastRenderedItem = renderedItem;
@@ -238,10 +239,11 @@ export class MenuSystem {
    * @param {MenuItem} menuItem
    * @param {*} lastRenderedItem
    */
-  _renderMenuItem(menuItem, lastRenderedItem, index) {
+  _renderMenuItem(menuItem, lastRenderedItem, index, hasSummary = false) {
+    const firstItemOffset = hasSummary ? 32 : 60;
     const y =
       lastRenderedItem.y +
-      (index === 0 ? lastRenderedItem.height / 2 + 60 : 32);
+      (index === 0 ? lastRenderedItem.height / 2 + firstItemOffset : 32);
 
     const menuItemGameObject = this.scene.add
       .text(this.scene.cameras.main.width / 2, y, menuItem.label, {
