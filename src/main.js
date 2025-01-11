@@ -1,6 +1,5 @@
 import { Boot } from './scenes/Boot.js';
 import { Battle } from './scenes/Battle.js';
-import { GameOver } from './scenes/GameOver.js';
 import { MainMenu } from './scenes/MainMenu.js';
 import { Preloader } from './scenes/Preloader.js';
 import { Credits } from './scenes/Credits.js';
@@ -30,7 +29,7 @@ const config = {
   input: {
     activePointers: 2,
   },
-  scene: [Boot, Preloader, MainMenu, Battle, Credits, HUD, PauseMenu, GameOver],
+  scene: [Boot, Preloader, MainMenu, Battle, Credits, HUD, PauseMenu],
   plugins: {
     global: [
       {
