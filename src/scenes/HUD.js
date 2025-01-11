@@ -8,6 +8,8 @@ import {
 } from '../constants/HUD.js';
 import { HealthBar } from '../UI/HealthBar.js';
 import { VFXSystem } from '../systems/vfxSystem.js';
+import { SceneKey } from '../constants/scene.js';
+import { MENU_ITEM_CONFIG } from '../constants/menu.js';
 
 export class HUD extends Scene {
   _scoreValueText;
@@ -17,7 +19,7 @@ export class HUD extends Scene {
   _vfxSystem;
 
   constructor() {
-    super('HUD');
+    super(SceneKey.HUD);
   }
 
   create(data) {
@@ -39,6 +41,13 @@ export class HUD extends Scene {
       this.onScreenShakeRequest,
       this,
     );
+
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.QUITTING_GAME,
+      this.onQuittingGame,
+      this,
+    );
+
     this._score = 0;
     this.anims.create({
       key: 'flicker',
@@ -56,11 +65,8 @@ export class HUD extends Scene {
         HUD_PADDING.verticalPadding + PAUSE_BUTTON_DIMENSIONS.height / 2,
         'pause-button',
       )
-      .setInteractive()
-      .on('pointerup', () => {
-        crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
-        this.scene.launch('PauseMenu');
-      });
+      .setInteractive(MENU_ITEM_CONFIG)
+      .on('pointerup', this.onPause, this);
 
     this._healthIcon = this.add.image(
       this._pauseButton.x +
@@ -119,5 +125,40 @@ export class HUD extends Scene {
 
   onUpdateLives(nextLivesValue) {
     this._healthBar.setLives(nextLivesValue);
+  }
+
+  onPause() {
+    crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
+    this.scene.launch('PauseMenu');
+  }
+
+  onQuittingGame() {
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.UPDATE_SCORE,
+      this.onUpdateScore,
+      this,
+    );
+
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.UPDATE_LIVES,
+      this.onUpdateLives,
+      this,
+    );
+
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.SHAKE_SCREEN,
+      this.onScreenShakeRequest,
+      this,
+    );
+
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.QUITTING_GAME,
+      this.onQuittingGame,
+      this,
+    );
+
+    this._pauseButton.off('pointerup', this.onPause, this);
+    crossSceneEventEmitter.emit(CrossSceneEvent.HUD_DESTROYED);
+    this.scene.stop(this);
   }
 }

@@ -1,4 +1,5 @@
 import { Scene, GameObjects } from 'phaser';
+import { SceneKey } from '../constants/scene.js';
 
 export class Preloader extends Scene {
   constructor() {
@@ -59,7 +60,7 @@ export class Preloader extends Scene {
         families: ['usuzi'],
       },
       active: () => {
-        this.scene.start('MainMenu');
+        this.scene.start(SceneKey.MAIN_MENU);
       },
     });
   }

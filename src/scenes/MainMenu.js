@@ -5,10 +5,11 @@ import {
   MENU_ITEM_CONFIG,
   HOVER_TWEEN_CONFIG,
 } from '../constants/menu.js';
+import { SceneKey } from '../constants/scene.js';
 
 export class MainMenu extends Scene {
   constructor() {
-    super('MainMenu');
+    super(SceneKey.MAIN_MENU);
   }
 
   create() {
@@ -30,7 +31,7 @@ export class MainMenu extends Scene {
     playButton.on('pointerover', onButtonHover);
     playButton.on('pointerout', onButtonOut);
     playButton.on('pointerup', (_pointer, _localX, _localY, event) => {
-      this.scene.start('Battle');
+      this.scene.start(SceneKey.BATTLE);
     });
 
     // TODO: Set text based on sound playback prefernce value
@@ -65,7 +66,7 @@ export class MainMenu extends Scene {
     creditsButton.on('pointerover', onButtonHover);
     creditsButton.on('pointerout', onButtonOut);
     creditsButton.on('pointerup', () => {
-      this.scene.start('Credits');
+      this.scene.start(SceneKey.CREDITS);
     });
 
     const footerText = this.add

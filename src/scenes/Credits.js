@@ -7,9 +7,11 @@ import {
   CREDITS_LIST_ITEMS,
 } from '../constants/menu.js';
 
+import { SceneKey } from '../constants/scene.js';
+
 export class Credits extends Scene {
   constructor() {
-    super('Credits');
+    super(SceneKey.CREDITS);
   }
 
   create() {
@@ -85,7 +87,7 @@ export class Credits extends Scene {
     backButton.on('pointerover', onButtonHover);
     backButton.on('pointerout', onButtonOut);
     backButton.on('pointerup', () => {
-      this.scene.start('MainMenu');
+      this.scene.start(SceneKey.MAIN_MENU);
     });
   }
 }

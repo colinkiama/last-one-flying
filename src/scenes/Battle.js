@@ -25,6 +25,7 @@ import { PLAYER_STARTING_POSITION } from '../constants/spawn.js';
 import { STARTING_LIVES } from '../constants/status.js';
 import { TOUCH_CONTROLS_KEY } from '../constants/data.js';
 import { TouchControlsSystem } from '../systems/touchControlsSystem.js';
+import { SceneKey } from '../constants/scene.js';
 
 export class Battle extends Scene {
   _player;
@@ -42,7 +43,7 @@ export class Battle extends Scene {
   _touchControlsSystem;
 
   constructor() {
-    super('Battle');
+    super(SceneKey.BATTLE);
   }
 
   create() {
@@ -192,13 +193,86 @@ export class Battle extends Scene {
 
     crossSceneEventEmitter.on(CrossSceneEvent.QUIT_GAME, this.onQuitGame, this);
 
-    this.registry.events.on(Data.Events.CHANGE_DATA, (parent, key, value) => {
-      this.onDataChanged(parent, key, value);
-    });
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.HUD_DESTROYED,
+      this.onHudDestroyed,
+      this,
+    );
 
-    this.registry.events.on(Data.Events.SET_DATA, (parent, key, value) => {
-      this.onDataChanged(parent, key, value);
-    });
+    this.registry.events.on(Data.Events.CHANGE_DATA, this.onDataChanged, this);
+    this.registry.events.on(Data.Events.SET_DATA, this.onDataChanged, this);
+  }
+
+  unsubscribeFromEvents() {
+    gameLogicEventEmitter.off(
+      GameLogicEvent.PLAYER_FIRE,
+      this.onPlayerFire,
+      this,
+    );
+    gameLogicEventEmitter.off(
+      GameLogicEvent.ENEMY_DEATH,
+      this.onEnemyDeath,
+      this,
+    );
+    gameLogicEventEmitter.off(
+      GameLogicEvent.PLAYER_DEATH,
+      this.onPlayerDeath,
+      this,
+    );
+    gameLogicEventEmitter.off(
+      GameLogicEvent.SHIP_DESTROYED,
+      this.onShipDestroyed,
+      this,
+    );
+    gameLogicEventEmitter.off(
+      GameLogicEvent.SCORE_UPDATED,
+      this.onScoreUpdated,
+      this,
+    );
+    gameLogicEventEmitter.off(
+      GameLogicEvent.LIVES_UPDATED,
+      this.onLivesUpdated,
+      this,
+    );
+    gameLogicEventEmitter.off(GameLogicEvent.GAME_OVER, this.onGameOver, this);
+
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.SHAKE_SCREEN,
+      this.onScreenShakeRequested,
+      this,
+    );
+
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.PAUSE_GAME,
+      this.onPauseGame,
+      this,
+    );
+
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.RESUME_GAME,
+      this.onResumeGame,
+      this,
+    );
+
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.QUIT_GAME,
+      this.onQuitGame,
+      this,
+    );
+
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.HUD_DESTROYED,
+      this.onHudDestroyed,
+      this,
+    );
+
+    this.registry.events.off(Data.Events.CHANGE_DATA, this.onDataChanged, this);
+    this.registry.events.off(Data.Events.SET_DATA, this.onDataChanged, this);
+  }
+
+  onHudDestroyed() {
+    this.unsubscribeFromEvents();
+    this.scene.start(SceneKey.MAIN_MENU);
   }
 
   onQuitGame() {
@@ -206,6 +280,7 @@ export class Battle extends Scene {
     // - Tell HUD to unsubscribe from all events and send HUD_DESTROYED message back
     // - On HUD_DESTROYED message, unsubscribe from all events in this scene
     // - Start main menu scene, destroying this scene
+    crossSceneEventEmitter.emit(CrossSceneEvent.QUITTING_GAME);
     console.log('Quit game!');
   }
 
