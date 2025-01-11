@@ -1,11 +1,4 @@
 import { Scene } from 'phaser';
-import {
-  COLORS,
-  WEBSITE_URL,
-  MENU_ITEM_CONFIG,
-  HOVER_TWEEN_CONFIG,
-} from '../constants/menu.js';
-
 import { crossSceneEventEmitter } from '../utils/events.js';
 import { CrossSceneEvent } from '../constants/events.js';
 import { MenuSystem } from '../systems/menuSystem.js';
@@ -19,6 +12,8 @@ export class PauseMenu extends Scene {
   }
 
   create() {
+    crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
+    this.cameras.main.setBackgroundColor(0xaa000000);
     this._menuSystem = new MenuSystem(this);
     this._menuSystem.start(
       [
@@ -61,9 +56,14 @@ export class PauseMenu extends Scene {
       ],
       'pause',
     );
+
+    this.input.keyboard.once('keyup-P', () => {
+      this.resumeGame();
+    });
   }
 
   resumeGame() {
+    this._menuSystem.shutDownCurrentMenu();
     crossSceneEventEmitter.emit(CrossSceneEvent.RESUME_GAME);
     this.scene.stop(this);
   }
