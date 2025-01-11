@@ -63,8 +63,8 @@ export class CombatSystem {
         );
 
         this.destroyShip(player);
-        gameLogicEventEmitter.emit(GameLogicEvent.PLAYER_DEATH);
         gameLogicEventEmitter.emit(GameLogicEvent.ENEMY_DEATH);
+        gameLogicEventEmitter.emit(GameLogicEvent.PLAYER_DEATH);
       },
     );
 

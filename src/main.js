@@ -6,7 +6,7 @@ import { Credits } from './scenes/Credits.js';
 import { PauseMenu } from './scenes/PauseMenu.js';
 import { HUD } from './scenes/HUD.js';
 import { AUTO, Scale, Game } from 'phaser';
-import { TOUCH_CONTROLS_KEY } from './constants/data.js';
+import { RegistryKey } from './constants/data.js';
 import { VirtualJoyStickPlugin } from 'virtualjoystick';
 
 //  Find out more information about the Game Config at:
@@ -46,21 +46,21 @@ const game = new Game(config);
 document.body.addEventListener('pointerdown', onPointerDown);
 
 function onPointerDown(event) {
-  const currentValue = game.registry.get(TOUCH_CONTROLS_KEY);
+  const currentValue = game.registry.get(RegistryKey.TOUCH_CONTROLS);
   const pointerType = event.pointerType;
   if (!currentValue && pointerType === 'touch') {
-    game.registry.set(TOUCH_CONTROLS_KEY, true);
+    game.registry.set(RegistryKey.TOUCH_CONTROLS, true);
     document.addEventListener('keydown', onKeyDown);
   } else if (currentValue && pointerType !== 'touch') {
-    game.registry.set(TOUCH_CONTROLS_KEY, false);
+    game.registry.set(RegistryKey.TOUCH_CONTROLS, false);
   }
 }
 
 function onKeyDown(event) {
-  const currentValue = game.registry.get(TOUCH_CONTROLS_KEY);
+  const currentValue = game.registry.get(RegistryKey.TOUCH_CONTROLS);
   if (currentValue) {
     document.removeEventListener('keydown', onKeyDown);
-    game.registry.set(TOUCH_CONTROLS_KEY, false);
+    game.registry.set(RegistryKey.TOUCH_CONTROLS, false);
   }
 }
 

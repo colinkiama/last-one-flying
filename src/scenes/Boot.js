@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { SceneKey } from '../constants/scene.js';
+import { LocalStorageKey, RegistryKey } from '../constants/data.js';
 
 export class Boot extends Scene {
   constructor() {
@@ -12,6 +13,11 @@ export class Boot extends Scene {
   }
 
   create() {
+    const storedHighScore = window.localStorage.getItem(
+      LocalStorageKey.HIGH_SCORE,
+    );
+
+    this.game.registry.set(RegistryKey.HIGH_SCORE, storedHighScore ?? 0);
     this.scene.start(SceneKey.PRELOADER);
   }
 }
