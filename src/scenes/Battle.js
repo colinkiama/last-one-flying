@@ -23,7 +23,7 @@ import { ScoreUpdateType } from '../constants/score.js';
 import { Player } from '../gameObjects/Player.js';
 import { PLAYER_STARTING_POSITION } from '../constants/spawn.js';
 import { STARTING_LIVES } from '../constants/status.js';
-import { TOUCH_CONTROLS_KEY } from '../constants/data.js';
+import { RegistryKey } from '../constants/data.js';
 import { TouchControlsSystem } from '../systems/touchControlsSystem.js';
 import { SceneKey } from '../constants/scene.js';
 
@@ -59,7 +59,9 @@ export class Battle extends Scene {
       enable: false,
     });
 
-    const isTouchControlsEnabled = this.registry.get(TOUCH_CONTROLS_KEY);
+    const isTouchControlsEnabled = this.registry.get(
+      RegistryKey.TOUCH_CONTROLS,
+    );
     const fireButton = this.add
       .circle(490, 270, 50)
       .setStrokeStyle(2, 0xffffff);
@@ -300,7 +302,7 @@ export class Battle extends Scene {
 
   onDataChanged(_parent, key, value) {
     switch (key) {
-      case TOUCH_CONTROLS_KEY:
+      case RegistryKey.TOUCH_CONTROLS:
         if (value) {
           this._movementSystem.activateJoystickMovement();
         } else {
