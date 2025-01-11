@@ -16,11 +16,8 @@ export class Boot extends Scene {
     const storedHighScore = window.localStorage.getItem(
       LocalStorageKey.HIGH_SCORE,
     );
+
     this.game.registry.set(RegistryKey.HIGH_SCORE, storedHighScore ?? 0);
-    console.log(
-      'Stored High score:',
-      this.game.registry.get(RegistryKey.HIGH_SCORE),
-    );
     this.scene.start(SceneKey.PRELOADER);
   }
 }

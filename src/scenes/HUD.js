@@ -127,7 +127,17 @@ export class HUD extends Scene {
       this,
     );
 
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.SCORE_RESET,
+      this.onScoreReset,
+      this,
+    );
+
     this.events.once('shutdown', this.unsubscribeFromEvents, this);
+  }
+
+  onScoreReset() {
+    this._highScoreLabelText.setVisible(false);
   }
 
   onScreenShakeRequest(screenShakeType) {

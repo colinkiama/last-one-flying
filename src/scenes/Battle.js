@@ -175,6 +175,7 @@ export class Battle extends Scene {
       this.onLivesUpdated,
       this,
     );
+
     gameLogicEventEmitter.on(GameLogicEvent.GAME_OVER, this.onGameOver, this);
 
     crossSceneEventEmitter.on(
@@ -370,10 +371,15 @@ export class Battle extends Scene {
     this._spawnSystem.deactivateEnemySpawnTimer();
     this.reset();
   }
+
   updateHighScore() {
+    const storedHighScore = this.game.registry.get(RegistryKey.HIGH_SCORE);
     const score = this._scoreSystem.getScore();
-    this.game.registry.set(RegistryKey.HIGH_SCORE, score);
-    localStorage.setItem(LocalStorageKey.HIGH_SCORE, score);
+
+    if (score > storedHighScore) {
+      this.game.registry.set(RegistryKey.HIGH_SCORE, score);
+      localStorage.setItem(LocalStorageKey.HIGH_SCORE, score);
+    }
   }
 
   update() {
@@ -389,6 +395,8 @@ export class Battle extends Scene {
       this._statusSystem.reset();
       this._scoreSystem.reset();
       this._spawnSystem.reset();
+
+      crossSceneEventEmitter.emit(CrossSceneEvent.SCORE_RESET);
     });
   }
 
