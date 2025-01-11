@@ -175,6 +175,13 @@ export class MenuSystem {
 
     let lastRenderedItem = title;
 
+    const summary = menu.summary
+      ? this._renderSummary(menu.summary, lastRenderedItem)
+      : null;
+    if (menu.summary) {
+      lastRenderedItem = summary;
+    }
+
     const menuItems = menu.items.map((menuItem, index) => {
       const renderedItem = this._renderMenuItem(
         menuItem,
@@ -188,7 +195,18 @@ export class MenuSystem {
 
     // const footerItems = renderFooterItems(this.scene, menu.footerItems);
     // return [title, ...menuItems, ...footerItems];
-    return [title, ...menuItems];
+    return [title, summary, ...menuItems].filter((item) => !!item);
+  }
+  _renderSummary(summary, lastRenderedItem) {
+    const y = lastRenderedItem.y + lastRenderedItem.height / 2 + 48;
+
+    return this.scene.add
+      .text(this.scene.cameras.main.width / 2, y, summary, {
+        fontFamily: 'usuzi',
+        fontSize: 24,
+        color: COLORS.foreground,
+      })
+      .setOrigin(0.5, 0);
   }
 
   /**
