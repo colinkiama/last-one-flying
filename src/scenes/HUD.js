@@ -24,31 +24,7 @@ export class HUD extends Scene {
 
   create(data) {
     const { lives } = data;
-    crossSceneEventEmitter.on(
-      CrossSceneEvent.UPDATE_SCORE,
-      this.onUpdateScore,
-      this,
-    );
 
-    crossSceneEventEmitter.on(
-      CrossSceneEvent.UPDATE_LIVES,
-      this.onUpdateLives,
-      this,
-    );
-
-    crossSceneEventEmitter.on(
-      CrossSceneEvent.SHAKE_SCREEN,
-      this.onScreenShakeRequest,
-      this,
-    );
-
-    crossSceneEventEmitter.on(
-      CrossSceneEvent.QUITTING_GAME,
-      this.onQuittingGame,
-      this,
-    );
-
-    this._score = 0;
     this.anims.create({
       key: 'flicker',
       frames: this.anims.generateFrameNumbers('health-point', {
@@ -65,8 +41,7 @@ export class HUD extends Scene {
         HUD_PADDING.verticalPadding + PAUSE_BUTTON_DIMENSIONS.height / 2,
         'pause-button',
       )
-      .setInteractive(MENU_ITEM_CONFIG)
-      .on('pointerup', this.onPause, this);
+      .setInteractive(MENU_ITEM_CONFIG);
 
     this._healthIcon = this.add.image(
       this._pauseButton.x +
@@ -110,7 +85,36 @@ export class HUD extends Scene {
       .setOrigin(1, 0);
 
     this._vfxSystem = new VFXSystem(this);
+
+    this.subscribeToEvents();
   }
+
+  subscribeToEvents() {
+    this._pauseButton.on('pointerup', this.onPause, this);
+
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.UPDATE_SCORE,
+      this.onUpdateScore,
+      this,
+    );
+
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.UPDATE_LIVES,
+      this.onUpdateLives,
+      this,
+    );
+
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.SHAKE_SCREEN,
+      this.onScreenShakeRequest,
+      this,
+    );
+
+    this.events.once('shutdown', () => {
+      this.unsubscribeFromEvents();
+    });
+  }
+
   onScreenShakeRequest(screenShakeType) {
     this._vfxSystem.shakeScreen(screenShakeType);
   }
@@ -132,7 +136,7 @@ export class HUD extends Scene {
     this.scene.launch('PauseMenu');
   }
 
-  onQuittingGame() {
+  unsubscribeFromEvents() {
     crossSceneEventEmitter.off(
       CrossSceneEvent.UPDATE_SCORE,
       this.onUpdateScore,
@@ -148,12 +152,6 @@ export class HUD extends Scene {
     crossSceneEventEmitter.off(
       CrossSceneEvent.SHAKE_SCREEN,
       this.onScreenShakeRequest,
-      this,
-    );
-
-    crossSceneEventEmitter.off(
-      CrossSceneEvent.QUITTING_GAME,
-      this.onQuittingGame,
       this,
     );
 

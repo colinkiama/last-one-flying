@@ -71,6 +71,10 @@ export class MainMenu extends Scene {
     footerText.on('pointerover', onButtonHover);
     footerText.on('pointerout', onButtonOut);
     footerText.on('pointerup', onFooterCreditsClick);
+
+    this.events.once('shutdown', () => {
+      // Unsubscribe from events
+    });
   }
   showCredits() {
     this.scene.start(SceneKey.CREDITS);

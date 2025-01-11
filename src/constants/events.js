@@ -5,7 +5,6 @@ export const CrossSceneEvent = {
   PAUSE_GAME: 'pause-game',
   RESUME_GAME: 'resume-game',
   QUIT_GAME: 'quit-game',
-  QUITTING_GAME: 'quitting-game',
   HUD_DESTROYED: 'hud-destroyed',
 };
 

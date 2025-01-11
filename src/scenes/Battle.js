@@ -280,8 +280,7 @@ export class Battle extends Scene {
     // - Tell HUD to unsubscribe from all events and send HUD_DESTROYED message back
     // - On HUD_DESTROYED message, unsubscribe from all events in this scene
     // - Start main menu scene, destroying this scene
-    crossSceneEventEmitter.emit(CrossSceneEvent.QUITTING_GAME);
-    console.log('Quit game!');
+    this.scene.stop(SceneKey.HUD);
   }
 
   onResumeGame() {
