@@ -5,10 +5,11 @@ import {
   MENU_ITEM_CONFIG,
   HOVER_TWEEN_CONFIG,
 } from '../constants/menu.js';
+import { SceneKey } from '../constants/scene.js';
 
 export class MainMenu extends Scene {
   constructor() {
-    super('MainMenu');
+    super(SceneKey.MAIN_MENU);
   }
 
   create() {
@@ -29,9 +30,7 @@ export class MainMenu extends Scene {
 
     playButton.on('pointerover', onButtonHover);
     playButton.on('pointerout', onButtonOut);
-    playButton.on('pointerup', (_pointer, _localX, _localY, event) => {
-      this.scene.start('Game');
-    });
+    playButton.on('pointerup', this.startNewGame, this);
 
     // TODO: Set text based on sound playback prefernce value
     // in local storage
@@ -46,13 +45,7 @@ export class MainMenu extends Scene {
 
     soundToggleButton.on('pointerover', onButtonHover);
     soundToggleButton.on('pointerout', onButtonOut);
-    soundToggleButton.on('pointerup', () => {
-      // TODO:
-      // - Set sound playback preference in local storage
-      // - Update soundToggle button text to either "Sound: On" or "Sound: Off"
-      //   based on the current sound playback preference value
-    });
-
+    soundToggleButton.on('pointerup', this.onSoundToggle, this);
     const creditsButton = this.add
       .text(320, soundToggleButton.y + 32, 'Credits', {
         fontFamily: 'usuzi',
@@ -64,9 +57,7 @@ export class MainMenu extends Scene {
 
     creditsButton.on('pointerover', onButtonHover);
     creditsButton.on('pointerout', onButtonOut);
-    creditsButton.on('pointerup', () => {
-      this.scene.start('Credits');
-    });
+    creditsButton.on('pointerup', this.showCredits, this);
 
     const footerText = this.add
       .text(320, 340, 'Colin Kiama - 2024', {
@@ -79,9 +70,25 @@ export class MainMenu extends Scene {
 
     footerText.on('pointerover', onButtonHover);
     footerText.on('pointerout', onButtonOut);
-    footerText.on('pointerup', () => {
-      window.open(WEBSITE_URL, '_blank');
+    footerText.on('pointerup', onFooterCreditsClick);
+
+    this.events.once('shutdown', () => {
+      // Unsubscribe from events
     });
+  }
+  showCredits() {
+    this.scene.start(SceneKey.CREDITS);
+  }
+
+  startNewGame() {
+    this.scene.start(SceneKey.BATTLE);
+  }
+
+  onSoundToggle() {
+    // TODO:
+    // - Set sound playback preference in local storage
+    // - Update soundToggle button text to either "Sound: On" or "Sound: Off"
+    //   based on the current sound playback preference value
   }
 }
 
@@ -91,4 +98,8 @@ function onButtonHover() {
 
 function onButtonOut() {
   this.setColor(COLORS.foreground);
+}
+
+function onFooterCreditsClick() {
+  window.open(WEBSITE_URL, '_blank');
 }

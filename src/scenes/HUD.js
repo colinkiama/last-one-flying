@@ -1,4 +1,4 @@
-import { Scene, Display } from 'phaser';
+import { Scene } from 'phaser';
 import { crossSceneEventEmitter } from '../utils/events.js';
 import { CrossSceneEvent } from '../constants/events.js';
 import {
@@ -8,6 +8,8 @@ import {
 } from '../constants/HUD.js';
 import { HealthBar } from '../UI/HealthBar.js';
 import { VFXSystem } from '../systems/vfxSystem.js';
+import { SceneKey } from '../constants/scene.js';
+import { MENU_ITEM_CONFIG } from '../constants/menu.js';
 
 export class HUD extends Scene {
   _scoreValueText;
@@ -17,44 +19,31 @@ export class HUD extends Scene {
   _vfxSystem;
 
   constructor() {
-    super('HUD');
+    super(SceneKey.HUD);
   }
 
   create(data) {
     const { lives } = data;
-    crossSceneEventEmitter.on(
-      CrossSceneEvent.UPDATE_SCORE,
-      this.onUpdateScore,
-      this,
-    );
+    if (!this.anims.exists('flicker')) {
+      this.anims.create({
+        key: 'flicker',
+        frames: this.anims.generateFrameNumbers('health-point', {
+          start: 0,
+          end: 1,
+        }),
+        frameRate: 3,
+        repeat: -1,
+      });
+    }
 
-    crossSceneEventEmitter.on(
-      CrossSceneEvent.UPDATE_LIVES,
-      this.onUpdateLives,
-      this,
-    );
+    this._pauseButton = this.add
+      .image(
+        HUD_PADDING.horizontalPadding + PAUSE_BUTTON_DIMENSIONS.width / 2,
+        HUD_PADDING.verticalPadding + PAUSE_BUTTON_DIMENSIONS.height / 2,
+        'pause-button',
+      )
+      .setInteractive(MENU_ITEM_CONFIG);
 
-    crossSceneEventEmitter.on(
-      CrossSceneEvent.SHAKE_SCREEN,
-      this.onScreenShakeRequest,
-      this,
-    );
-    this._score = 0;
-    this.anims.create({
-      key: 'flicker',
-      frames: this.anims.generateFrameNumbers('health-point', {
-        start: 0,
-        end: 1,
-      }),
-      frameRate: 3,
-      repeat: -1,
-    });
-
-    this._pauseButton = this.add.image(
-      HUD_PADDING.horizontalPadding + PAUSE_BUTTON_DIMENSIONS.width / 2,
-      HUD_PADDING.verticalPadding + PAUSE_BUTTON_DIMENSIONS.height / 2,
-      'pause-button',
-    );
     this._healthIcon = this.add.image(
       this._pauseButton.x +
         PAUSE_BUTTON_DIMENSIONS.width / 2 +
@@ -97,7 +86,34 @@ export class HUD extends Scene {
       .setOrigin(1, 0);
 
     this._vfxSystem = new VFXSystem(this);
+
+    this.subscribeToEvents();
   }
+
+  subscribeToEvents() {
+    this._pauseButton.on('pointerup', this.onPause, this);
+
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.UPDATE_SCORE,
+      this.onUpdateScore,
+      this,
+    );
+
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.UPDATE_LIVES,
+      this.onUpdateLives,
+      this,
+    );
+
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.SHAKE_SCREEN,
+      this.onScreenShakeRequest,
+      this,
+    );
+
+    this.events.once('shutdown', this.unsubscribeFromEvents, this);
+  }
+
   onScreenShakeRequest(screenShakeType) {
     this._vfxSystem.shakeScreen(screenShakeType);
   }
@@ -112,5 +128,33 @@ export class HUD extends Scene {
 
   onUpdateLives(nextLivesValue) {
     this._healthBar.setLives(nextLivesValue);
+  }
+
+  onPause() {
+    crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
+    this.scene.launch('PauseMenu');
+  }
+
+  unsubscribeFromEvents() {
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.UPDATE_SCORE,
+      this.onUpdateScore,
+      this,
+    );
+
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.UPDATE_LIVES,
+      this.onUpdateLives,
+      this,
+    );
+
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.SHAKE_SCREEN,
+      this.onScreenShakeRequest,
+      this,
+    );
+
+    this._pauseButton.off('pointerup', this.onPause, this);
+    crossSceneEventEmitter.emit(CrossSceneEvent.HUD_DESTROYED);
   }
 }
