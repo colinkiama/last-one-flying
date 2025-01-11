@@ -61,9 +61,14 @@ export class PauseMenu extends Scene {
       ],
       'pause',
     );
+
+    this.input.keyboard.once('keyup-' + 'P', () => {
+      this.resumeGame();
+    });
   }
 
   resumeGame() {
+    this._menuSystem.shutDownCurrentMenu();
     crossSceneEventEmitter.emit(CrossSceneEvent.RESUME_GAME);
     this.scene.stop(this);
   }
