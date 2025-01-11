@@ -13,6 +13,7 @@ export class PauseMenu extends Scene {
 
   create() {
     crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
+    this.cameras.main.setBackgroundColor(0xaa000000);
     this._menuSystem = new MenuSystem(this);
     this._menuSystem.start(
       [
