@@ -24,16 +24,17 @@ export class HUD extends Scene {
 
   create(data) {
     const { lives } = data;
-
-    this.anims.create({
-      key: 'flicker',
-      frames: this.anims.generateFrameNumbers('health-point', {
-        start: 0,
-        end: 1,
-      }),
-      frameRate: 3,
-      repeat: -1,
-    });
+    if (!this.anims.exists('flicker')) {
+      this.anims.create({
+        key: 'flicker',
+        frames: this.anims.generateFrameNumbers('health-point', {
+          start: 0,
+          end: 1,
+        }),
+        frameRate: 3,
+        repeat: -1,
+      });
+    }
 
     this._pauseButton = this.add
       .image(
@@ -110,9 +111,7 @@ export class HUD extends Scene {
       this,
     );
 
-    this.events.once('shutdown', () => {
-      this.unsubscribeFromEvents();
-    });
+    this.events.once('shutdown', this.unsubscribeFromEvents, this);
   }
 
   onScreenShakeRequest(screenShakeType) {
@@ -157,6 +156,5 @@ export class HUD extends Scene {
 
     this._pauseButton.off('pointerup', this.onPause, this);
     crossSceneEventEmitter.emit(CrossSceneEvent.HUD_DESTROYED);
-    this.scene.stop(this);
   }
 }

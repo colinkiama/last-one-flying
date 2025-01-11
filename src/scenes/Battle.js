@@ -201,6 +201,8 @@ export class Battle extends Scene {
 
     this.registry.events.on(Data.Events.CHANGE_DATA, this.onDataChanged, this);
     this.registry.events.on(Data.Events.SET_DATA, this.onDataChanged, this);
+
+    this.events.once('shutdown', this.unsubscribeFromEvents, this);
   }
 
   unsubscribeFromEvents() {
@@ -271,15 +273,10 @@ export class Battle extends Scene {
   }
 
   onHudDestroyed() {
-    this.unsubscribeFromEvents();
     this.scene.start(SceneKey.MAIN_MENU);
   }
 
   onQuitGame() {
-    // TODO:
-    // - Tell HUD to unsubscribe from all events and send HUD_DESTROYED message back
-    // - On HUD_DESTROYED message, unsubscribe from all events in this scene
-    // - Start main menu scene, destroying this scene
     this.scene.stop(SceneKey.HUD);
   }
 
