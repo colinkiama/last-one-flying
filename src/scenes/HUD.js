@@ -17,6 +17,7 @@ export class HUD extends Scene {
   _healthIcon;
   _healthBar;
   _vfxSystem;
+  _highScoreLabelText;
 
   constructor() {
     super(SceneKey.HUD);
@@ -75,11 +76,24 @@ export class HUD extends Scene {
     this._scoreValueText = this.add
       .text(
         this.cameras.main.width - HUD_PADDING.horizontalPadding,
-        scoreLabel.y + scoreLabel.height / 2 + 8,
+        scoreLabel.y + scoreLabel.height,
         '0',
         {
           fontFamily: 'usuzi',
           fontSize: 24,
+          color: '#ffffff',
+        },
+      )
+      .setOrigin(1, 0);
+
+    this._highScoreLabelText = this.add
+      .text(
+        this.cameras.main.width - HUD_PADDING.horizontalPadding,
+        this._scoreValueText.y + this._scoreValueText.height,
+        'BEST',
+        {
+          fontFamily: 'usuzi',
+          fontSize: 12,
           color: '#ffffff',
         },
       )
