@@ -289,10 +289,12 @@ export class Battle extends Scene {
   }
 
   onResumeGame() {
+    this.scene.resume(SceneKey.HUD);
     this.scene.resume(this);
   }
 
   onPauseGame() {
+    this.scene.pause(SceneKey.HUD);
     this.scene.pause(this);
   }
 
