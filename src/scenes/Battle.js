@@ -23,7 +23,7 @@ import { ScoreUpdateType } from '../constants/score.js';
 import { Player } from '../gameObjects/Player.js';
 import { PLAYER_STARTING_POSITION } from '../constants/spawn.js';
 import { STARTING_LIVES } from '../constants/status.js';
-import { RegistryKey } from '../constants/data.js';
+import { LocalStorageKey, RegistryKey } from '../constants/data.js';
 import { TouchControlsSystem } from '../systems/touchControlsSystem.js';
 import { SceneKey } from '../constants/scene.js';
 
@@ -366,8 +366,14 @@ export class Battle extends Scene {
   }
 
   onGameOver() {
+    this.updateHighScore();
     this._spawnSystem.deactivateEnemySpawnTimer();
     this.reset();
+  }
+  updateHighScore() {
+    const score = this._scoreSystem.getScore();
+    this.game.registry.set(RegistryKey.HIGH_SCORE, score);
+    localStorage.setItem(LocalStorageKey.HIGH_SCORE, score);
   }
 
   update() {
