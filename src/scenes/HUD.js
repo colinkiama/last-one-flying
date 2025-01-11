@@ -10,6 +10,7 @@ import { HealthBar } from '../UI/HealthBar.js';
 import { VFXSystem } from '../systems/vfxSystem.js';
 import { SceneKey } from '../constants/scene.js';
 import { MENU_ITEM_CONFIG } from '../constants/menu.js';
+import { RegistryKey } from '../constants/data.js';
 
 export class HUD extends Scene {
   _scoreValueText;
@@ -97,6 +98,7 @@ export class HUD extends Scene {
           color: '#ffffff',
         },
       )
+      .setVisible(false)
       .setOrigin(1, 0);
 
     this._vfxSystem = new VFXSystem(this);
@@ -138,6 +140,14 @@ export class HUD extends Scene {
 
   onUpdateScore(nextPointsValue) {
     this._scoreValueText.text = String(nextPointsValue);
+    if (this._highScoreLabelText.visible) {
+      return;
+    }
+
+    const storedHighScore = this.game.registry.get(RegistryKey.HIGH_SCORE);
+    if (nextPointsValue > storedHighScore) {
+      this._highScoreLabelText.setVisible(true);
+    }
   }
 
   onUpdateLives(nextLivesValue) {
