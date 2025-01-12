@@ -175,6 +175,12 @@ export class HUD extends Scene {
       this,
     );
 
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.SCORE_RESET,
+      this.onScoreReset,
+      this,
+    );
+
     crossSceneEventEmitter.off(
       CrossSceneEvent.UPDATE_LIVES,
       this.onUpdateLives,
