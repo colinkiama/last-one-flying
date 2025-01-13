@@ -60,7 +60,7 @@ export class MainMenu extends Scene {
     creditsButton.on('pointerup', this.showCredits, this);
 
     const footerText = this.add
-      .text(320, 340, 'Colin Kiama - 2024', {
+      .text(320, 340, 'Colin Kiama - 2025', {
         fontFamily: 'usuzi',
         fontSize: 16,
         color: COLORS.foreground,

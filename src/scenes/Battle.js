@@ -204,10 +204,20 @@ export class Battle extends Scene {
       this,
     );
 
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.RESET_GAME,
+      this.onResetGame,
+      this,
+    );
+
     this.registry.events.on(Data.Events.CHANGE_DATA, this.onDataChanged, this);
     this.registry.events.on(Data.Events.SET_DATA, this.onDataChanged, this);
 
     this.events.once('shutdown', this.unsubscribeFromEvents, this);
+  }
+  onResetGame() {
+    this.scene.resume();
+    this.reset();
   }
 
   onPauseRequested() {
@@ -276,6 +286,12 @@ export class Battle extends Scene {
     crossSceneEventEmitter.off(
       CrossSceneEvent.HUD_DESTROYED,
       this.onHudDestroyed,
+      this,
+    );
+
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.RESET_GAME,
+      this.onResetGame,
       this,
     );
 
@@ -367,9 +383,19 @@ export class Battle extends Scene {
   }
 
   onGameOver() {
+    const gameStats = {
+      score: this._scoreSystem.getScore,
+      oldHighScore: this.game.registry.get(RegistryKey.HIGH_SCORE),
+      time: 0, // TODO: Record time between player has been alive for each game
+    };
+
+    this.clearPhysicsPools();
     this.updateHighScore();
     this._spawnSystem.deactivateEnemySpawnTimer();
-    this.reset();
+
+    this.time.delayedCall(1000, () => {
+      this.scene.launch(SceneKey.GAME_OVER, gameStats);
+    });
   }
 
   updateHighScore() {
@@ -388,16 +414,11 @@ export class Battle extends Scene {
   }
 
   reset() {
-    this.clearPhysicsPools();
-
-    this.time.delayedCall(1000, () => {
-      this.clearVFXPools();
-      this._statusSystem.reset();
-      this._scoreSystem.reset();
-      this._spawnSystem.reset();
-
-      crossSceneEventEmitter.emit(CrossSceneEvent.SCORE_RESET);
-    });
+    this.clearVFXPools();
+    this._statusSystem.reset();
+    this._scoreSystem.reset();
+    this._spawnSystem.reset();
+    crossSceneEventEmitter.emit(CrossSceneEvent.SCORE_RESET);
   }
 
   clearPhysicsPools() {

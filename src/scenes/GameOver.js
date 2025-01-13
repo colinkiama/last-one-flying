@@ -4,15 +4,16 @@ import { CrossSceneEvent } from '../constants/events.js';
 import { MenuSystem } from '../systems/menuSystem.js';
 import { SceneKey } from '../constants/scene.js';
 
-export class PauseMenu extends Scene {
+export class GameOver extends Scene {
   /** @type {MenuSystem} */
   _menuSystem;
 
   constructor() {
-    super(SceneKey.PAUSE_MENU);
+    super(SceneKey.GAME_OVER);
   }
 
-  create() {
+  create(data) {
+    const { score, oldHighScore, time } = data;
     crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
     this.cameras.main.setBackgroundColor(0xaa000000);
     this._menuSystem = new MenuSystem(this);
@@ -22,34 +23,15 @@ export class PauseMenu extends Scene {
           key: 'pause',
           title: {
             type: 'text',
-            value: 'Game Paused',
+            value: 'Game Over',
           },
           items: [
             {
-              label: 'Resume',
-              action: this.resumeGame,
-            },
-            {
-              label: 'Sound: On',
+              label: 'Play Again',
+              action: this.resetGame,
             },
             {
               label: 'Back To Main Menu',
-              action: this.showQuitGameConfirmation,
-            },
-          ],
-        },
-        {
-          key: 'quit-game-confirmation',
-          title: { type: 'text', value: 'All Progress Will Be Lost!' },
-          parent: 'pause',
-          summary: 'Are you sure?',
-          items: [
-            {
-              label: 'no',
-              action: this.popMenu,
-            },
-            {
-              label: 'yes',
               action: this.quitGame,
             },
           ],
@@ -57,15 +39,11 @@ export class PauseMenu extends Scene {
       ],
       'pause',
     );
-
-    this.input.keyboard.once('keyup-P', () => {
-      this.resumeGame();
-    });
   }
 
-  resumeGame() {
+  resetGame() {
     this._menuSystem.shutDownCurrentMenu();
-    crossSceneEventEmitter.emit(CrossSceneEvent.RESUME_GAME);
+    crossSceneEventEmitter.emit(CrossSceneEvent.RESET_GAME);
     this.scene.stop(this);
   }
 
