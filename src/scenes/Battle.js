@@ -384,7 +384,7 @@ export class Battle extends Scene {
 
   onGameOver() {
     const gameStats = {
-      score: this._scoreSystem.getScore,
+      score: this._scoreSystem.getScore(),
       oldHighScore: this.game.registry.get(RegistryKey.HIGH_SCORE),
       time: 0, // TODO: Record time between player has been alive for each game
     };

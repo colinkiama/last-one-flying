@@ -22,6 +22,7 @@ import {
 /**
  * @typedef {Object} Menu
  * @property {string} [parent] `key` of the previous menu that led to this one
+ * @property {GameObjects.Container} [customContent]
  * @property {string} key Unique identifier
  * @property {MenuTitle} title The content that appears on the top of the menu
  * @property {string} [summary]
@@ -166,20 +167,26 @@ export class MenuSystem {
    * @returns
    */
   _renderMenu(menu, options) {
-    // TODO: Create menu to show on screen
     const title = this._createTitle(menu.title);
     this._titleTween = this.scene.tweens.add({
       targets: [title],
       ...HOVER_TWEEN_CONFIG,
     });
 
-    let lastRenderedItem = title;
+    let lastRenderedItem;
+    lastRenderedItem = title;
 
     const summary = menu.summary
       ? this._renderSummary(menu.summary, lastRenderedItem)
       : null;
     if (menu.summary) {
       lastRenderedItem = summary;
+    }
+
+    const customContent = menu.customContent ?? null;
+    if (menu.customContent) {
+      customContent.y = lastRenderedItem.y + lastRenderedItem.height / 2 + 36;
+      lastRenderedItem = customContent;
     }
 
     const menuItems = menu.items.map((menuItem, index) => {
@@ -196,8 +203,11 @@ export class MenuSystem {
 
     // const footerItems = renderFooterItems(this.scene, menu.footerItems);
     // return [title, ...menuItems, ...footerItems];
-    return [title, summary, ...menuItems].filter((item) => !!item);
+    return [title, summary, customContent, ...menuItems].filter(
+      (item) => !!item,
+    );
   }
+
   _renderSummary(summary, lastRenderedItem) {
     const y = lastRenderedItem.y + lastRenderedItem.height / 2 + 48;
 
@@ -232,6 +242,18 @@ export class MenuSystem {
       default:
         throw new Error(`Unknown menu title type: ${titleData.type}`);
     }
+  }
+
+  _renderCustomContent(summary, lastRenderedItem) {
+    const y = lastRenderedItem.y + lastRenderedItem.height / 2 + 48;
+
+    return this.scene.add
+      .text(this.scene.cameras.main.width / 2, y, summary, {
+        fontFamily: 'usuzi',
+        fontSize: 24,
+        color: COLORS.foreground,
+      })
+      .setOrigin(0.5, 0);
   }
 
   /**
