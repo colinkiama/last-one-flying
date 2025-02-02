@@ -89,6 +89,18 @@ export class GameOver extends Scene {
     lastRenderedItem = renderedTime[renderedTime.length - 1];
 
     // 3. Render High Score (TODO: Introduce a delay and an explosion effect when player gets new high score!)
+    const renderedHighScore = this._renderStatItem(
+      {
+        label: 'High Score',
+        value: Math.max(score, oldHighScore),
+      },
+      {
+        lastRenderedItem,
+      },
+    );
+
+    renderedItems.push(...renderedHighScore);
+    lastRenderedItem = renderedHighScore[renderedHighScore.length - 1];
 
     return renderedItems;
   }
@@ -103,7 +115,7 @@ export class GameOver extends Scene {
     const statLabel = this.add
       .text(this.cameras.main.width / 2, y, item.label, {
         fontFamily: 'usuzi',
-        fontSize: 24,
+        fontSize: 20,
         color: COLORS.foreground,
       })
       .setOrigin(0.5, 0);
@@ -115,7 +127,7 @@ export class GameOver extends Scene {
         item.value,
         {
           fontFamily: 'usuzi',
-          fontSize: 32,
+          fontSize: 24,
           color: COLORS.foreground,
         },
       )

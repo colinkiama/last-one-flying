@@ -195,7 +195,7 @@ export class MenuSystem {
         menuItem,
         lastRenderedItem,
         index,
-        !!menu.summary,
+        !!menu.summary || !!menu.customContent,
       );
 
       lastRenderedItem = renderedItem;
@@ -230,7 +230,7 @@ export class MenuSystem {
     switch (titleData.type) {
       case 'text': {
         return this.scene.add
-          .text(sceneWidth / 2, 60, titleData.value, {
+          .text(sceneWidth / 2, 32, titleData.value, {
             fontFamily: 'usuzi',
             fontSize: 40,
             align: 'center',
@@ -269,7 +269,7 @@ export class MenuSystem {
     const firstItemOffset = hasSummary ? 32 : 60;
     const y =
       lastRenderedItem.y +
-      (index === 0 ? lastRenderedItemHeight / 2 + firstItemOffset : 32);
+      (index === 0 ? lastRenderedItemHeight + firstItemOffset : 32);
 
     const menuItemGameObject = this.scene.add
       .text(this.scene.cameras.main.width / 2, y, menuItem.label, {
