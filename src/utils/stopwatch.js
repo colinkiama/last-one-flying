@@ -1,5 +1,8 @@
 import { Scene } from 'phaser';
-import { MILLISECONDS_IN_SECOND, SECONDS_IN_MINUTE } from '../constants/time';
+import {
+  MILLISECONDS_IN_SECOND,
+  SECONDS_IN_MINUTE,
+} from '../constants/time.js';
 
 export class Stopwatch {
   _timer;
@@ -10,6 +13,7 @@ export class Stopwatch {
    * @param {Scene} scene
    */
   constructor(scene) {
+    this._elapsedTime = 0;
     this._timer = scene.time.addEvent({
       delay: 100,
       loop: true,
@@ -30,11 +34,13 @@ export class Stopwatch {
     this._elapsedTime += this._timer.getElapsed();
   }
 
-  stop() {
+  reset() {
+    this._elapsedTime = 0;
     this._timer.reset({
       delay: 100,
       loop: true,
-      paused: true,
+      callback: this.updateElapsedTime,
+      callbackScope: this,
     });
   }
 
@@ -43,11 +49,12 @@ export class Stopwatch {
    */
   get formattedElapsedTime() {
     let remaningTime = this._elapsedTime;
-    const minsPart =
-      remaningTime / (SECONDS_IN_MINUTE * MILLISECONDS_IN_SECOND);
+    const minsPart = Math.trunc(
+      remaningTime / (SECONDS_IN_MINUTE * MILLISECONDS_IN_SECOND),
+    );
     remaningTime -= minsPart * SECONDS_IN_MINUTE * MILLISECONDS_IN_SECOND;
-    const secondsPart = remaningTime / MILLISECONDS_IN_SECOND;
+    const secondsPart = Math.trunc(remaningTime / MILLISECONDS_IN_SECOND);
 
-    return `${minsPart}:${secondsPart.toString().substring(0, 2).padStart(2, '0')}`;
+    return `${minsPart}:${secondsPart.toString().padStart(2, '0')}`;
   }
 }

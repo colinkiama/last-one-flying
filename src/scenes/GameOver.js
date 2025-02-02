@@ -75,6 +75,18 @@ export class GameOver extends Scene {
     lastRenderedItem = renderedScore[renderedScore.length - 1];
 
     // 2. Render Time
+    const renderedTime = this._renderStatItem(
+      {
+        label: 'Time',
+        value: time,
+      },
+      {
+        lastRenderedItem,
+      },
+    );
+
+    renderedItems.push(...renderedTime);
+    lastRenderedItem = renderedTime[renderedTime.length - 1];
 
     // 3. Render High Score (TODO: Introduce a delay and an explosion effect when player gets new high score!)
 

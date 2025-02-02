@@ -263,6 +263,7 @@ export class MenuSystem {
    * @param {*} lastRenderedItem
    */
   _renderMenuItem(menuItem, lastRenderedItem, index, hasSummary = false) {
+    // The height of a Container game object need to be calculated dynamically using `Container.getBounds()`
     const lastRenderedItemHeight =
       lastRenderedItem.getBounds?.().height ?? lastRenderedItem.height;
     const firstItemOffset = hasSummary ? 32 : 60;

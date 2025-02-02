@@ -26,6 +26,7 @@ import { STARTING_LIVES } from '../constants/status.js';
 import { LocalStorageKey, RegistryKey } from '../constants/data.js';
 import { TouchControlsSystem } from '../systems/touchControlsSystem.js';
 import { SceneKey } from '../constants/scene.js';
+import { Stopwatch } from '../utils/stopwatch.js';
 
 export class Battle extends Scene {
   _player;
@@ -41,6 +42,8 @@ export class Battle extends Scene {
   _scoreSystem;
   _statusSystem;
   _touchControlsSystem;
+
+  _sessionStopWatch;
 
   constructor() {
     super(SceneKey.BATTLE);
@@ -140,6 +143,8 @@ export class Battle extends Scene {
     this.scene.launch('HUD', {
       lives: this._statusSystem.getLives(),
     });
+
+    this._sessionStopWatch = new Stopwatch(this);
   }
 
   subscribeToEvents() {
@@ -383,10 +388,11 @@ export class Battle extends Scene {
   }
 
   onGameOver() {
+    this._sessionStopWatch.pause();
     const gameStats = {
       score: this._scoreSystem.getScore(),
       oldHighScore: this.game.registry.get(RegistryKey.HIGH_SCORE),
-      time: 0, // TODO: Record time between player has been alive for each game
+      time: this._sessionStopWatch.formattedElapsedTime,
     };
 
     this.clearPhysicsPools();
@@ -419,6 +425,7 @@ export class Battle extends Scene {
     this._scoreSystem.reset();
     this._spawnSystem.reset();
     crossSceneEventEmitter.emit(CrossSceneEvent.SCORE_RESET);
+    this._sessionStopWatch.reset();
   }
 
   clearPhysicsPools() {
