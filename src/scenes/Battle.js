@@ -222,6 +222,7 @@ export class Battle extends Scene {
   }
   onResetGame() {
     this.scene.resume();
+    this.scene.resume(SceneKey.HUD);
     this.reset();
   }
 
