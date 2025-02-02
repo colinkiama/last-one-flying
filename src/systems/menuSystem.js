@@ -187,6 +187,7 @@ export class MenuSystem {
     if (menu.customContent) {
       customContent.y = lastRenderedItem.y + lastRenderedItem.height / 2 + 36;
       lastRenderedItem = customContent;
+      console.log('Custom content as last rendered item:', lastRenderedItem);
     }
 
     const menuItems = menu.items.map((menuItem, index) => {
@@ -262,10 +263,12 @@ export class MenuSystem {
    * @param {*} lastRenderedItem
    */
   _renderMenuItem(menuItem, lastRenderedItem, index, hasSummary = false) {
+    const lastRenderedItemHeight =
+      lastRenderedItem.getBounds?.().height ?? lastRenderedItem.height;
     const firstItemOffset = hasSummary ? 32 : 60;
     const y =
       lastRenderedItem.y +
-      (index === 0 ? lastRenderedItem.height / 2 + firstItemOffset : 32);
+      (index === 0 ? lastRenderedItemHeight / 2 + firstItemOffset : 32);
 
     const menuItemGameObject = this.scene.add
       .text(this.scene.cameras.main.width / 2, y, menuItem.label, {
