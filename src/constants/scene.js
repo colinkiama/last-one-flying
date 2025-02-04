@@ -6,4 +6,5 @@ export const SceneKey = {
   PAUSE_MENU: 'PauseMenu',
   CREDITS: 'Credits',
   HUD: 'HUD',
+  GAME_OVER: 'GameOver',
 };

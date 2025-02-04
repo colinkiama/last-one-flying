@@ -26,6 +26,7 @@ import { STARTING_LIVES } from '../constants/status.js';
 import { LocalStorageKey, RegistryKey } from '../constants/data.js';
 import { TouchControlsSystem } from '../systems/touchControlsSystem.js';
 import { SceneKey } from '../constants/scene.js';
+import { Stopwatch } from '../utils/stopwatch.js';
 
 export class Battle extends Scene {
   _player;
@@ -41,6 +42,8 @@ export class Battle extends Scene {
   _scoreSystem;
   _statusSystem;
   _touchControlsSystem;
+
+  _sessionStopWatch;
 
   constructor() {
     super(SceneKey.BATTLE);
@@ -140,6 +143,8 @@ export class Battle extends Scene {
     this.scene.launch('HUD', {
       lives: this._statusSystem.getLives(),
     });
+
+    this._sessionStopWatch = new Stopwatch(this);
   }
 
   subscribeToEvents() {
@@ -204,10 +209,21 @@ export class Battle extends Scene {
       this,
     );
 
+    crossSceneEventEmitter.on(
+      CrossSceneEvent.RESET_GAME,
+      this.onResetGame,
+      this,
+    );
+
     this.registry.events.on(Data.Events.CHANGE_DATA, this.onDataChanged, this);
     this.registry.events.on(Data.Events.SET_DATA, this.onDataChanged, this);
 
     this.events.once('shutdown', this.unsubscribeFromEvents, this);
+  }
+  onResetGame() {
+    this.scene.resume();
+    this.scene.resume(SceneKey.HUD);
+    this.reset();
   }
 
   onPauseRequested() {
@@ -276,6 +292,12 @@ export class Battle extends Scene {
     crossSceneEventEmitter.off(
       CrossSceneEvent.HUD_DESTROYED,
       this.onHudDestroyed,
+      this,
+    );
+
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.RESET_GAME,
+      this.onResetGame,
       this,
     );
 
@@ -367,9 +389,20 @@ export class Battle extends Scene {
   }
 
   onGameOver() {
+    this._sessionStopWatch.pause();
+    const gameStats = {
+      score: this._scoreSystem.getScore(),
+      oldHighScore: this.game.registry.get(RegistryKey.HIGH_SCORE),
+      time: this._sessionStopWatch.formattedElapsedTime,
+    };
+
+    this.clearPhysicsPools();
     this.updateHighScore();
     this._spawnSystem.deactivateEnemySpawnTimer();
-    this.reset();
+
+    this.time.delayedCall(1000, () => {
+      this.scene.launch(SceneKey.GAME_OVER, gameStats);
+    });
   }
 
   updateHighScore() {
@@ -388,16 +421,12 @@ export class Battle extends Scene {
   }
 
   reset() {
-    this.clearPhysicsPools();
-
-    this.time.delayedCall(1000, () => {
-      this.clearVFXPools();
-      this._statusSystem.reset();
-      this._scoreSystem.reset();
-      this._spawnSystem.reset();
-
-      crossSceneEventEmitter.emit(CrossSceneEvent.SCORE_RESET);
-    });
+    this.clearVFXPools();
+    this._statusSystem.reset();
+    this._scoreSystem.reset();
+    this._spawnSystem.reset();
+    crossSceneEventEmitter.emit(CrossSceneEvent.SCORE_RESET);
+    this._sessionStopWatch.reset();
   }
 
   clearPhysicsPools() {

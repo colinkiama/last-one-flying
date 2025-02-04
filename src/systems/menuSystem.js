@@ -1,4 +1,4 @@
-import { GameObjects, Scene, Tweens } from 'phaser';
+import { GameObjects, Scene, Tweens, Display } from 'phaser';
 import {
   COLORS,
   HOVER_TWEEN_CONFIG,
@@ -22,6 +22,7 @@ import {
 /**
  * @typedef {Object} Menu
  * @property {string} [parent] `key` of the previous menu that led to this one
+ * @property {GameObjects.Container} [customContent]
  * @property {string} key Unique identifier
  * @property {MenuTitle} title The content that appears on the top of the menu
  * @property {string} [summary]
@@ -69,6 +70,7 @@ export class MenuSystem {
     this._currentMenu = this.menuMap.get(firstMenuKey);
     this._currentMenuContainer = this.scene.add.container(0, 0);
     this._currentMenuContainer.add(this._renderMenu(this._currentMenu));
+    recentreMenu(this.scene, this._currentMenuContainer);
   }
 
   /**
@@ -80,6 +82,7 @@ export class MenuSystem {
     const nextMenu = this.menuMap.get(key);
 
     nextMenuContainer.add(this._renderMenu(nextMenu));
+    recentreMenu(this.scene, nextMenuContainer);
 
     const sceneWidth = this.scene.cameras.main.width;
     const pushTweenPromise = new Promise((resolve) =>
@@ -133,6 +136,7 @@ export class MenuSystem {
     const nextMenu = this.menuMap.get(this._currentMenu.parent);
 
     nextMenuContainer.add(this._renderMenu(nextMenu));
+    recentreMenu(this.scene, nextMenuContainer);
 
     const sceneWidth = this.scene.cameras.main.width;
     const popTweenPromise = new Promise((resolve) =>
@@ -166,14 +170,14 @@ export class MenuSystem {
    * @returns
    */
   _renderMenu(menu, options) {
-    // TODO: Create menu to show on screen
     const title = this._createTitle(menu.title);
     this._titleTween = this.scene.tweens.add({
       targets: [title],
       ...HOVER_TWEEN_CONFIG,
     });
 
-    let lastRenderedItem = title;
+    let lastRenderedItem;
+    lastRenderedItem = title;
 
     const summary = menu.summary
       ? this._renderSummary(menu.summary, lastRenderedItem)
@@ -182,12 +186,19 @@ export class MenuSystem {
       lastRenderedItem = summary;
     }
 
+    const customContent = menu.customContent ?? null;
+    if (menu.customContent) {
+      customContent.y = lastRenderedItem.y + lastRenderedItem.height + 12;
+      lastRenderedItem = customContent;
+      console.log('Custom content as last rendered item:', lastRenderedItem);
+    }
+
     const menuItems = menu.items.map((menuItem, index) => {
       const renderedItem = this._renderMenuItem(
         menuItem,
         lastRenderedItem,
         index,
-        !!menu.summary,
+        !!menu.summary || !!menu.customContent,
       );
 
       lastRenderedItem = renderedItem;
@@ -196,10 +207,13 @@ export class MenuSystem {
 
     // const footerItems = renderFooterItems(this.scene, menu.footerItems);
     // return [title, ...menuItems, ...footerItems];
-    return [title, summary, ...menuItems].filter((item) => !!item);
+    return [title, summary, customContent, ...menuItems].filter(
+      (item) => !!item,
+    );
   }
+
   _renderSummary(summary, lastRenderedItem) {
-    const y = lastRenderedItem.y + lastRenderedItem.height / 2 + 48;
+    const y = lastRenderedItem.y + lastRenderedItem.height;
 
     return this.scene.add
       .text(this.scene.cameras.main.width / 2, y, summary, {
@@ -219,7 +233,7 @@ export class MenuSystem {
     switch (titleData.type) {
       case 'text': {
         return this.scene.add
-          .text(sceneWidth / 2, 60, titleData.value, {
+          .text(sceneWidth / 2, 0, titleData.value, {
             fontFamily: 'usuzi',
             fontSize: 40,
             align: 'center',
@@ -234,16 +248,31 @@ export class MenuSystem {
     }
   }
 
+  _renderCustomContent(summary, lastRenderedItem) {
+    const y = lastRenderedItem.y + lastRenderedItem.height / 2 + 48;
+
+    return this.scene.add
+      .text(this.scene.cameras.main.width / 2, y, summary, {
+        fontFamily: 'usuzi',
+        fontSize: 24,
+        color: COLORS.foreground,
+      })
+      .setOrigin(0.5, 0);
+  }
+
   /**
    *
    * @param {MenuItem} menuItem
    * @param {*} lastRenderedItem
    */
   _renderMenuItem(menuItem, lastRenderedItem, index, hasSummary = false) {
-    const firstItemOffset = hasSummary ? 32 : 60;
+    // The height of a Container game object need to be calculated dynamically using `Container.getBounds()`
+    const lastRenderedItemHeight =
+      lastRenderedItem.getBounds?.().height ?? lastRenderedItem.height;
+    const firstItemOffset = hasSummary ? 32 : 36;
     const y =
       lastRenderedItem.y +
-      (index === 0 ? lastRenderedItem.height / 2 + firstItemOffset : 32);
+      (index === 0 ? lastRenderedItemHeight + firstItemOffset : 32);
 
     const menuItemGameObject = this.scene.add
       .text(this.scene.cameras.main.width / 2, y, menuItem.label, {
@@ -272,4 +301,14 @@ function onButtonHover() {
 
 function onButtonOut() {
   this.setColor(COLORS.foreground);
+}
+
+function recentreMenu(scene, menuContainer) {
+  const bounds = menuContainer.getBounds();
+  const heightDifference = scene.cameras.main.height - bounds.height;
+  if (heightDifference < 0) {
+    return;
+  }
+
+  menuContainer.y = heightDifference / 2;
 }

@@ -2,13 +2,14 @@ import { Scene } from 'phaser';
 import { crossSceneEventEmitter } from '../utils/events.js';
 import { CrossSceneEvent } from '../constants/events.js';
 import { MenuSystem } from '../systems/menuSystem.js';
+import { SceneKey } from '../constants/scene.js';
 
 export class PauseMenu extends Scene {
   /** @type {MenuSystem} */
   _menuSystem;
 
   constructor() {
-    super('PauseMenu');
+    super(SceneKey.PAUSE_MENU);
   }
 
   create() {
