@@ -8,6 +8,7 @@ import { COLORS } from '../constants/menu.js';
 export class GameOver extends Scene {
   /** @type {MenuSystem} */
   _menuSystem;
+  _renderedStatsObjects;
 
   constructor() {
     super(SceneKey.GAME_OVER);
@@ -71,6 +72,8 @@ export class GameOver extends Scene {
       label: 'Score',
       value: score,
     });
+
+    this._renderedStatsObjects.score = renderedScore;
     renderedItems.push(...renderedScore);
     lastRenderedItem = renderedScore[renderedScore.length - 1];
 
@@ -85,6 +88,7 @@ export class GameOver extends Scene {
       },
     );
 
+    this._renderedStatsObjects.time = renderedTime;
     renderedItems.push(...renderedTime);
     lastRenderedItem = renderedTime[renderedTime.length - 1];
 
@@ -99,6 +103,7 @@ export class GameOver extends Scene {
       },
     );
 
+    this._renderedStatsObjects.highScore = renderedHighScore;
     renderedItems.push(...renderedHighScore);
     lastRenderedItem = renderedHighScore[renderedHighScore.length - 1];
 
