@@ -18,6 +18,7 @@ export class GameOver extends Scene {
     const { score, time, oldHighScore } = data;
     crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
     this.cameras.main.setBackgroundColor(0xaa000000);
+    this._renderedStatsObjects = {};
     const statsContainer = this.add.container();
     statsContainer.add(this._renderStats(data));
     this._menuSystem = new MenuSystem(this);
@@ -123,6 +124,7 @@ export class GameOver extends Scene {
         fontSize: 20,
         color: COLORS.foreground,
       })
+      .setVisible(false)
       .setOrigin(0.5, 0);
 
     const statValue = this.add
@@ -136,6 +138,7 @@ export class GameOver extends Scene {
           color: COLORS.foreground,
         },
       )
+      .setVisible(false)
       .setOrigin(0.5, 0);
 
     return [statLabel, statValue];
