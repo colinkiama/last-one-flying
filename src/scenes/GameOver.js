@@ -9,18 +9,19 @@ export class GameOver extends Scene {
   /** @type {MenuSystem} */
   _menuSystem;
   _renderedStatsObjects;
+  _tweenTimeline;
 
   constructor() {
     super(SceneKey.GAME_OVER);
   }
 
   create(data) {
-    const { score, time, oldHighScore } = data;
     crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
     this.cameras.main.setBackgroundColor(0xaa000000);
     this._renderedStatsObjects = {};
     const statsContainer = this.add.container();
     statsContainer.add(this._renderStats(data));
+
     this._menuSystem = new MenuSystem(this);
     this._menuSystem.start(
       [
@@ -45,6 +46,41 @@ export class GameOver extends Scene {
       ],
       'pause',
     );
+
+    const timeline = this.add.timeline([
+      {
+        at: 500,
+        run: () => {
+          this.revealStat('score');
+        },
+      },
+      {
+        at: 1250,
+        run: () => {
+          this.revealStat('time');
+        },
+      },
+      {
+        at: 2000,
+        run: () => {
+          this.revealStat('highScore');
+        },
+      },
+    ]);
+
+    timeline.play();
+  }
+
+  revealStat(key) {
+    const items = this._renderedStatsObjects[key];
+    if (!items) {
+      return;
+    }
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      item.setVisible(true);
+    }
   }
 
   resetGame() {
