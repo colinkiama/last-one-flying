@@ -15,6 +15,7 @@ export class GameOver extends Scene {
   _explosionPool;
   _vfxSystem;
   _statsContainer;
+  _newHighScoreBlinkTimer;
 
   constructor() {
     super(SceneKey.GAME_OVER);
@@ -37,6 +38,8 @@ export class GameOver extends Scene {
     this._renderedStatsObjects = {};
     this._statsContainer = this.add.container();
     this._statsContainer.add(this._renderStats(data));
+
+    const isNewHighScore = score > oldHighScore;
 
     this._menuSystem = new MenuSystem(this);
     this._menuSystem.start(
@@ -76,11 +79,14 @@ export class GameOver extends Scene {
           this.revealStat('time');
         },
       },
-      score > oldHighScore
+      isNewHighScore
         ? {
             at: 2750,
             run: () => {
-              this.revealStat('highScore', true);
+              this.revealStat('highScore', {
+                showExplosion: true,
+                showNewHighScoreLabel: true,
+              });
             },
           }
         : {
@@ -94,7 +100,10 @@ export class GameOver extends Scene {
     timeline.play();
   }
 
-  revealStat(key, showExplosion = false) {
+  revealStat(key, options) {
+    const localOptions = options || {};
+    const { showExplosion = false, showNewHighScoreLabel = false } =
+      localOptions;
     const items = this._renderedStatsObjects[key];
     if (!items) {
       return;
@@ -110,11 +119,26 @@ export class GameOver extends Scene {
 
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
+      if (i === 2 && showNewHighScoreLabel) {
+        continue;
+      }
+
       item.setVisible(true);
+    }
+
+    if (showNewHighScoreLabel) {
+      const newHighScoreLabel = items[2];
+      this._newHighScoreBlinkTimer = this.time.addEvent({
+          delay: 500,
+          callback: () => newHighScoreLabel.setVisible(!newHighScoreLabel.visible),
+          loop: true,
+        }
+      );
     }
   }
 
   resetGame() {
+    this._newHighScoreBlinkTimer.remove();
     this._menuSystem.shutDownCurrentMenu();
     crossSceneEventEmitter.emit(CrossSceneEvent.RESET_GAME);
     this.scene.stop(this);
@@ -160,7 +184,7 @@ export class GameOver extends Scene {
     renderedItems.push(...renderedTime);
     lastRenderedItem = renderedTime[renderedTime.length - 1];
 
-    // 3. Render High Score (TODO: Introduce a delay and an explosion effect when player gets new high score!)
+    // 3. Render High Score
     const renderedHighScore = this._renderStatItem(
       {
         label: 'High Score',
@@ -212,21 +236,21 @@ export class GameOver extends Scene {
     let newLabel = null;
     if (isHighScore) {
       newLabel = this.add
-      .text(
-        this.cameras.main.width / 2,
-        statValue.y + statValue.height + 2,
-        "NEW",
-        {
-          fontFamily: 'usuzi',
-          fontSize: 12,
-          color: COLORS.foreground,
-        },
-      )
-      .setVisible(false)
-      .setOrigin(0.5, 0);
+        .text(
+          this.cameras.main.width / 2,
+          statValue.y + statValue.height + 2,
+          'NEW',
+          {
+            fontFamily: 'usuzi',
+            fontSize: 12,
+            color: COLORS.foreground,
+          },
+        )
+        .setVisible(false)
+        .setOrigin(0.5, 0);
     }
 
-    return [statLabel, statValue, newLabel].filter(item => !!item);
+    return [statLabel, statValue, newLabel].filter((item) => !!item);
   }
 
   async popMenu() {
