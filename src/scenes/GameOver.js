@@ -129,16 +129,19 @@ export class GameOver extends Scene {
     if (showNewHighScoreLabel) {
       const newHighScoreLabel = items[2];
       this._newHighScoreBlinkTimer = this.time.addEvent({
-          delay: 500,
-          callback: () => newHighScoreLabel.setVisible(!newHighScoreLabel.visible),
-          loop: true,
-        }
-      );
+        delay: 500,
+        callback: () =>
+          newHighScoreLabel.setVisible(!newHighScoreLabel.visible),
+        loop: true,
+      });
     }
   }
 
   resetGame() {
-    this._newHighScoreBlinkTimer.remove();
+    if (this._newHighScoreBlinkTimer) {
+      this.time.removeEvent(this._newHighScoreBlinkTimer.remove());
+    }
+
     this._menuSystem.shutDownCurrentMenu();
     crossSceneEventEmitter.emit(CrossSceneEvent.RESET_GAME);
     this.scene.stop(this);
