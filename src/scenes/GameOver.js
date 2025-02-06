@@ -168,6 +168,7 @@ export class GameOver extends Scene {
       },
       {
         lastRenderedItem,
+        isHighScore: score > oldHighScore,
       },
     );
 
@@ -180,9 +181,9 @@ export class GameOver extends Scene {
 
   _renderStatItem(item, options) {
     const localOptions = options || {};
-    const { lastRenderedItem = null } = localOptions;
+    const { lastRenderedItem = null, isHighScore = false } = localOptions;
     const y = lastRenderedItem
-      ? lastRenderedItem.y + lastRenderedItem.height / 2 + 24
+      ? lastRenderedItem.y + lastRenderedItem.height + 12
       : 0;
 
     const statLabel = this.add
@@ -197,7 +198,7 @@ export class GameOver extends Scene {
     const statValue = this.add
       .text(
         this.cameras.main.width / 2,
-        statLabel.y + statLabel.height / 2 + 12,
+        statLabel.y + statLabel.height,
         item.value,
         {
           fontFamily: 'usuzi',
@@ -208,7 +209,24 @@ export class GameOver extends Scene {
       .setVisible(false)
       .setOrigin(0.5, 0);
 
-    return [statLabel, statValue];
+    let newLabel = null;
+    if (isHighScore) {
+      newLabel = this.add
+      .text(
+        this.cameras.main.width / 2,
+        statValue.y + statValue.height + 2,
+        "NEW",
+        {
+          fontFamily: 'usuzi',
+          fontSize: 12,
+          color: COLORS.foreground,
+        },
+      )
+      .setVisible(false)
+      .setOrigin(0.5, 0);
+    }
+
+    return [statLabel, statValue, newLabel].filter(item => !!item);
   }
 
   async popMenu() {
