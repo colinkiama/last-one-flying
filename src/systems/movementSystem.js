@@ -4,7 +4,8 @@ import {
   MIN_JOYSTICK_FORCE,
   MovementType,
   POINTER_DEADZONE,
-  ROTATION_SPEED,
+  PLAYER_ROTATION_SPEED,
+  PLAYER_MOVEMENT_SPEED,
 } from '../constants/movement.js';
 
 export class MovementSystem {
@@ -49,9 +50,9 @@ export class MovementSystem {
     const { up, down, left, right } = this._movementKeys;
 
     if (left.isDown) {
-      this._player.setAngularVelocity(-ROTATION_SPEED);
+      this._player.setAngularVelocity(-PLAYER_ROTATION_SPEED);
     } else if (right.isDown) {
-      this._player.setAngularVelocity(ROTATION_SPEED);
+      this._player.setAngularVelocity(PLAYER_ROTATION_SPEED);
     } else {
       this._player.setAngularVelocity(0);
     }
@@ -59,13 +60,13 @@ export class MovementSystem {
     if (up.isDown) {
       this.scene.physics.velocityFromRotation(
         this._player.rotation,
-        300,
+        PLAYER_MOVEMENT_SPEED,
         this._player.body.velocity,
       );
     } else if (down.isDown) {
       this.scene.physics.velocityFromRotation(
         this._player.rotation,
-        -300,
+        -PLAYER_MOVEMENT_SPEED,
         this._player.body.velocity,
       );
     } else {
