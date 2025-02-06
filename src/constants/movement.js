@@ -5,3 +5,4 @@ export const MovementType = {
 };
 
 export const MIN_JOYSTICK_FORCE = 16;
+export const ROTATION_SPEED = 250;
