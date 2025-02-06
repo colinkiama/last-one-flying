@@ -4,10 +4,18 @@ import { CrossSceneEvent } from '../constants/events.js';
 import { MenuSystem } from '../systems/menuSystem.js';
 import { SceneKey } from '../constants/scene.js';
 import { COLORS } from '../constants/menu.js';
+import { Explosion } from '../poolObjects/Explosion.js';
+import { VFXSystem } from '../systems/vfxSystem.js';
 
 export class GameOver extends Scene {
   /** @type {MenuSystem} */
   _menuSystem;
+  _renderedStatsObjects;
+  _tweenTimeline;
+  _explosionPool;
+  _vfxSystem;
+  _statsContainer;
+  _newHighScoreBlinkTimer;
 
   constructor() {
     super(SceneKey.GAME_OVER);
@@ -16,9 +24,23 @@ export class GameOver extends Scene {
   create(data) {
     const { score, time, oldHighScore } = data;
     crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
+    this._explosionPool = this.add.group({
+      classType: Explosion,
+      maxSize: 1,
+      runChildUpdate: true,
+    });
+
+    this._vfxSystem = new VFXSystem(this, {
+      explosionPool: this._explosionPool,
+    });
+
     this.cameras.main.setBackgroundColor(0xaa000000);
-    const statsContainer = this.add.container();
-    statsContainer.add(this._renderStats(data));
+    this._renderedStatsObjects = {};
+    this._statsContainer = this.add.container();
+    this._statsContainer.add(this._renderStats(data));
+
+    const isNewHighScore = score > oldHighScore;
+
     this._menuSystem = new MenuSystem(this);
     this._menuSystem.start(
       [
@@ -28,7 +50,7 @@ export class GameOver extends Scene {
             type: 'text',
             value: 'Game Over',
           },
-          customContent: statsContainer,
+          customContent: this._statsContainer,
           items: [
             {
               label: 'Play Again',
@@ -43,9 +65,80 @@ export class GameOver extends Scene {
       ],
       'pause',
     );
+
+    const timeline = this.add.timeline([
+      {
+        at: 500,
+        run: () => {
+          this.revealStat('score');
+        },
+      },
+      {
+        at: 1250,
+        run: () => {
+          this.revealStat('time');
+        },
+      },
+      isNewHighScore
+        ? {
+            at: 2750,
+            run: () => {
+              this.revealStat('highScore', {
+                showExplosion: true,
+                showNewHighScoreLabel: true,
+              });
+            },
+          }
+        : {
+            at: 2000,
+            run: () => {
+              this.revealStat('highScore');
+            },
+          },
+    ]);
+
+    timeline.play();
+  }
+
+  revealStat(key, options) {
+    const localOptions = options || {};
+    const { showExplosion = false, showNewHighScoreLabel = false } =
+      localOptions;
+    const items = this._renderedStatsObjects[key];
+    if (!items) {
+      return;
+    }
+
+    if (showExplosion) {
+      const firstItem = items[0];
+      this._vfxSystem.createFireworkExplosion(
+        firstItem.x,
+        firstItem.y + firstItem.height + this._statsContainer.getBounds().top,
+      );
+    }
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (i === 2 && showNewHighScoreLabel) {
+        continue;
+      }
+
+      item.setVisible(true);
+    }
+
+    if (showNewHighScoreLabel) {
+      const newHighScoreLabel = items[2];
+      this._newHighScoreBlinkTimer = this.time.addEvent({
+          delay: 500,
+          callback: () => newHighScoreLabel.setVisible(!newHighScoreLabel.visible),
+          loop: true,
+        }
+      );
+    }
   }
 
   resetGame() {
+    this._newHighScoreBlinkTimer.remove();
     this._menuSystem.shutDownCurrentMenu();
     crossSceneEventEmitter.emit(CrossSceneEvent.RESET_GAME);
     this.scene.stop(this);
@@ -71,6 +164,8 @@ export class GameOver extends Scene {
       label: 'Score',
       value: score,
     });
+
+    this._renderedStatsObjects.score = renderedScore;
     renderedItems.push(...renderedScore);
     lastRenderedItem = renderedScore[renderedScore.length - 1];
 
@@ -85,10 +180,11 @@ export class GameOver extends Scene {
       },
     );
 
+    this._renderedStatsObjects.time = renderedTime;
     renderedItems.push(...renderedTime);
     lastRenderedItem = renderedTime[renderedTime.length - 1];
 
-    // 3. Render High Score (TODO: Introduce a delay and an explosion effect when player gets new high score!)
+    // 3. Render High Score
     const renderedHighScore = this._renderStatItem(
       {
         label: 'High Score',
@@ -96,9 +192,11 @@ export class GameOver extends Scene {
       },
       {
         lastRenderedItem,
+        isHighScore: score > oldHighScore,
       },
     );
 
+    this._renderedStatsObjects.highScore = renderedHighScore;
     renderedItems.push(...renderedHighScore);
     lastRenderedItem = renderedHighScore[renderedHighScore.length - 1];
 
@@ -107,9 +205,9 @@ export class GameOver extends Scene {
 
   _renderStatItem(item, options) {
     const localOptions = options || {};
-    const { lastRenderedItem = null } = localOptions;
+    const { lastRenderedItem = null, isHighScore = false } = localOptions;
     const y = lastRenderedItem
-      ? lastRenderedItem.y + lastRenderedItem.height / 2 + 24
+      ? lastRenderedItem.y + lastRenderedItem.height + 12
       : 0;
 
     const statLabel = this.add
@@ -118,12 +216,13 @@ export class GameOver extends Scene {
         fontSize: 20,
         color: COLORS.foreground,
       })
+      .setVisible(false)
       .setOrigin(0.5, 0);
 
     const statValue = this.add
       .text(
         this.cameras.main.width / 2,
-        statLabel.y + statLabel.height / 2 + 12,
+        statLabel.y + statLabel.height,
         item.value,
         {
           fontFamily: 'usuzi',
@@ -131,9 +230,27 @@ export class GameOver extends Scene {
           color: COLORS.foreground,
         },
       )
+      .setVisible(false)
       .setOrigin(0.5, 0);
 
-    return [statLabel, statValue];
+    let newLabel = null;
+    if (isHighScore) {
+      newLabel = this.add
+        .text(
+          this.cameras.main.width / 2,
+          statValue.y + statValue.height + 2,
+          'NEW',
+          {
+            fontFamily: 'usuzi',
+            fontSize: 12,
+            color: COLORS.foreground,
+          },
+        )
+        .setVisible(false)
+        .setOrigin(0.5, 0);
+    }
+
+    return [statLabel, statValue, newLabel].filter((item) => !!item);
   }
 
   async popMenu() {

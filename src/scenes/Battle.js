@@ -377,7 +377,7 @@ export class Battle extends Scene {
   }
 
   onShipDestroyed(ship) {
-    this._vfxSystem.makeShipExplosion(ship);
+    this._vfxSystem.createShipExplosion(ship);
   }
 
   onScoreUpdated(score) {
