@@ -14,7 +14,7 @@ export class VFXSystem {
     }
   }
 
-  makeShipExplosion(ship) {
+  createShipExplosion(ship) {
     // In scenarios where there are no inactive items in the explosions pool, you
     // don't display an explosion.
     if (!this._explosionPool) {
@@ -39,6 +39,31 @@ export class VFXSystem {
         texture: 'explosion',
       })
       .explode(20, ship.x, ship.y);
+  }
+
+  createFireworkExplosion(x, y) {
+    if (!this._explosionPool) {
+      throw new Error(
+        'Cannot create firework explosions without explosion pool being defined in VFXSystem constructor',
+      );
+    }
+
+    const explosion = this._explosionPool.get();
+    if (!explosion) {
+      return;
+    }
+
+    explosion
+      .enable()
+      .setConfig({
+        lifespan: 2000,
+        speed: { min: 150, max: 250 },
+        scale: { start: 2, end: 0 },
+        gravityY: 150,
+        emitting: false,
+        texture: 'explosion',
+      })
+      .explode(50, x, y);
   }
 
   shakeScreen(screenShakeType) {

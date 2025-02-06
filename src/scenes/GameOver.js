@@ -4,23 +4,39 @@ import { CrossSceneEvent } from '../constants/events.js';
 import { MenuSystem } from '../systems/menuSystem.js';
 import { SceneKey } from '../constants/scene.js';
 import { COLORS } from '../constants/menu.js';
+import { Explosion } from '../poolObjects/Explosion.js';
+import { VFXSystem } from '../systems/vfxSystem.js';
 
 export class GameOver extends Scene {
   /** @type {MenuSystem} */
   _menuSystem;
   _renderedStatsObjects;
   _tweenTimeline;
+  _explosionPool;
+  _vfxSystem;
+  _statsContainer;
 
   constructor() {
     super(SceneKey.GAME_OVER);
   }
 
   create(data) {
+    const { score, time, oldHighScore } = data;
     crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
+    this._explosionPool = this.add.group({
+      classType: Explosion,
+      maxSize: 1,
+      runChildUpdate: true,
+    });
+
+    this._vfxSystem = new VFXSystem(this, {
+      explosionPool: this._explosionPool,
+    });
+
     this.cameras.main.setBackgroundColor(0xaa000000);
     this._renderedStatsObjects = {};
-    const statsContainer = this.add.container();
-    statsContainer.add(this._renderStats(data));
+    this._statsContainer = this.add.container();
+    this._statsContainer.add(this._renderStats(data));
 
     this._menuSystem = new MenuSystem(this);
     this._menuSystem.start(
@@ -31,7 +47,7 @@ export class GameOver extends Scene {
             type: 'text',
             value: 'Game Over',
           },
-          customContent: statsContainer,
+          customContent: this._statsContainer,
           items: [
             {
               label: 'Play Again',
@@ -60,21 +76,36 @@ export class GameOver extends Scene {
           this.revealStat('time');
         },
       },
-      {
-        at: 2000,
-        run: () => {
-          this.revealStat('highScore');
-        },
-      },
+      score > oldHighScore
+        ? {
+            at: 2750,
+            run: () => {
+              this.revealStat('highScore', true);
+            },
+          }
+        : {
+            at: 2000,
+            run: () => {
+              this.revealStat('highScore');
+            },
+          },
     ]);
 
     timeline.play();
   }
 
-  revealStat(key) {
+  revealStat(key, showExplosion = false) {
     const items = this._renderedStatsObjects[key];
     if (!items) {
       return;
+    }
+
+    if (showExplosion) {
+      const firstItem = items[0];
+      this._vfxSystem.createFireworkExplosion(
+        firstItem.x,
+        firstItem.y + firstItem.height + this._statsContainer.getBounds().top,
+      );
     }
 
     for (let i = 0; i < items.length; i++) {
