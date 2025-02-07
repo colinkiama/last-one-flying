@@ -1,7 +1,6 @@
 import { Math as PhaserMath } from 'phaser';
 import { createMovementKeys } from '../utils/input.js';
 import {
-  MIN_JOYSTICK_FORCE,
   MovementType,
   POINTER_DEADZONE,
   PLAYER_ROTATION_SPEED,
@@ -69,21 +68,6 @@ export class MovementSystem {
     } else {
       this._player.setVelocity(0);
     }
-  }
-
-  handleJoystickMovement() {
-    if (this._joystick.force > MIN_JOYSTICK_FORCE) {
-      this._player.setRotation(this._joystick.rotation);
-      this.scene.physics.velocityFromRotation(
-        this._player.rotation,
-        300,
-        this._player.body.velocity,
-      );
-    } else {
-      this._player.setVelocity(0);
-    }
-
-    this.updatePlayerBody();
   }
 
   updatePlayerBody() {

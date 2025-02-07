@@ -1,13 +1,12 @@
 import { Physics, Math as PhaserMath } from 'phaser';
-import { PLAYER_LASER_BEAM_SPEED } from '../constants/combat.js';
-const LASER_SHOT_SPEED = 250;
+import { PLAYER_LASER_BEAM_SPEED, PLAYER_LASER_LIFE_SPAN } from '../constants/combat.js';
 const LIFESPAN = 2000; // In milliseconds
 
 export class LaserBeam extends Physics.Arcade.Image {
   lifespan;
 
   fire(x, y, config) {
-    const { isVertical = false, rotation = 0, laserBeamSpeed = PLAYER_LASER_BEAM_SPEED } = config || {
+    const { isVertical = false, rotation = 0, laserBeamSpeed = PLAYER_LASER_BEAM_SPEED, lifespan = PLAYER_LASER_LIFE_SPAN } = config || {
       isVertical: false,
       rotation: 0,
     };
@@ -27,7 +26,7 @@ export class LaserBeam extends Physics.Arcade.Image {
       laserBeamSpeed,
       this.body.velocity,
     );
-    this.lifespan = LIFESPAN;
+    this.lifespan = lifespan;
   }
 
   update(time, delta) {
