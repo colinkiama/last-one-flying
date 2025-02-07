@@ -2,7 +2,11 @@ import { Math as PhaserMath, Time } from 'phaser';
 import { gameLogicEventEmitter } from '../utils/events.js';
 import { createCombatKeys } from '../utils/input.js';
 import { GameLogicEvent } from '../constants/events.js';
-import { LASER_SHOT_DELAY } from '../constants/combat.js';
+import {
+  ENEMY_MOVEMENT_SPEED,
+  ENEMY_SHOT_DELAY,
+  LASER_SHOT_DELAY,
+} from '../constants/combat.js';
 import { MovementType } from '../constants/movement.js';
 
 export class CombatSystem {
@@ -105,7 +109,7 @@ export class CombatSystem {
     }
 
     this._enemyAutoFireEvent = new Time.TimerEvent({
-      delay: 1500,
+      delay: ENEMY_SHOT_DELAY,
       loop: true,
       callback: () => {
         const activeEnemies = this._enemyPool.getMatching('active', true);
@@ -202,7 +206,11 @@ export class CombatSystem {
       );
       enemy.setRotation(rotation);
 
-      this.scene.physics.moveToObject(enemy, this._player, 100);
+      this.scene.physics.moveToObject(
+        enemy,
+        this._player,
+        ENEMY_MOVEMENT_SPEED,
+      );
     }
   }
 
