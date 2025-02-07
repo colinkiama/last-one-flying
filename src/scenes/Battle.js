@@ -54,7 +54,7 @@ export class Battle extends Scene {
     this.cameras.main.setBackgroundColor(0x000000);
 
     const joystick = this.plugins.get('rexVirtualJoystick').add(this, {
-      x: 150,
+      x: 100,
       y: 270,
       radius: 50,
       base: this.add.arc(0, 0, 60).setStrokeStyle(2, 0xffffff),
@@ -66,7 +66,7 @@ export class Battle extends Scene {
       RegistryKey.TOUCH_CONTROLS,
     );
     const fireButton = this.add
-      .circle(490, 270, 50)
+      .circle(this.cameras.main.width - 100, 270, 50)
       .setStrokeStyle(2, 0xffffff);
 
     const touchButtons = {
