@@ -28,12 +28,10 @@ export class MovementSystem {
   }
 
   activatePointerMovement() {
-    this.scene.input.on('pointermove', this.onPointerMove, this);
     this._movementType = MovementType.NON_TOUCH;
   }
 
   activateJoystickMovement() {
-    this.scene.input.off('pointermove', this.onPointerMove, this);
     this._movementType = MovementType.TOUCH;
   }
 
@@ -99,28 +97,5 @@ export class MovementSystem {
     }
 
     this.scene.physics.world.wrap(this._player, this._player.width / 2);
-  }
-
-  onPointerMove(pointer) {
-    if (this.isInDeadzone(pointer.worldX, pointer.worldY)) {
-      return;
-    }
-
-    const targetAngle = PhaserMath.Angle.Between(
-      this._player.x,
-      this._player.y,
-      pointer.worldX,
-      pointer.worldY,
-    );
-    this._player.setRotation(targetAngle);
-  }
-
-  isInDeadzone(x, y) {
-    return (
-      x >= this._player.x - POINTER_DEADZONE &&
-      x <= this._player.x + POINTER_DEADZONE &&
-      y >= this._player.y - POINTER_DEADZONE &&
-      y <= this._player.y + POINTER_DEADZONE
-    );
   }
 }
