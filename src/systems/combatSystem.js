@@ -3,6 +3,8 @@ import { gameLogicEventEmitter } from '../utils/events.js';
 import { createCombatKeys } from '../utils/input.js';
 import { GameLogicEvent } from '../constants/events.js';
 import {
+    ENEMY_LASER_BEAM_SPEED,
+  ENEMY_LASER_LIFE_SPAN,
   ENEMY_MOVEMENT_SPEED,
   ENEMY_SHOT_DELAY,
   LASER_SHOT_DELAY,
@@ -133,6 +135,8 @@ export class CombatSystem {
               {
                 isVertical: enemy.body.width === 24,
                 rotation: enemy.rotation,
+                laserBeamSpeed: ENEMY_LASER_BEAM_SPEED,
+                lifespan: ENEMY_LASER_LIFE_SPAN
               },
             );
           }

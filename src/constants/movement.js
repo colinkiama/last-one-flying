@@ -4,6 +4,5 @@ export const MovementType = {
   NON_TOUCH: 'non-touch',
 };
 
-export const MIN_JOYSTICK_FORCE = 16;
-export const PLAYER_ROTATION_SPEED = 250;
-export const PLAYER_MOVEMENT_SPEED = 250;
+export const PLAYER_ROTATION_SPEED = 200;
+export const PLAYER_MOVEMENT_SPEED = 200;

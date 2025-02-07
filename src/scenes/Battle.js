@@ -27,6 +27,7 @@ import { LocalStorageKey, RegistryKey } from '../constants/data.js';
 import { TouchControlsSystem } from '../systems/touchControlsSystem.js';
 import { SceneKey } from '../constants/scene.js';
 import { Stopwatch } from '../utils/stopwatch.js';
+import { FIRE_BUTTON_OFFSET_X, FIRE_BUTTON_OFFSET_Y, FIRE_BUTTON_RADIUS, JOYSTICK_BASE_RADIUS, JOYSTICK_OFFSET_X, JOYSTICK_OFFSET_Y, JOYSTICK_RADIUS, JOYSTICK_THUMB_RADIUS } from '../constants/touch.js';
 
 export class Battle extends Scene {
   _player;
@@ -54,19 +55,19 @@ export class Battle extends Scene {
     this.cameras.main.setBackgroundColor(0x000000);
 
     const joystick = this.plugins.get('rexVirtualJoystick').add(this, {
-      x: 100,
-      y: 270,
-      radius: 50,
-      base: this.add.arc(0, 0, 60).setStrokeStyle(2, 0xffffff),
-      thumb: this.add.arc(0, 0, 40).setStrokeStyle(2, 0xffffff),
-      enable: false,
+      x: JOYSTICK_OFFSET_X,
+      y: this.cameras.main.height - JOYSTICK_OFFSET_Y,
+      radius: JOYSTICK_RADIUS,
+      base: this.add.arc(0, 0, JOYSTICK_BASE_RADIUS).setStrokeStyle(2, 0xffffff),
+      thumb: this.add.arc(0, 0, JOYSTICK_THUMB_RADIUS).setStrokeStyle(2, 0xffffff),
+      enable: true
     });
 
     const isTouchControlsEnabled = this.registry.get(
       RegistryKey.TOUCH_CONTROLS,
     );
     const fireButton = this.add
-      .circle(this.cameras.main.width - 100, 270, 50)
+      .circle(this.cameras.main.width - FIRE_BUTTON_OFFSET_X, this.cameras.main.height - FIRE_BUTTON_OFFSET_Y, FIRE_BUTTON_RADIUS)
       .setStrokeStyle(2, 0xffffff);
 
     const touchButtons = {
