@@ -11,15 +11,17 @@ import {
 export class MovementSystem {
   scene;
   _player;
-  _movementKeys;
+  _keyboardCursorKeys;
   _joystick;
+  _joystickCursorKeys;
   _movementType;
 
   constructor(scene, player, movementSystem) {
     this.scene = scene;
     this._player = player;
-    this._movementKeys = createMovementKeys(this.scene.input.keyboard);
+    this._keyboardCursorKeys = createMovementKeys(this.scene.input.keyboard);
     this._joystick = movementSystem.joystick;
+    this._joystickCursorKeys = this._joystick.createCursorKeys();
   }
 
   get movementType() {
@@ -37,17 +39,12 @@ export class MovementSystem {
   }
 
   handlePlayerMovement() {
-    if (this._movementType === MovementType.TOUCH) {
-      this.handleJoystickMovement();
-    } else {
-      this.handleKeyMovement();
-    }
-
+    this.handleKeyMovement(this._movementType === MovementType.TOUCH ? this._joystickCursorKeys : this._keyboardCursorKeys);
     this.updatePlayerBody();
   }
 
-  handleKeyMovement() {
-    const { up, down, left, right } = this._movementKeys;
+  handleKeyMovement(cursorKeys) {
+    const { up, down, left, right } = cursorKeys;
 
     if (left.isDown) {
       this._player.setAngularVelocity(-PLAYER_ROTATION_SPEED);
