@@ -5,7 +5,7 @@ import {
   POINTER_DEADZONE,
   PLAYER_ROTATION_SPEED,
   PLAYER_MOVEMENT_SPEED,
-  MIN_JOYSTICK_FORCE
+  MIN_JOYSTICK_FORCE,
 } from '../constants/movement.js';
 
 export class MovementSystem {
