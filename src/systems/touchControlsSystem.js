@@ -1,43 +1,32 @@
 export class TouchControlsSystem {
-  joystick;
-  // { fire: GameObject }
-  buttons;
-  _visible;
-  _isFireButtonDown;
+    leftJoystick;
+    rightJoystick
+    _isRightJoystickPressed;
 
-  constructor(joystick, buttons) {
-    this.joystick = joystick;
-    this.buttons = buttons;
-    this._isFireButtonDown = false;
-    this.setupEvents();
-  }
-
-  set visible(isVisible) {
-    this._visible = isVisible;
-    this.joystick.visible = isVisible;
-
-    for (const key in this.buttons) {
-      const button = this.buttons[key];
-      if (isVisible) {
-        button.setVisible(isVisible).setInteractive();
-      } else {
-        button.setVisible(isVisible).disableInteractive();
-      }
+    constructor(leftJoystick, rightJoystick) {
+        this.leftJoystick = leftJoystick;
+        this.rightJoystick = rightJoystick;
+        this._isRightJoystickPressed = false;
+        this.setupEvents();
     }
-  }
 
-  get isFireButtonDown() {
-    return this._isFireButtonDown;
-  }
+    set visible(isVisible) {
+        this._visible = isVisible;
+        this.leftJoystick.visible = isVisible;
+        this.rightJoystick.visible = isVisible;
+    }
 
-  setupEvents() {
-    this.buttons.fire
-      .setInteractive()
-      .on('pointerdown', () => {
-        this._isFireButtonDown = true;
-      })
-      .on('pointerup', () => {
-        this._isFireButtonDown = false;
-      });
-  }
+    get isRightJoystickPressed() {
+        return this._isRightJoystickPressed;
+    }
+
+    setupEvents() {
+        this.rightJoystick
+            .on('pointerdown', () => {
+                this._isRightJoystickPressed = true;
+            })
+            .on('pointerup', () => {
+                this._isRightJoystickPressed = false;
+            });
+    }
 }
