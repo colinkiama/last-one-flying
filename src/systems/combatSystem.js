@@ -154,7 +154,7 @@ export class CombatSystem {
     const shootButtonPressed =
       shoot.isDown ||
       (movementType === MovementType.TOUCH
-        ? this._touchControlsSystem.isFireButtonDown
+        ? this._touchControlsSystem.isRightJoystickPressed
         : activePointer.primaryDown);
 
     const shotDelayTmeElapsed = this.scene.time.now >= this._nextShotTime;
