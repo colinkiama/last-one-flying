@@ -8,6 +8,7 @@ import {
   ENEMY_MOVEMENT_SPEED,
   ENEMY_SHOT_DELAY,
   LASER_SHOT_DELAY,
+  PLAYER_GRACE_PERIOD,
 } from '../constants/combat.js';
 import { MovementType } from '../constants/movement.js';
 
@@ -24,6 +25,9 @@ export class CombatSystem {
   _solarBeam;
   _touchControlsSystem;
 
+  _gracePeriodTimer;
+  _gracePeriodTimeLeft;
+
   constructor(scene, player, pools, touchControlsSystem) {
     const { enemyPool, laserBeamPool, enemyLaserBeamPool } = pools;
     this.scene = scene;
@@ -35,6 +39,7 @@ export class CombatSystem {
     this._touchControlsSystem = touchControlsSystem;
     this._combatKeys = createCombatKeys(this.scene.input.keyboard);
     this._nextShotTime = 0;
+    this._gracePeriodTimeLeft = 0;
   }
 
   activateCollisions() {
@@ -186,6 +191,10 @@ export class CombatSystem {
       return;
     }
 
+    if (this._gracePeriodTimeLeft > 0) {
+      return;
+    }
+
     this.followPlayer();
   }
 
@@ -215,6 +224,33 @@ export class CombatSystem {
         this._player,
         ENEMY_MOVEMENT_SPEED,
       );
+    }
+  }
+
+  startPlayerGracePeriod() {
+    this._gracePeriodTimeLeft = PLAYER_GRACE_PERIOD;
+    if (!this._gracePeriodTimer) {
+      this._gracePeriodTimer = this.scene.time.addEvent({
+        delay: 100,
+        callbackScope: this,
+        callback: this.updateGracePeriodTimeLeft,
+        loop: true,
+      });
+    } else {
+      this._gracePeriodTimer.reset({
+        delay: 100,
+        callbackScope: this,
+        callback: this.updateGracePeriodTimeLeft,
+        loop: true,
+      });
+    }
+  }
+
+  updateGracePeriodTimeLeft() {
+    this._gracePeriodTimeLeft -= this._gracePeriodTimer.getElapsed();
+    if (this._gracePeriodTimeLeft < 0) {
+      this._gracePeriodTimeLeft = 0;
+      this._gracePeriodTimer.paused = true;
     }
   }
 

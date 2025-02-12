@@ -392,6 +392,8 @@ export class Battle extends Scene {
       this._spawnSystem.spawnPlayer(
         closestEnemy ? { enemy: closestEnemy } : undefined,
       );
+
+      this._combatSystem.startPlayerGracePeriod();
     });
   }
 
