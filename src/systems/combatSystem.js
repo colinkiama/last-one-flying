@@ -119,6 +119,10 @@ export class CombatSystem {
       delay: ENEMY_SHOT_DELAY,
       loop: true,
       callback: () => {
+        if (this._gracePeriodTimeLeft > 0) {
+          return;
+        }
+
         const activeEnemies = this._enemyPool.getMatching('active', true);
         for (let i = 0; i < activeEnemies.length; i++) {
           const enemy = activeEnemies[i];
