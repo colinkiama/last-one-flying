@@ -57,6 +57,10 @@ export class CombatSystem {
       this._enemyPool,
       this._player,
       (enemy, player) => {
+        if (this._gracePeriodTimeLeft > 0) {
+          return;
+        }
+
         this.destroyShip(enemy);
         const activeEnemies = this._enemyPool.getMatching('active', true);
         const closestEnemy = activeEnemies.reduce(
