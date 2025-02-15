@@ -175,7 +175,7 @@ export class CombatSystem {
 
     if (canShoot) {
       this._nextShotTime = this.scene.time.now + LASER_SHOT_DELAY;
-      const laserBeam = this._laserBeamPool.get(0, 0, 'laser-beam');
+      const laserBeam = this._laserBeamPool.get(0, 0, 'player-laser-beam');
       if (laserBeam) {
         const rotatedShipHeadOffset = new PhaserMath.Vector2(
           this._player.width * this._player.originX + laserBeam.width,

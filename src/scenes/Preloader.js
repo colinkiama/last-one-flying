@@ -36,7 +36,7 @@ export class Preloader extends Scene {
 
     this.load.image('logo', 'last-one-flying-logo.png');
     this.load.image('player', 'player.png');
-    this.load.image('laser-beam', 'laser-beam.png');
+    this.load.image('player-laser-beam', 'player-laser-beam.png');
     this.load.image('enemy-laser-beam', 'enemy-laser-beam.png');
     this.load.image('explosion', 'explosion.png');
     this.load.image('basic-enemy', 'basic-enemy.png');
