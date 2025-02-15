@@ -244,14 +244,22 @@ export class CombatSystem {
         loop: true,
       });
     }
+
+    gameLogicEventEmitter.emit(GameLogicEvent.GRACE_PERIOD_STARTED);
   }
 
   updateGracePeriodTimeLeft() {
     this._gracePeriodTimeLeft -= this._gracePeriodTimer.getElapsed();
+    if (this._gracePeriodTimeLeft > 0) {
+      return;
+    }
+
     if (this._gracePeriodTimeLeft < 0) {
       this._gracePeriodTimeLeft = 0;
-      this._gracePeriodTimer.paused = true;
     }
+
+    this._gracePeriodTimer.paused = true;
+    gameLogicEventEmitter.emit(GameLogicEvent.GRACE_PERIOD_ENDED);
   }
 
   destroyShip(ship) {

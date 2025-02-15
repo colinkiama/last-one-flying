@@ -79,4 +79,14 @@ export class VFXSystem {
         break;
     }
   }
+
+  createPlayerGracePeriodTween(player) {
+    return this.scene.tweens.add({
+      targets: player,
+      alpha: { from: 0.2, to: 1.0 },
+      duration: 300,
+      yoyo: true,
+      repeat: -1,
+    });
+  }
 }

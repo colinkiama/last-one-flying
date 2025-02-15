@@ -51,6 +51,7 @@ export class Battle extends Scene {
   _touchControlsSystem;
 
   _sessionStopWatch;
+  _playerGracePeriodTween;
 
   constructor() {
     super(SceneKey.BATTLE);
@@ -202,6 +203,18 @@ export class Battle extends Scene {
 
     gameLogicEventEmitter.on(GameLogicEvent.GAME_OVER, this.onGameOver, this);
 
+    gameLogicEventEmitter.on(
+      GameLogicEvent.GRACE_PERIOD_STARTED,
+      this.onGracePeriodStarted,
+      this,
+    );
+
+    gameLogicEventEmitter.on(
+      GameLogicEvent.GRACE_PERIOD_ENDED,
+      this.onGracePeriodEnded,
+      this,
+    );
+
     crossSceneEventEmitter.on(
       CrossSceneEvent.SHAKE_SCREEN,
       this.onScreenShakeRequested,
@@ -282,7 +295,20 @@ export class Battle extends Scene {
       this.onLivesUpdated,
       this,
     );
+
     gameLogicEventEmitter.off(GameLogicEvent.GAME_OVER, this.onGameOver, this);
+
+    gameLogicEventEmitter.off(
+      GameLogicEvent.GRACE_PERIOD_STARTED,
+      this.onGracePeriodStarted,
+      this,
+    );
+
+    gameLogicEventEmitter.off(
+      GameLogicEvent.GRACE_PERIOD_ENDED,
+      this.onGracePeriodEnded,
+      this,
+    );
 
     crossSceneEventEmitter.off(
       CrossSceneEvent.SHAKE_SCREEN,
@@ -322,6 +348,20 @@ export class Battle extends Scene {
 
     this.registry.events.off(Data.Events.CHANGE_DATA, this.onDataChanged, this);
     this.registry.events.off(Data.Events.SET_DATA, this.onDataChanged, this);
+  }
+
+  onGracePeriodEnded() {
+    if (this._playerGracePeriodTween) {
+      this._playerGracePeriodTween.stop();
+    }
+
+    this._player.alpha = 1;
+  }
+
+  onGracePeriodStarted() {
+    this._playerGracePeriodTween = this._vfxSystem.createPlayerGracePeriodTween(
+      this._player,
+    );
   }
 
   onHudDestroyed() {
