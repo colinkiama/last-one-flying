@@ -162,13 +162,12 @@ export class CombatSystem {
 
   update(movementType) {
     const { shoot } = this._combatKeys;
-    const activePointer = this.scene.input.activePointer;
 
     const shootButtonPressed =
       shoot.isDown ||
       (movementType === MovementType.TOUCH
         ? this._touchControlsSystem.isRightJoystickPressed
-        : activePointer.primaryDown);
+        : false);
 
     const shotDelayTmeElapsed = this.scene.time.now >= this._nextShotTime;
     const canShoot =
