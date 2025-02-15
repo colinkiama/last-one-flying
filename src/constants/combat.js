@@ -6,3 +6,4 @@ export const PLAYER_LASER_BEAM_SPEED = 250;
 export const PLAYER_LASER_LIFE_SPAN = 2000;
 export const ENEMY_LASER_BEAM_SPEED = 200;
 export const ENEMY_LASER_LIFE_SPAN = 3000;
+export const PLAYER_GRACE_PERIOD = 1500;

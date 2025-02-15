@@ -18,4 +18,6 @@ export const GameLogicEvent = {
   SCORE_UPDATED: 'score-updated',
   LIVES_UPDATED: 'lives-updated',
   GAME_OVER: 'game-over',
+  GRACE_PERIOD_STARTED: 'grace-period-started',
+  GRACE_PERIOD_ENDED: 'grace-period-ended',
 };
