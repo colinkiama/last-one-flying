@@ -75,6 +75,7 @@ export class Battle extends Scene {
       thumb: this.add
         .arc(0, 0, JOYSTICK_THUMB_RADIUS)
         .setStrokeStyle(2, 0xffffff),
+      dir: 'up&down',
     });
 
     const rightJoystick = this.plugins.get('rexVirtualJoystick').add(this, {
