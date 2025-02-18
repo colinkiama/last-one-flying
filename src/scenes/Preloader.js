@@ -127,7 +127,6 @@ export class Preloader extends Scene {
           this.scene.add(sceneName, loadedModule[sceneName]);
         });
 
-
         this.progressBar.setVisible(false);
         this.progressBarFill.setVisible(false);
 
@@ -152,7 +151,7 @@ export class Preloader extends Scene {
               ],
             },
           ],
-          'sound-preference'
+          'sound-preference',
         );
       },
     });
@@ -164,7 +163,7 @@ export class Preloader extends Scene {
   }
 
   startGameMuted() {
-    this.game.registry.set(RegistryKey.PLAY_SOUND, true);
+    this.game.registry.set(RegistryKey.PLAY_SOUND, false);
     this.scene.start(SceneKey.MAIN_MENU);
   }
 }

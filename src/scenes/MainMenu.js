@@ -7,13 +7,27 @@ import {
 } from '../constants/menu.js';
 import { SceneKey } from '../constants/scene.js';
 import { onButtonHover, onButtonOut } from '../utils/ui.js';
+import { RegistryKey } from '../constants/data.js';
 
 export class MainMenu extends Scene {
+  _music;
+
   constructor() {
     super(SceneKey.MAIN_MENU);
   }
 
   create() {
+    if (!this._music) {
+      this._music = this.sound.add('main-theme');
+    }
+
+    if (
+      this.game.registry.get(RegistryKey.PLAY_SOUND) &&
+      !this._music.isPlaying
+    ) {
+      this._music.play({ loop: true });
+    }
+
     const logo = this.add.image(320, 60, 'logo').setOrigin(0.5, 0);
     this.tweens.add({
       targets: logo,
