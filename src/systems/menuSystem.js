@@ -190,7 +190,6 @@ export class MenuSystem {
     if (menu.customContent) {
       customContent.y = lastRenderedItem.y + lastRenderedItem.height + 12;
       lastRenderedItem = customContent;
-      console.log('Custom content as last rendered item:', lastRenderedItem);
     }
 
     const menuItems = menu.items.map((menuItem, index) => {

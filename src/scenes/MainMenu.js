@@ -6,6 +6,7 @@ import {
   HOVER_TWEEN_CONFIG,
 } from '../constants/menu.js';
 import { SceneKey } from '../constants/scene.js';
+import { onButtonHover, onButtonOut } from '../utils/ui.js';
 
 export class MainMenu extends Scene {
   constructor() {
@@ -90,14 +91,6 @@ export class MainMenu extends Scene {
     // - Update soundToggle button text to either "Sound: On" or "Sound: Off"
     //   based on the current sound playback preference value
   }
-}
-
-function onButtonHover() {
-  this.setColor(COLORS.hoverForeground);
-}
-
-function onButtonOut() {
-  this.setColor(COLORS.foreground);
 }
 
 function onFooterCreditsClick() {

@@ -1,6 +1,8 @@
 import { Scene } from 'phaser';
 import { SceneKey } from '../constants/scene.js';
 import { LocalStorageKey, RegistryKey } from '../constants/data.js';
+import { COLORS, MENU_ITEM_CONFIG } from '../constants/menu.js';
+import { onButtonHover, onButtonOut } from '../utils/ui.js';
 
 const PROGRESS_BAR_WIDTH = 300;
 const PROGRESS_BAR_HEIGHT = 32;
@@ -11,11 +13,13 @@ const SCENES_TO_LOAD = [
   'PauseMenu',
   'GameOver',
   'Credits',
-]
+];
 
 export class Preloader extends Scene {
   sceneImports;
   sceneLoaderPromise;
+  playButton;
+
   constructor() {
     super('Preloader');
   }
@@ -83,10 +87,10 @@ export class Preloader extends Scene {
       frameHeight: 32,
     });
 
-    this.load.setPath('src/scenes');
-
     this.sceneImports = [];
-    SCENES_TO_LOAD.map((sceneName) => this.sceneImports.push(import(`../scenes/${sceneName}.js`)));
+    SCENES_TO_LOAD.map((sceneName) =>
+      this.sceneImports.push(import(`../scenes/${sceneName}.js`)),
+    );
     this.sceneLoaderPromise = Promise.all(this.sceneImports);
   }
 
@@ -103,6 +107,9 @@ export class Preloader extends Scene {
     //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
     // this.scene.start('MainMenu');
 
+    const playButtonX = this.cameras.main.width / 2;
+    const playButtonY = this.cameras.main.height / 2;
+
     WebFont.load({
       custom: {
         families: ['usuzi'],
@@ -112,9 +119,20 @@ export class Preloader extends Scene {
         SCENES_TO_LOAD.map((sceneName, i) => {
           const loadedModule = importResults[i];
           this.scene.add(sceneName, loadedModule[sceneName]);
-        })
+        });
 
-        this.scene.start(SceneKey.MAIN_MENU);
+        this.playButton = this.add
+          .text(playButtonX, playButtonY + PROGRESS_BAR_HEIGHT + 16, 'PLAY', {
+            fontSize: 24,
+            color: COLORS.foreground,
+            fontFamily: 'usuzi',
+          })
+          .setOrigin(0.5, 0.5)
+          .setInteractive(MENU_ITEM_CONFIG)
+          .setVisible(true)
+          .on('pointerover', onButtonHover)
+          .on('pointerout', onButtonOut)
+          .on('pointerup', () => this.scene.start(SceneKey.MAIN_MENU));
       },
     });
   }
