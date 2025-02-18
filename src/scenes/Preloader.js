@@ -3,6 +3,7 @@ import { SceneKey } from '../constants/scene.js';
 import { LocalStorageKey, RegistryKey } from '../constants/data.js';
 import { COLORS, MENU_ITEM_CONFIG } from '../constants/menu.js';
 import { onButtonHover, onButtonOut } from '../utils/ui.js';
+import { MenuSystem } from '../systems/menuSystem.js';
 
 const PROGRESS_BAR_WIDTH = 300;
 const PROGRESS_BAR_HEIGHT = 32;
@@ -19,6 +20,11 @@ export class Preloader extends Scene {
   sceneImports;
   sceneLoaderPromise;
   playButton;
+  progressBar;
+  progressBarFill;
+
+  /** @type {MenuSystem} */
+  _menuSystem;
 
   constructor() {
     super('Preloader');
@@ -29,7 +35,7 @@ export class Preloader extends Scene {
 
     const progressBarX = this.cameras.main.width / 2;
     const progressBarY = this.cameras.main.height / 2;
-    this.add
+    this.progressBar = this.add
       .rectangle(
         progressBarX,
         progressBarY,
@@ -39,7 +45,7 @@ export class Preloader extends Scene {
       .setStrokeStyle(1, 0xffffff);
 
     //  This is the progress bar itself. It will increase in size from the left based on the % of progress.
-    const bar = this.add.rectangle(
+    this.progressBarFill = this.add.rectangle(
       progressBarX - PROGRESS_BAR_WIDTH / 2 + 1,
       progressBarY,
       0,
@@ -50,7 +56,7 @@ export class Preloader extends Scene {
     //  Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
     this.load.on('progress', (progress) => {
       //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
-      bar.width = (PROGRESS_BAR_WIDTH - 3) * progress;
+      this.progressBarFill.width = (PROGRESS_BAR_WIDTH - 3) * progress;
     });
 
     //  Inject our CSS (for Usuzi Font)
@@ -121,19 +127,44 @@ export class Preloader extends Scene {
           this.scene.add(sceneName, loadedModule[sceneName]);
         });
 
-        this.playButton = this.add
-          .text(playButtonX, playButtonY + PROGRESS_BAR_HEIGHT + 16, 'PLAY', {
-            fontSize: 24,
-            color: COLORS.foreground,
-            fontFamily: 'usuzi',
-          })
-          .setOrigin(0.5, 0.5)
-          .setInteractive(MENU_ITEM_CONFIG)
-          .setVisible(true)
-          .on('pointerover', onButtonHover)
-          .on('pointerout', onButtonOut)
-          .on('pointerup', () => this.scene.start(SceneKey.MAIN_MENU));
+
+        this.progressBar.setVisible(false);
+        this.progressBarFill.setVisible(false);
+
+        this._menuSystem = new MenuSystem(this);
+        this._menuSystem.start(
+          [
+            {
+              key: 'sound-preference',
+              title: {
+                type: 'text',
+                value: 'Play Sound?',
+              },
+              items: [
+                {
+                  label: 'Yes',
+                  action: this.startGameWithSound,
+                },
+                {
+                  label: 'No',
+                  action: this.startGameMuted,
+                },
+              ],
+            },
+          ],
+          'sound-preference'
+        );
       },
     });
+  }
+
+  startGameWithSound() {
+    this.game.registry.set(RegistryKey.PLAY_SOUND, true);
+    this.scene.start(SceneKey.MAIN_MENU);
+  }
+
+  startGameMuted() {
+    this.game.registry.set(RegistryKey.PLAY_SOUND, true);
+    this.scene.start(SceneKey.MAIN_MENU);
   }
 }
