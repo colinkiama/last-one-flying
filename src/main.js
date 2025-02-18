@@ -1,14 +1,7 @@
-import { Boot } from './scenes/Boot.js';
-import { Battle } from './scenes/Battle.js';
-import { MainMenu } from './scenes/MainMenu.js';
-import { Preloader } from './scenes/Preloader.js';
-import { Credits } from './scenes/Credits.js';
-import { PauseMenu } from './scenes/PauseMenu.js';
-import { HUD } from './scenes/HUD.js';
 import { AUTO, Scale, Game } from 'phaser';
-import { RegistryKey } from './constants/data.js';
 import { VirtualJoyStickPlugin } from 'virtualjoystick';
-import { GameOver } from './scenes/GameOver.js';
+import { RegistryKey } from './constants/data.js';
+import { Preloader } from './scenes/Preloader.js';
 
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -30,7 +23,7 @@ const config = {
   input: {
     activePointers: 2,
   },
-  scene: [Boot, Preloader, MainMenu, Battle, Credits, HUD, PauseMenu, GameOver],
+  scene: [Preloader],
   plugins: {
     global: [
       {

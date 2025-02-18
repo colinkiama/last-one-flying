@@ -58,6 +58,11 @@ export class Battle extends Scene {
   }
 
   create() {
+    const mainThemeSong = this.sound.get('main-theme');
+    if (mainThemeSong.isPlaying) {
+      mainThemeSong.stop();
+    }
+
     this.subscribeToEvents();
     this.cameras.main.setBackgroundColor(0x000000);
 
