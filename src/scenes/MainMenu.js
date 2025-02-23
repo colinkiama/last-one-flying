@@ -8,12 +8,20 @@ import {
 import { SceneKey } from '../constants/scene.js';
 import { onButtonHover, onButtonOut } from '../utils/ui.js';
 import { RegistryKey } from '../constants/data.js';
+import { DependencyKey } from '../constants/injector.js';
 
 export class MainMenu extends Scene {
+  injector;
+  _audioSystem;
+
   _music;
 
   constructor() {
     super(SceneKey.MAIN_MENU);
+  }
+
+  setupDependencies() {
+    this.audioSystem = this.injector.get(DependencyKey.AUDIO_SYSTEM);
   }
 
   create() {

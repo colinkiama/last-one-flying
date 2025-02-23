@@ -4,6 +4,9 @@ import { LocalStorageKey, RegistryKey } from '../constants/data.js';
 import { COLORS, MENU_ITEM_CONFIG } from '../constants/menu.js';
 import { onButtonHover, onButtonOut } from '../utils/ui.js';
 import { MenuSystem } from '../systems/menuSystem.js';
+import { Injector } from '../utils/injector.js';
+import { DependencyKey } from '../constants/injector.js';
+import { AudioSystem } from '../systems/audioSystem.js';
 
 const PROGRESS_BAR_WIDTH = 300;
 const PROGRESS_BAR_HEIGHT = 32;
@@ -15,6 +18,8 @@ const SCENES_TO_LOAD = [
   'GameOver',
   'Credits',
 ];
+
+let dependencyInjector;
 
 export class Preloader extends Scene {
   sceneImports;
@@ -58,6 +63,8 @@ export class Preloader extends Scene {
       //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
       this.progressBarFill.width = (PROGRESS_BAR_WIDTH - 3) * progress;
     });
+
+    dependencyInjector = new Injector();
 
     //  Inject our CSS (for Usuzi Font)
     const element = document.createElement('style');
@@ -121,10 +128,18 @@ export class Preloader extends Scene {
         families: ['usuzi'],
       },
       active: async () => {
+        const { AudioSystem } = await import('../systems/audioSystem.js');
+        dependencyInjector.register(DependencyKey.AUDIO_SYSTEM, new AudioSystem(this.sound));
+
         const importResults = await this.sceneLoaderPromise;
         SCENES_TO_LOAD.map((sceneName, i) => {
           const loadedModule = importResults[i];
-          this.scene.add(sceneName, loadedModule[sceneName]);
+          const addedScene = this.scene.add(sceneName, loadedModule[sceneName]);
+          addedScene.injector = dependencyInjector;
+
+          if (addedScene.setupDependencies) {
+            addedScene.setupDependencies();
+          }
         });
 
         this.progressBar.setVisible(false);

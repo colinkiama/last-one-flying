@@ -34,8 +34,11 @@ import {
   JOYSTICK_RADIUS,
   JOYSTICK_THUMB_RADIUS,
 } from '../constants/touch.js';
+import { DependencyKey } from '../constants/injector.js';
 
 export class Battle extends Scene {
+  injector;
+
   _player;
   _enemyPool;
   _laserPool;
@@ -49,12 +52,17 @@ export class Battle extends Scene {
   _scoreSystem;
   _statusSystem;
   _touchControlsSystem;
+  _audioSystem;
 
   _sessionStopWatch;
   _playerGracePeriodTween;
 
   constructor() {
     super(SceneKey.BATTLE);
+  }
+
+  setupDependencies() {
+    this._audioSystem = this.injector.get(DependencyKey.AUDIO_SYSTEM);
   }
 
   create() {
