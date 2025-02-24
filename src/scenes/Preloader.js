@@ -183,7 +183,9 @@ export class Preloader extends Scene {
 
   startGameWithSound() {
     this.game.registry.set(RegistryKey.PLAY_SOUND, true);
-    this.scene.start(SceneKey.MAIN_MENU);
+    this.scene.start(SceneKey.MAIN_MENU, {
+      playMusic: true,
+    });
   }
 
   startGameMuted() {

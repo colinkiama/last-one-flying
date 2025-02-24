@@ -10,6 +10,6 @@ export class Injector {
   }
 
   get(key) {
-    this.dependencyMap.get(key);
+    return this.dependencyMap.get(key);
   }
 }

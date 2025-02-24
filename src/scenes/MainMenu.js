@@ -9,6 +9,7 @@ import { SceneKey } from '../constants/scene.js';
 import { onButtonHover, onButtonOut } from '../utils/ui.js';
 import { RegistryKey } from '../constants/data.js';
 import { DependencyKey } from '../constants/injector.js';
+import { AudioKeys } from '../constants/audio.js';
 
 export class MainMenu extends Scene {
   injector;
@@ -21,19 +22,20 @@ export class MainMenu extends Scene {
   }
 
   setupDependencies() {
-    this.audioSystem = this.injector.get(DependencyKey.AUDIO_SYSTEM);
+    console.log('What is this?:', this);
+    this._audioSystem = this.injector.get(DependencyKey.AUDIO_SYSTEM);
+    console.log('What is this? after injector:', this);
+
+    console.log('Dependencies:', this._audioSystem);
   }
 
-  create() {
-    if (!this._music) {
-      this._music = this.sound.add('main-theme');
-    }
-
+  create(data) {
     if (
+      data.playMusic &&
       this.game.registry.get(RegistryKey.PLAY_SOUND) &&
-      !this._music.isPlaying
+      !this._audioSystem.get(AudioKeys.MAIN_THEME)?.isPlaying
     ) {
-      this._music.play({ loop: true });
+      this._audioSystem.play(AudioKeys.MAIN_THEME);
     }
 
     const logo = this.add.image(320, 60, 'logo').setOrigin(0.5, 0);
