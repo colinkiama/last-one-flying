@@ -1,16 +1,15 @@
-
 export class Injector {
-    dependencyMap;
+  dependencyMap;
 
-    constructor() {
-        this.dependencyMap = new Map()
-    }
+  constructor() {
+    this.dependencyMap = new Map();
+  }
 
-    register(key, value) {
-        this.dependencyMap.set(key, value);
-    }
+  register(key, value) {
+    this.dependencyMap.set(key, value);
+  }
 
-    get(key) {
-        this.dependencyMap.get(key);
-    }
+  get(key) {
+    this.dependencyMap.get(key);
+  }
 }

@@ -1,7 +1,7 @@
 export class AudioSystem {
-    _soundManager;
+  _soundManager;
 
-    constructor(soundManager) {
-        this._soundManager = soundManager;
-    }
+  constructor(soundManager) {
+    this._soundManager = soundManager;
+  }
 }

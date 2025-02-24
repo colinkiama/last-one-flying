@@ -1,3 +1,3 @@
 export const DependencyKey = {
-    AUDIO_SYSTEM: 'AudioSystem'
+  AUDIO_SYSTEM: 'AudioSystem',
 };
