@@ -1,10 +1,8 @@
 export class AudioSystem {
   _soundManager;
-  _audioCache;
 
   constructor(soundManager) {
     this._soundManager = soundManager;
-    this._audioCache = new Map();
   }
 
   play(key, options) {
@@ -17,15 +15,15 @@ export class AudioSystem {
   }
 
   get(key) {
-    return this._audioCache.get(key);
+    return this._soundManager.get(key);
   }
 
   getOrAddAudio(key, options) {
-    return this._audioCache.get(key) ?? this._soundManager.add(key, options);
+    return this._soundManager.get(key) ?? this._soundManager.add(key, options);
   }
 
   stop(key) {
-    const audio = this._audioCache.get(key);
+    const audio = this._soundManager.get(key);
     if (!audio) {
       console.error(`Audio not found using the key: '${key}'`);
     }

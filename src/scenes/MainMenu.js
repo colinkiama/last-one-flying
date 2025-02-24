@@ -22,11 +22,7 @@ export class MainMenu extends Scene {
   }
 
   setupDependencies() {
-    console.log('What is this?:', this);
     this._audioSystem = this.injector.get(DependencyKey.AUDIO_SYSTEM);
-    console.log('What is this? after injector:', this);
-
-    console.log('Dependencies:', this._audioSystem);
   }
 
   create(data) {
@@ -106,6 +102,7 @@ export class MainMenu extends Scene {
   }
 
   startNewGame() {
+    this._audioSystem.stop(AudioKeys.MAIN_THEME);
     this.scene.start(SceneKey.BATTLE);
   }
 
