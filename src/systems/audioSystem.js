@@ -22,6 +22,10 @@ export class AudioSystem {
     audio.play();
   }
 
+  playSFX(key, options) {
+    this._soundManager.play(key, options);
+  }
+
   playLoop(key, options, loopMarkerConfig) {
     const audio = this.getOrAddAudio(key, options);
     this._loopMarkers.get(key) ?? this._loopMarkers.set(key, audio.addMarker(loopMarkerConfig));
