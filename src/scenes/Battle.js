@@ -382,10 +382,11 @@ export class Battle extends Scene {
   }
 
   onHudDestroyed() {
-    this.scene.start(SceneKey.MAIN_MENU);
+    this.scene.start(SceneKey.MAIN_MENU, { playMusic: true });
   }
 
   onQuitGame() {
+    this._audioSystem.stop(AudioKey.BATTLE_THEME);
     this.scene.stop(SceneKey.HUD);
   }
 
