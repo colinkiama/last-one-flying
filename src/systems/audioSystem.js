@@ -14,11 +14,6 @@ export class AudioSystem {
 
   play(key, options) {
     const audio = this.getOrAddAudio(key, options);
-    if (audio.isPlaying) {
-      console.warn(`Tried to play music with key: ${key}, even though it's already playing!`);
-      return;
-    }
-
     audio.play();
   }
 
