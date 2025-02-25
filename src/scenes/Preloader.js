@@ -7,7 +7,7 @@ import { MenuSystem } from '../systems/menuSystem.js';
 import { Injector } from '../utils/injector.js';
 import { DependencyKey } from '../constants/injector.js';
 import { AudioSystem } from '../systems/audioSystem.js';
-import { AudioKeys } from '../constants/audio.js';
+import { AudioKey } from '../constants/audio.js';
 
 const PROGRESS_BAR_WIDTH = 300;
 const PROGRESS_BAR_HEIGHT = 32;
@@ -81,13 +81,13 @@ export class Preloader extends Scene {
 
     //  Load the assets for the game - Replace with your own assets
     this.load.setPath('assets');
-    this.load.audio(AudioKeys.MAIN_THEME, [
+    this.load.audio(AudioKey.MAIN_THEME, [
       'audio/main-theme.opus',
       'audio/main-theme.ogg',
       'audio/main-theme.mp3',
     ]);
 
-    this.load.audio(AudioKeys.BATTLE_THEME, [
+    this.load.audio(AudioKey.BATTLE_THEME, [
       'audio/battle-theme.opus',
       'audio/battle-theme.mp3',
     ]);

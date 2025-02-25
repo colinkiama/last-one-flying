@@ -1,29 +1,35 @@
 import * as Phaser from 'phaser';
-/**
- * @typedef {Object} LoopConfig
- * @property {Phaser.Types.Sound.SoundConfig} initialPlayback
- * @property {Phaser.Types.Sound.SoundConfig} loopPlayback
- */
 
 export class AudioSystem {
   /**
    * @type {Phaser.Sound.BaseSoundManager}
    */
   _soundManager;
-
-  /**
-   * @type {Map<string, LoopConfig>}
-   */
-  _loopConfigs;
+  _loopMarkers;
 
   constructor(soundManager) {
     this._soundManager = soundManager;
-    this._loopConfigs = new Map();
+    this._loopMarkers = new Map();
   }
 
   play(key, options) {
     const audio = this.getOrAddAudio(key, options);
+    if (audio.isPlaying) {
+      console.warn(`Tried to play music with key: ${key}, even though it's already playing!`);
+      return;
+    }
+
     audio.play();
+  }
+
+  playLoop(key, options, loopMarkerConfig) {
+    const audio = this.getOrAddAudio(key, options);
+    this._loopMarkers.get(key) ?? this._loopMarkers.set(key, audio.addMarker(loopMarkerConfig));
+
+    audio.play();
+    audio.once("complete", () => {
+      audio.play(loopMarkerConfig.name);
+    });
   }
 
   pause(key) {
@@ -37,12 +43,8 @@ export class AudioSystem {
   }
 
   get(key) {
-    const audio = this.get(key);
-    if (!audio) {
-      throw new Error(`Audio not found using the key: '${key}'`);
-    }
-
-    return this._soundManager.get(key);
+    const audio = this._soundManager.get(key);
+    return audio;
   }
 
   getOrAddAudio(key, options) {

@@ -35,6 +35,7 @@ import {
   JOYSTICK_THUMB_RADIUS,
 } from '../constants/touch.js';
 import { DependencyKey } from '../constants/injector.js';
+import { AudioKey, AudioMarkerKey, LOOP_MARKER_CONFIGS } from '../constants/audio.js';
 
 export class Battle extends Scene {
   injector;
@@ -66,6 +67,13 @@ export class Battle extends Scene {
   }
 
   create() {
+    if(
+      this.game.registry.get(RegistryKey.PLAY_SOUND) &&
+      !this._audioSystem.get(AudioKey.BATTLE_THEME)?.isPlaying
+      ) {
+        this._audioSystem.playLoop(AudioKey.BATTLE_THEME, { loop: false }, LOOP_MARKER_CONFIGS[AudioKey.BATTLE_THEME]);
+    }
+
     this.subscribeToEvents();
     this.cameras.main.setBackgroundColor(0x000000);
 

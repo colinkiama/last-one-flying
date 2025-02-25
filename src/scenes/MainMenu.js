@@ -9,7 +9,7 @@ import { SceneKey } from '../constants/scene.js';
 import { onButtonHover, onButtonOut } from '../utils/ui.js';
 import { RegistryKey } from '../constants/data.js';
 import { DependencyKey } from '../constants/injector.js';
-import { AudioKeys } from '../constants/audio.js';
+import { AudioKey } from '../constants/audio.js';
 
 export class MainMenu extends Scene {
   injector;
@@ -29,9 +29,9 @@ export class MainMenu extends Scene {
     if (
       data.playMusic &&
       this.game.registry.get(RegistryKey.PLAY_SOUND) &&
-      !this._audioSystem.get(AudioKeys.MAIN_THEME)?.isPlaying
+      !this._audioSystem.get(AudioKey.MAIN_THEME)?.isPlaying
     ) {
-      this._audioSystem.play(AudioKeys.MAIN_THEME);
+      this._audioSystem.play(AudioKey.MAIN_THEME);
     }
 
     const logo = this.add.image(320, 60, 'logo').setOrigin(0.5, 0);
@@ -102,7 +102,7 @@ export class MainMenu extends Scene {
   }
 
   startNewGame() {
-    this._audioSystem.stop(AudioKeys.MAIN_THEME);
+    this._audioSystem.stop(AudioKey.MAIN_THEME);
     this.scene.start(SceneKey.BATTLE);
   }
 
