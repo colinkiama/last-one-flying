@@ -10,11 +10,11 @@ export const AudioMarkerKey = {
 export const LOOP_MARKER_CONFIGS = {
   [AudioKey.BATTLE_THEME]: {
     name: AudioMarkerKey.BATTLE_THEME_LOOP,
-    start: 6.4, // In Seconds
-    duration: 101.6,
+    start: 6.3, // In Seconds
+    duration: 101.7,
     config: {
       loop: true,
-      seek: 6.4,
+      seek: 6.3,
     }
   }
 };
