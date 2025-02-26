@@ -87,7 +87,7 @@ export class Credits extends Scene {
     backButton.on('pointerover', onButtonHover);
     backButton.on('pointerout', onButtonOut);
     backButton.on('pointerup', () => {
-      this.scene.start(SceneKey.MAIN_MENU);
+      this.scene.start(SceneKey.MAIN_MENU, { playMusic: false });
     });
   }
 }

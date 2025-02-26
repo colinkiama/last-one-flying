@@ -34,8 +34,12 @@ import {
   JOYSTICK_RADIUS,
   JOYSTICK_THUMB_RADIUS,
 } from '../constants/touch.js';
+import { DependencyKey } from '../constants/injector.js';
+import { AudioKey, AudioMarkerKey, LOOP_MARKER_CONFIGS } from '../constants/audio.js';
 
 export class Battle extends Scene {
+  injector;
+
   _player;
   _enemyPool;
   _laserPool;
@@ -49,6 +53,7 @@ export class Battle extends Scene {
   _scoreSystem;
   _statusSystem;
   _touchControlsSystem;
+  _audioSystem;
 
   _sessionStopWatch;
   _playerGracePeriodTween;
@@ -57,10 +62,15 @@ export class Battle extends Scene {
     super(SceneKey.BATTLE);
   }
 
+  setupDependencies() {
+    this._audioSystem = this.injector.get(DependencyKey.AUDIO_SYSTEM);
+  }
+
   create() {
-    const mainThemeSong = this.sound.get('main-theme');
-    if (mainThemeSong.isPlaying) {
-      mainThemeSong.stop();
+    if(
+      !this._audioSystem.get(AudioKey.BATTLE_THEME)?.isPlaying
+      ) {
+        this._audioSystem.playLoop(AudioKey.BATTLE_THEME, { loop: false }, LOOP_MARKER_CONFIGS[AudioKey.BATTLE_THEME]);
     }
 
     this.subscribeToEvents();
@@ -265,6 +275,7 @@ export class Battle extends Scene {
   }
 
   onPauseRequested() {
+
     this.scene.launch(SceneKey.PAUSE_MENU);
   }
 
@@ -371,14 +382,16 @@ export class Battle extends Scene {
   }
 
   onHudDestroyed() {
-    this.scene.start(SceneKey.MAIN_MENU);
+    this.scene.start(SceneKey.MAIN_MENU, { playMusic: true });
   }
 
   onQuitGame() {
+    this._audioSystem.stop(AudioKey.BATTLE_THEME);
     this.scene.stop(SceneKey.HUD);
   }
 
   onResumeGame() {
+    this._audioSystem.resume(AudioKey.BATTLE_THEME);
     this.scene.resume(SceneKey.HUD);
     this.scene.resume(this);
   }
@@ -386,6 +399,7 @@ export class Battle extends Scene {
   onPauseGame() {
     this.scene.pause(SceneKey.HUD);
     this.scene.pause(this);
+    this._audioSystem.pause(AudioKey.BATTLE_THEME);
   }
 
   onDataChanged(_parent, key, value) {
@@ -466,6 +480,7 @@ export class Battle extends Scene {
     this.clearPhysicsPools();
     this.updateHighScore();
     this._spawnSystem.deactivateEnemySpawnTimer();
+    this._audioSystem.stop(AudioKey.BATTLE_THEME);
 
     this.time.delayedCall(1000, () => {
       this.scene.launch(SceneKey.GAME_OVER, gameStats);
@@ -494,6 +509,7 @@ export class Battle extends Scene {
     this._spawnSystem.reset();
     crossSceneEventEmitter.emit(CrossSceneEvent.SCORE_RESET);
     this._sessionStopWatch.reset();
+    this._audioSystem.playLoop(AudioKey.BATTLE_THEME, { loop: false }, AudioMarkerKey.BATTLE_THEME_LOOP);
   }
 
   clearPhysicsPools() {
