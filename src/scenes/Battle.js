@@ -275,6 +275,7 @@ export class Battle extends Scene {
   }
 
   onPauseRequested() {
+
     this.scene.launch(SceneKey.PAUSE_MENU);
   }
 
@@ -390,6 +391,7 @@ export class Battle extends Scene {
   }
 
   onResumeGame() {
+    this._audioSystem.resume(AudioKey.BATTLE_THEME);
     this.scene.resume(SceneKey.HUD);
     this.scene.resume(this);
   }
@@ -397,6 +399,7 @@ export class Battle extends Scene {
   onPauseGame() {
     this.scene.pause(SceneKey.HUD);
     this.scene.pause(this);
+    this._audioSystem.pause(AudioKey.BATTLE_THEME);
   }
 
   onDataChanged(_parent, key, value) {

@@ -33,7 +33,7 @@ export class AudioSystem {
 
   pause(key) {
     const audio = this.get(key);
-    audio.play();
+    audio.pause();
   }
 
   resume(key) {
