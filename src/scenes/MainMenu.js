@@ -28,7 +28,6 @@ export class MainMenu extends Scene {
   create(data) {
     if (
       data.playMusic &&
-      this.game.registry.get(RegistryKey.PLAY_SOUND) &&
       !this._audioSystem.get(AudioKey.MAIN_THEME)?.isPlaying
     ) {
       this._audioSystem.play(AudioKey.MAIN_THEME);
@@ -102,7 +101,10 @@ export class MainMenu extends Scene {
   }
 
   startNewGame() {
-    this._audioSystem.stop(AudioKey.MAIN_THEME);
+    if (this._audioSystem.get(AudioKey.MAIN_THEME)?.isPlaying) {
+      this._audioSystem.stop(AudioKey.MAIN_THEME);
+    }
+
     this.scene.start(SceneKey.BATTLE);
   }
 

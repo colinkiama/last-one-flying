@@ -190,6 +190,7 @@ export class Preloader extends Scene {
 
   startGameMuted() {
     this.game.registry.set(RegistryKey.PLAY_SOUND, false);
+    this.sound.setMute(true);
     this.scene.start(SceneKey.MAIN_MENU);
   }
 }

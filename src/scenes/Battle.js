@@ -68,7 +68,6 @@ export class Battle extends Scene {
 
   create() {
     if(
-      this.game.registry.get(RegistryKey.PLAY_SOUND) &&
       !this._audioSystem.get(AudioKey.BATTLE_THEME)?.isPlaying
       ) {
         this._audioSystem.playLoop(AudioKey.BATTLE_THEME, { loop: false }, LOOP_MARKER_CONFIGS[AudioKey.BATTLE_THEME]);
