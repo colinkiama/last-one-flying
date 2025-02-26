@@ -480,6 +480,7 @@ export class Battle extends Scene {
     this.clearPhysicsPools();
     this.updateHighScore();
     this._spawnSystem.deactivateEnemySpawnTimer();
+    this._audioSystem.stop(AudioKey.BATTLE_THEME);
 
     this.time.delayedCall(1000, () => {
       this.scene.launch(SceneKey.GAME_OVER, gameStats);
@@ -508,6 +509,7 @@ export class Battle extends Scene {
     this._spawnSystem.reset();
     crossSceneEventEmitter.emit(CrossSceneEvent.SCORE_RESET);
     this._sessionStopWatch.reset();
+    this._audioSystem.playLoop(AudioKey.BATTLE_THEME, { loop: false }, AudioMarkerKey.BATTLE_THEME_LOOP);
   }
 
   clearPhysicsPools() {
