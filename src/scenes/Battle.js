@@ -280,6 +280,7 @@ export class Battle extends Scene {
   }
 
   unsubscribeFromEvents() {
+    this._audioSystem.unsubscribeFromEvents();
     this.input.keyboard.off('keyup-P', this.onPauseRequested, this);
 
     gameLogicEventEmitter.off(
