@@ -9,7 +9,8 @@ export const AudioMarkerKey = {
 
 const BATTLE_THEME_LENGTH = 109.761;
 const BATTLE_LOOP_MARKER_START = 6.3;
-const BATTLE_THEME_LOOP_DURATION = BATTLE_THEME_LENGTH - BATTLE_LOOP_MARKER_START;
+const BATTLE_THEME_LOOP_DURATION =
+  BATTLE_THEME_LENGTH - BATTLE_LOOP_MARKER_START;
 
 export const LOOP_MARKER_CONFIGS = {
   [AudioKey.BATTLE_THEME]: {
@@ -19,6 +20,6 @@ export const LOOP_MARKER_CONFIGS = {
     config: {
       loop: true,
       seek: BATTLE_LOOP_MARKER_START,
-    }
-  }
+    },
+  },
 };

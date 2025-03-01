@@ -26,12 +26,15 @@ export class AudioSystem {
     const hadLoopMarkerStored = this._loopMarkers.has(key);
 
     if (!hadLoopMarkerStored) {
-
-      const marker = audio.markers[loopMarkerConfig.name] ?? audio.addMarker(loopMarkerConfig);
+      const marker =
+        audio.markers[loopMarkerConfig.name] ??
+        audio.addMarker(loopMarkerConfig);
       this._loopMarkers.set(key, marker);
 
-      audio.on("complete", playLoopMarkerOnCompletion,
-       { audio: audio, markerName: loopMarkerConfig.name});
+      audio.on('complete', playLoopMarkerOnCompletion, {
+        audio: audio,
+        markerName: loopMarkerConfig.name,
+      });
     }
 
     audio.play(options ?? undefined);
@@ -64,15 +67,18 @@ export class AudioSystem {
 
   unsubscribeFromEvents() {
     const keys = this._loopMarkers.keys().toArray();
-    keys.forEach(key => {
+    keys.forEach((key) => {
       const audio = this._soundManager.get(key);
-      audio.off("complete", playLoopMarkerOnCompletion, { audio: audio, markerName: this._loopMarkers.get(key).name});
+      audio.off('complete', playLoopMarkerOnCompletion, {
+        audio: audio,
+        markerName: this._loopMarkers.get(key).name,
+      });
       this._loopMarkers.delete(key);
     });
   }
 }
 
 function playLoopMarkerOnCompletion() {
-  const {audio, markerName} = this;
+  const { audio, markerName } = this;
   audio.play(markerName);
 }

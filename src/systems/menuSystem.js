@@ -242,6 +242,11 @@ export class MenuSystem {
           })
           .setOrigin(0.5, 0);
       }
+      case 'image': {
+        return this.scene.add
+          .image(sceneWidth / 2, 0, titleData.value)
+          .setOrigin(0.5, 0);
+      }
       default:
         throw new Error(`Unknown menu title type: ${titleData.type}`);
     }
