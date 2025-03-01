@@ -15,6 +15,7 @@ import { MenuSystem } from '../systems/menuSystem.js';
 export class MainMenu extends Scene {
   injector;
   _audioSystem;
+  /** @type {MenuSystem} */
   _menuSystem;
 
   constructor() {
@@ -26,6 +27,13 @@ export class MainMenu extends Scene {
   }
 
   create(data) {
+    if (
+      data.playMusic &&
+      !this._audioSystem.get(AudioKey.MAIN_THEME)?.isPlaying
+    ) {
+      this._audioSystem.play(AudioKey.MAIN_THEME);
+    }
+
     this._menuSystem = new MenuSystem(this);
     this._menuSystem.start(
       [
@@ -56,12 +64,7 @@ export class MainMenu extends Scene {
       'main-menu',
     );
 
-    // if (
-    //   data.playMusic &&
-    //   !this._audioSystem.get(AudioKey.MAIN_THEME)?.isPlaying
-    // ) {
-    //   this._audioSystem.play(AudioKey.MAIN_THEME);
-    // }
+
     //
     // const logo = this.add.image(320, 60, 'logo').setOrigin(0.5, 0);
     // this.tweens.add({
