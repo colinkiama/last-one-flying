@@ -35,7 +35,11 @@ import {
   JOYSTICK_THUMB_RADIUS,
 } from '../constants/touch.js';
 import { DependencyKey } from '../constants/injector.js';
-import { AudioKey, AudioMarkerKey, LOOP_MARKER_CONFIGS } from '../constants/audio.js';
+import {
+  AudioKey,
+  AudioMarkerKey,
+  LOOP_MARKER_CONFIGS,
+} from '../constants/audio.js';
 
 export class Battle extends Scene {
   injector;
@@ -67,10 +71,12 @@ export class Battle extends Scene {
   }
 
   create() {
-    if(
-      !this._audioSystem.get(AudioKey.BATTLE_THEME)?.isPlaying
-      ) {
-        this._audioSystem.playLoop(AudioKey.BATTLE_THEME, { loop: false }, LOOP_MARKER_CONFIGS[AudioKey.BATTLE_THEME]);
+    if (!this._audioSystem.get(AudioKey.BATTLE_THEME)?.isPlaying) {
+      this._audioSystem.playLoop(
+        AudioKey.BATTLE_THEME,
+        { loop: false },
+        LOOP_MARKER_CONFIGS[AudioKey.BATTLE_THEME],
+      );
     }
 
     this.subscribeToEvents();
@@ -275,7 +281,6 @@ export class Battle extends Scene {
   }
 
   onPauseRequested() {
-
     this.scene.launch(SceneKey.PAUSE_MENU);
   }
 
@@ -510,7 +515,11 @@ export class Battle extends Scene {
     this._spawnSystem.reset();
     crossSceneEventEmitter.emit(CrossSceneEvent.SCORE_RESET);
     this._sessionStopWatch.reset();
-    this._audioSystem.playLoop(AudioKey.BATTLE_THEME, { loop: false }, AudioMarkerKey.BATTLE_THEME_LOOP);
+    this._audioSystem.playLoop(
+      AudioKey.BATTLE_THEME,
+      { loop: false },
+      AudioMarkerKey.BATTLE_THEME_LOOP,
+    );
   }
 
   clearPhysicsPools() {
