@@ -204,9 +204,18 @@ export class MenuSystem {
       return renderedItem;
     });
 
-    // const footerItems = renderFooterItems(this.scene, menu.footerItems);
-    // return [title, ...menuItems, ...footerItems];
-    return [title, summary, customContent, ...menuItems].filter(
+    const footerItems = menu.footerItems ? menu.footerItems.map((footerItem, index) => {
+      const renderedItem = this._renderFooterItem(
+        footerItem,
+        lastRenderedItem,
+        index,
+      );
+
+      lastRenderedItem = renderedItem;
+      return renderedItem;
+    }) : [];
+
+    return [title, summary, customContent, ...menuItems, ...footerItems].filter(
       (item) => !!item,
     );
   }
@@ -296,6 +305,40 @@ export class MenuSystem {
     }
 
     return menuItemGameObject;
+  }
+
+  /**
+   *
+   * @param {MenuItem} footerItem
+   * @param {*} lastRenderedItem
+   */
+  _renderFooterItem(footerItem, lastRenderedItem, index) {
+    // The height of a Container game object need to be calculated dynamically using `Container.getBounds()`
+    const lastRenderedItemHeight =
+    lastRenderedItem.getBounds?.().height ?? lastRenderedItem.height;
+    const firstItemOffset = 60;
+    const y =
+    lastRenderedItem.y +
+    (index === 0 ? lastRenderedItemHeight + firstItemOffset : 32);
+
+    const footerItemObject = this.scene.add
+    .text(this.scene.cameras.main.width / 2, y, footerItem.label, {
+      fontFamily: 'usuzi',
+      fontSize: 16,
+      color: COLORS.foreground,
+    })
+    .setOrigin(0.5, 0);
+
+    if (footerItem.isInteractive === undefined || footerItem.isInteractive) {
+      footerItemObject.setInteractive(MENU_ITEM_CONFIG);
+      footerItemObject.on('pointerover', onButtonHover);
+      footerItemObject.on('pointerout', onButtonOut);
+      if (footerItem.action) {
+        footerItemObject.on('pointerup', footerItem.action, this.scene);
+      }
+    }
+
+    return footerItemObject;
   }
 }
 

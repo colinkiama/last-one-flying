@@ -59,83 +59,26 @@ export class MainMenu extends Scene {
               action: this.showCredits
             }
           ],
+          footerItems: [
+          {
+            label: 'Colin Kiama - 2025',
+            action: onFooterCreditsClick
+          }
+          ]
         },
       ],
       'main-menu',
     );
 
-
-    //
-    // const logo = this.add.image(320, 60, 'logo').setOrigin(0.5, 0);
-    // this.tweens.add({
-    //   targets: logo,
-    //   ...HOVER_TWEEN_CONFIG,
-    // });
-    //
-    // const playButton = this.add
-    //   .text(320, logo.y + logo.height + 32, 'Play', {
-    //     fontFamily: 'usuzi',
-    //     fontSize: 24,
-    //     color: COLORS.foreground,
-    //   })
-    //   .setOrigin(0.5, 0)
-    //   .setInteractive(MENU_ITEM_CONFIG);
-    //
-    // playButton.on('pointerover', onButtonHover);
-    // playButton.on('pointerout', onButtonOut);
-    // playButton.on('pointerup', this.startNewGame, this);
-    //
-    // // TODO: Set text based on sound playback prefernce value
-    // // in local storage
-    // const soundToggleButton = this.add
-    //   .text(320, playButton.y + 32, 'Sound: On', {
-    //     fontFamily: 'usuzi',
-    //     fontSize: 24,
-    //     color: COLORS.foreground,
-    //   })
-    //   .setOrigin(0.5, 0)
-    //   .setInteractive(MENU_ITEM_CONFIG);
-    //
-    // soundToggleButton.on('pointerover', onButtonHover);
-    // soundToggleButton.on('pointerout', onButtonOut);
-    // soundToggleButton.on('pointerup', this.onSoundToggle, this);
-    // const creditsButton = this.add
-    //   .text(320, soundToggleButton.y + 32, 'Credits', {
-    //     fontFamily: 'usuzi',
-    //     fontSize: 24,
-    //     color: COLORS.foreground,
-    //   })
-    //   .setOrigin(0.5, 0)
-    //   .setInteractive(MENU_ITEM_CONFIG);
-    //
-    // creditsButton.on('pointerover', onButtonHover);
-    // creditsButton.on('pointerout', onButtonOut);
-    // creditsButton.on('pointerup', this.showCredits, this);
-    //
-    // const footerText = this.add
-    //   .text(320, 340, 'Colin Kiama - 2025', {
-    //     fontFamily: 'usuzi',
-    //     fontSize: 16,
-    //     color: COLORS.foreground,
-    //   })
-    //   .setOrigin(0.5, 1)
-    //   .setInteractive(MENU_ITEM_CONFIG);
-    //
-    // footerText.on('pointerover', onButtonHover);
-    // footerText.on('pointerout', onButtonOut);
-    // footerText.on('pointerup', onFooterCreditsClick);
-    //
-    // this.events.once('shutdown', () => {
-    //   // Unsubscribe from events
-    // });
+    this.events.once('shutdown', () => {
+      this._menuSystem.shutDownCurrentMenu();
+    });
   }
   showCredits() {
-    this._menuSystem.shutDownCurrentMenu();
     this.scene.start(SceneKey.CREDITS);
   }
 
   startNewGame() {
-    this._menuSystem.shutDownCurrentMenu();
     if (this._audioSystem.get(AudioKey.MAIN_THEME)?.isPlaying) {
       this._audioSystem.stop(AudioKey.MAIN_THEME);
     }
