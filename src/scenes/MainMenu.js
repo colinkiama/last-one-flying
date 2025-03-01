@@ -40,6 +40,16 @@ export class MainMenu extends Scene {
               label: 'Play',
               action: this.startNewGame,
             },
+            // // TODO: Set text based on sound playback prefernce value
+            // // in local storage
+            {
+              label: 'Sound: On',
+              action: this.onSoundToggle
+            },
+            {
+              label: 'Credits',
+              action: this.showCredits
+            }
           ],
         },
       ],
@@ -117,10 +127,12 @@ export class MainMenu extends Scene {
     // });
   }
   showCredits() {
+    this._menuSystem.shutDownCurrentMenu();
     this.scene.start(SceneKey.CREDITS);
   }
 
   startNewGame() {
+    this._menuSystem.shutDownCurrentMenu();
     if (this._audioSystem.get(AudioKey.MAIN_THEME)?.isPlaying) {
       this._audioSystem.stop(AudioKey.MAIN_THEME);
     }
