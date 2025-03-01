@@ -40,6 +40,8 @@ export class MenuSystem {
   _currentMenu;
   /** @type {GameObjects.Container} */
   _currentMenuContainer;
+  /** @type {GameObjects.Container} */
+  _currentFooterContainer;
   /** @type {Tweens.Tween} */
   _titleTween;
 
@@ -71,6 +73,10 @@ export class MenuSystem {
     this._currentMenuContainer = this.scene.add.container(0, 0);
     this._currentMenuContainer.add(this._renderMenu(this._currentMenu));
     recentreMenu(this.scene, this._currentMenuContainer);
+    this._currentFooterContainer = this.scene.add.container(0, this.scene.cameras.main.height);
+
+    this._currentFooterContainer.add(this._renderFooter(this._currentMenu));
+    realignFooter(this.scene, this._currentFooterContainer);
   }
 
   /**
@@ -84,17 +90,21 @@ export class MenuSystem {
     nextMenuContainer.add(this._renderMenu(nextMenu));
     recentreMenu(this.scene, nextMenuContainer);
 
+    const nextFooterContainer = this.scene.add.container(0, this.scene.cameras.main.height);
+    nextFooterContainer.add(this._renderFooter(nextMenu));
+    realignFooter(this.scene, nextFooterContainer);
+
     const sceneWidth = this.scene.cameras.main.width;
     const pushTweenPromise = new Promise((resolve) =>
       this.scene.tweens.addMultiple([
         {
-          targets: [this._currentMenuContainer],
+          targets: [this._currentMenuContainer, this._currentFooterContainer],
           x: -sceneWidth,
           duration: 500,
           ease: 'back',
         },
         {
-          targets: [nextMenuContainer],
+          targets: [nextMenuContainer, nextFooterContainer],
           x: { from: sceneWidth, to: 0 },
           duration: 500,
           ease: 'back',
@@ -106,6 +116,7 @@ export class MenuSystem {
     await pushTweenPromise;
     this._currentMenuContainer.destroy();
     this._currentMenuContainer = nextMenuContainer;
+    this._currentFooterContainer = nextFooterContainer;
     this._currentMenu = nextMenu;
   }
 
@@ -138,17 +149,21 @@ export class MenuSystem {
     nextMenuContainer.add(this._renderMenu(nextMenu));
     recentreMenu(this.scene, nextMenuContainer);
 
+    const nextFooterContainer = this.scene.add.container(0, this.scene.cameras.main.height);
+    nextFooterContainer.add(this._renderFooter(nextMenu));
+    realignFooter(this.scene, nextFooterContainer);
+
     const sceneWidth = this.scene.cameras.main.width;
     const popTweenPromise = new Promise((resolve) =>
       this.scene.tweens.addMultiple([
         {
-          targets: [this._currentMenuContainer],
+          targets: [this._currentMenuContainer, this._currentFooterContainer],
           x: sceneWidth,
           duration: 500,
           ease: 'back',
         },
         {
-          targets: [nextMenuContainer],
+          targets: [nextMenuContainer, nextFooterContainer],
           x: { from: -sceneWidth, to: 0 },
           duration: 500,
           ease: 'back',
@@ -204,18 +219,7 @@ export class MenuSystem {
       return renderedItem;
     });
 
-    const footerItems = menu.footerItems ? menu.footerItems.map((footerItem, index) => {
-      const renderedItem = this._renderFooterItem(
-        footerItem,
-        lastRenderedItem,
-        index,
-      );
-
-      lastRenderedItem = renderedItem;
-      return renderedItem;
-    }) : [];
-
-    return [title, summary, customContent, ...menuItems, ...footerItems].filter(
+    return [title, summary, customContent, ...menuItems].filter(
       (item) => !!item,
     );
   }
@@ -307,6 +311,27 @@ export class MenuSystem {
     return menuItemGameObject;
   }
 
+   /**
+   *
+   * @param {Menu} menu
+   * @param {*} options
+   * @returns
+   */
+  _renderFooter(menu, options) {
+    let lastRenderedItem = null;
+
+    return menu.footerItems ? menu.footerItems.map((footerItem, index) => {
+      const renderedItem = this._renderFooterItem(
+        footerItem,
+        lastRenderedItem,
+        index,
+      );
+
+      lastRenderedItem = renderedItem;
+      return renderedItem;
+    }) : [];
+  }
+
   /**
    *
    * @param {MenuItem} footerItem
@@ -314,12 +339,12 @@ export class MenuSystem {
    */
   _renderFooterItem(footerItem, lastRenderedItem, index) {
     // The height of a Container game object need to be calculated dynamically using `Container.getBounds()`
-    const lastRenderedItemHeight =
-    lastRenderedItem.getBounds?.().height ?? lastRenderedItem.height;
+    const lastRenderedItemHeight = lastRenderedItem ? lastRenderedItem.getBounds?.().height ?? lastRenderedItem.height : 0;
     const firstItemOffset = 60;
     const y =
+    lastRenderedItem ?
     lastRenderedItem.y +
-    (index === 0 ? lastRenderedItemHeight + firstItemOffset : 32);
+    (index === 0 ? lastRenderedItemHeight + firstItemOffset : 32) : 0;
 
     const footerItemObject = this.scene.add
     .text(this.scene.cameras.main.width / 2, y, footerItem.label, {
@@ -358,4 +383,9 @@ function recentreMenu(scene, menuContainer) {
   }
 
   menuContainer.y = heightDifference / 2;
+}
+
+function realignFooter(scene, footerContainer) {
+  const bounds = footerContainer.getBounds();
+  footerContainer.y = scene.cameras.main.height - bounds.height - 20;
 }
