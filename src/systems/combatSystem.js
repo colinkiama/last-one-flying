@@ -142,6 +142,8 @@ export class CombatSystem {
               0,
             ).rotate(enemy.rotation);
 
+            gameLogicEventEmitter.emit(GameLogicEvent.ENEMY_FIRE);
+
             enemyLaserBeam.fire(
               enemy.x + rotatedShipHeadOffset.x,
               enemy.y + rotatedShipHeadOffset.y,

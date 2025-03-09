@@ -12,6 +12,7 @@ export const CrossSceneEvent = {
 
 export const GameLogicEvent = {
   PLAYER_FIRE: 'player-fire',
+  ENEMY_FIRE: 'enemy-fire',
   ENEMY_DEATH: 'enemy-death',
   PLAYER_DEATH: 'player-death',
   SHIP_DESTROYED: 'ship-destroyed',

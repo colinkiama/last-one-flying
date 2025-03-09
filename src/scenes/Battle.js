@@ -198,6 +198,13 @@ export class Battle extends Scene {
       this.onPlayerFire,
       this,
     );
+
+    gameLogicEventEmitter.on(
+      GameLogicEvent.ENEMY_FIRE,
+      this.onEnemyFire,
+      this,
+    );
+
     gameLogicEventEmitter.on(
       GameLogicEvent.ENEMY_DEATH,
       this.onEnemyDeath,
@@ -292,6 +299,11 @@ export class Battle extends Scene {
     gameLogicEventEmitter.off(
       GameLogicEvent.PLAYER_FIRE,
       this.onPlayerFire,
+      this,
+    );
+    gameLogicEventEmitter.off(
+      GameLogicEvent.ENEMY_FIRE,
+      this.onEnemyFire,
       this,
     );
     gameLogicEventEmitter.off(
@@ -430,10 +442,15 @@ export class Battle extends Scene {
   }
 
   onPlayerFire() {
+    this._audioSystem.playSFX(SoundFXKey.PLAYER_LASER_FIRE);
     crossSceneEventEmitter.emit(
       CrossSceneEvent.SHAKE_SCREEN,
       ScreenShakeType.PLAYER_FIRE,
     );
+  }
+
+  onEnemyFire() {
+    this._audioSystem.playSFX(SoundFXKey.ENEMY_LASER_FIRE);
   }
 
   onEnemyDeath() {
