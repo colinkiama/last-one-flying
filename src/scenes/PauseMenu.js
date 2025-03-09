@@ -30,6 +30,10 @@ export class PauseMenu extends Scene {
               action: this.resumeGame,
             },
             {
+              label: 'Toggle Full Screen',
+              action: this.onFullScreenToggle
+            },
+            {
               label: 'Sound: On',
             },
             {
@@ -67,6 +71,10 @@ export class PauseMenu extends Scene {
     this._menuSystem.shutDownCurrentMenu();
     crossSceneEventEmitter.emit(CrossSceneEvent.RESUME_GAME);
     this.scene.stop(this);
+  }
+
+  onFullScreenToggle() {
+    this.scale.toggleFullscreen();
   }
 
   quitGame() {
