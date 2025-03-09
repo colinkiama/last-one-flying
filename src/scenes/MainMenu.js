@@ -52,19 +52,19 @@ export class MainMenu extends Scene {
             // // in local storage
             {
               label: 'Sound: On',
-              action: this.onSoundToggle
+              action: this.onSoundToggle,
             },
             {
               label: 'Credits',
-              action: this.showCredits
-            }
+              action: this.showCredits,
+            },
           ],
           footerItems: [
-          {
-            label: 'Colin Kiama - 2025',
-            action: onFooterCreditsClick
-          }
-          ]
+            {
+              label: 'Colin Kiama - 2025',
+              action: onFooterCreditsClick,
+            },
+          ],
         },
       ],
       'main-menu',

@@ -73,7 +73,10 @@ export class MenuSystem {
     this._currentMenuContainer = this.scene.add.container(0, 0);
     this._currentMenuContainer.add(this._renderMenu(this._currentMenu));
     recentreMenu(this.scene, this._currentMenuContainer);
-    this._currentFooterContainer = this.scene.add.container(0, this.scene.cameras.main.height);
+    this._currentFooterContainer = this.scene.add.container(
+      0,
+      this.scene.cameras.main.height,
+    );
 
     this._currentFooterContainer.add(this._renderFooter(this._currentMenu));
     realignFooter(this.scene, this._currentFooterContainer);
@@ -90,7 +93,10 @@ export class MenuSystem {
     nextMenuContainer.add(this._renderMenu(nextMenu));
     recentreMenu(this.scene, nextMenuContainer);
 
-    const nextFooterContainer = this.scene.add.container(0, this.scene.cameras.main.height);
+    const nextFooterContainer = this.scene.add.container(
+      0,
+      this.scene.cameras.main.height,
+    );
     nextFooterContainer.add(this._renderFooter(nextMenu));
     realignFooter(this.scene, nextFooterContainer);
 
@@ -149,7 +155,10 @@ export class MenuSystem {
     nextMenuContainer.add(this._renderMenu(nextMenu));
     recentreMenu(this.scene, nextMenuContainer);
 
-    const nextFooterContainer = this.scene.add.container(0, this.scene.cameras.main.height);
+    const nextFooterContainer = this.scene.add.container(
+      0,
+      this.scene.cameras.main.height,
+    );
     nextFooterContainer.add(this._renderFooter(nextMenu));
     realignFooter(this.scene, nextFooterContainer);
 
@@ -311,7 +320,7 @@ export class MenuSystem {
     return menuItemGameObject;
   }
 
-   /**
+  /**
    *
    * @param {Menu} menu
    * @param {*} options
@@ -320,16 +329,18 @@ export class MenuSystem {
   _renderFooter(menu, options) {
     let lastRenderedItem = null;
 
-    return menu.footerItems ? menu.footerItems.map((footerItem, index) => {
-      const renderedItem = this._renderFooterItem(
-        footerItem,
-        lastRenderedItem,
-        index,
-      );
+    return menu.footerItems
+      ? menu.footerItems.map((footerItem, index) => {
+          const renderedItem = this._renderFooterItem(
+            footerItem,
+            lastRenderedItem,
+            index,
+          );
 
-      lastRenderedItem = renderedItem;
-      return renderedItem;
-    }) : [];
+          lastRenderedItem = renderedItem;
+          return renderedItem;
+        })
+      : [];
   }
 
   /**
@@ -339,20 +350,22 @@ export class MenuSystem {
    */
   _renderFooterItem(footerItem, lastRenderedItem, index) {
     // The height of a Container game object need to be calculated dynamically using `Container.getBounds()`
-    const lastRenderedItemHeight = lastRenderedItem ? lastRenderedItem.getBounds?.().height ?? lastRenderedItem.height : 0;
+    const lastRenderedItemHeight = lastRenderedItem
+      ? (lastRenderedItem.getBounds?.().height ?? lastRenderedItem.height)
+      : 0;
     const firstItemOffset = 60;
-    const y =
-    lastRenderedItem ?
-    lastRenderedItem.y +
-    (index === 0 ? lastRenderedItemHeight + firstItemOffset : 32) : 0;
+    const y = lastRenderedItem
+      ? lastRenderedItem.y +
+        (index === 0 ? lastRenderedItemHeight + firstItemOffset : 32)
+      : 0;
 
     const footerItemObject = this.scene.add
-    .text(this.scene.cameras.main.width / 2, y, footerItem.label, {
-      fontFamily: 'usuzi',
-      fontSize: 16,
-      color: COLORS.foreground,
-    })
-    .setOrigin(0.5, 0);
+      .text(this.scene.cameras.main.width / 2, y, footerItem.label, {
+        fontFamily: 'usuzi',
+        fontSize: 16,
+        color: COLORS.foreground,
+      })
+      .setOrigin(0.5, 0);
 
     if (footerItem.isInteractive === undefined || footerItem.isInteractive) {
       footerItemObject.setInteractive(MENU_ITEM_CONFIG);

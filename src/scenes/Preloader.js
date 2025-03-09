@@ -7,7 +7,7 @@ import { MenuSystem } from '../systems/menuSystem.js';
 import { Injector } from '../utils/injector.js';
 import { DependencyKey } from '../constants/injector.js';
 import { AudioSystem } from '../systems/audioSystem.js';
-import { AudioKey } from '../constants/audio.js';
+import { AudioKey, SoundFXKey } from '../constants/audio.js';
 
 const PROGRESS_BAR_WIDTH = 300;
 const PROGRESS_BAR_HEIGHT = 32;
@@ -90,6 +90,11 @@ export class Preloader extends Scene {
     this.load.audio(AudioKey.BATTLE_THEME, [
       'audio/battle-theme.opus',
       'audio/battle-theme.mp3',
+    ]);
+
+    this.load.audio(SoundFXKey.EXPLOSION, [
+      'audio/explosion.opus',
+      'audio/explosion.mp3',
     ]);
 
     this.load.image('logo', 'last-one-flying-logo.png');
