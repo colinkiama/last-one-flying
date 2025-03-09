@@ -92,6 +92,11 @@ export class Preloader extends Scene {
       'audio/battle-theme.mp3',
     ]);
 
+    this.load.audio(AudioKey.LOW_HEALTH_WARNING, [
+      'audio/low-health-warning.opus',
+      'audio/low-health-warning.mp3',
+    ]);
+
     this.load.audio(SoundFXKey.EXPLOSION, [
       'audio/explosion.opus',
       'audio/explosion.mp3',
@@ -107,9 +112,9 @@ export class Preloader extends Scene {
       'audio/player-laser.mp3',
     ]);
 
-    this.load.audio(AudioKey.LOW_HEALTH_WARNING, [
-      'audio/low-health-warning.opus',
-      'audio/low-health-warning.mp3',
+    this.load.audio(SoundFXKey.STAT_REVEAL, [
+      'audio/stat-reveal.opus',
+      'audio/stat-reveal.mp3',
     ]);
 
     this.load.image('logo', 'last-one-flying-logo.png');

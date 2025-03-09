@@ -6,8 +6,13 @@ import { SceneKey } from '../constants/scene.js';
 import { COLORS } from '../constants/menu.js';
 import { Explosion } from '../poolObjects/Explosion.js';
 import { VFXSystem } from '../systems/vfxSystem.js';
+import { DependencyKey } from '../constants/injector.js';
+import { SoundFXKey } from '../constants/audio.js';
+import { ScreenShakeType } from '../constants/vfx.js';
 
 export class GameOver extends Scene {
+  injector;
+  _audioSystem;
   /** @type {MenuSystem} */
   _menuSystem;
   _renderedStatsObjects;
@@ -19,6 +24,10 @@ export class GameOver extends Scene {
 
   constructor() {
     super(SceneKey.GAME_OVER);
+  }
+
+  setupDependencies() {
+    this._audioSystem = this.injector.get(DependencyKey.AUDIO_SYSTEM);
   }
 
   create(data) {
@@ -70,12 +79,14 @@ export class GameOver extends Scene {
       {
         at: 500,
         run: () => {
+          this._audioSystem.playSFX(SoundFXKey.STAT_REVEAL);
           this.revealStat('score');
         },
       },
       {
         at: 1250,
         run: () => {
+          this._audioSystem.playSFX(SoundFXKey.STAT_REVEAL);
           this.revealStat('time');
         },
       },
@@ -83,6 +94,9 @@ export class GameOver extends Scene {
         ? {
             at: 2750,
             run: () => {
+              this._vfxSystem.shakeScreen(ScreenShakeType.HIGH_SCORE);
+              crossSceneEventEmitter.emit(CrossSceneEvent.NEW_HIGH_SCORE_REVEAL);
+              this._audioSystem.playSFX(SoundFXKey.EXPLOSION);
               this.revealStat('highScore', {
                 showExplosion: true,
                 showNewHighScoreLabel: true,
@@ -92,6 +106,7 @@ export class GameOver extends Scene {
         : {
             at: 2000,
             run: () => {
+              this._audioSystem.playSFX(SoundFXKey.STAT_REVEAL);
               this.revealStat('highScore');
             },
           },
