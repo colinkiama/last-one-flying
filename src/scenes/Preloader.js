@@ -97,6 +97,16 @@ export class Preloader extends Scene {
       'audio/explosion.mp3',
     ]);
 
+    this.load.audio(SoundFXKey.ENEMY_LASER_FIRE, [
+      'audio/enemy-laser.opus',
+      'audio/enemy-laser.mp3',
+    ]);
+
+    this.load.audio(SoundFXKey.PLAYER_LASER_FIRE, [
+      'audio/player-laser.opus',
+      'audio/player-laser.mp3',
+    ]);
+
     this.load.image('logo', 'last-one-flying-logo.png');
     this.load.image('player', 'player.png');
     this.load.image('player-laser-beam', 'player-laser-beam.png');
