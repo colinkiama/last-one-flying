@@ -77,6 +77,8 @@ export class VFXSystem {
       case ScreenShakeType.PLAYER_DEATH:
         this.scene.cameras.main.shake(500, 0.01);
         break;
+      case ScreenShakeType.HIGH_SCORE:
+        this.scene.cameras.main.shake(700, 0.01);
     }
   }
 
