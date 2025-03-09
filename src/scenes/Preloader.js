@@ -107,6 +107,11 @@ export class Preloader extends Scene {
       'audio/player-laser.mp3',
     ]);
 
+    this.load.audio(AudioKey.LOW_HEALTH_WARNING, [
+      'audio/low-health-warning.opus',
+      'audio/low-health-warning.mp3',
+    ]);
+
     this.load.image('logo', 'last-one-flying-logo.png');
     this.load.image('player', 'player.png');
     this.load.image('player-laser-beam', 'player-laser-beam.png');

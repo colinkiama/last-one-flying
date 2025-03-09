@@ -1,6 +1,7 @@
 export const AudioKey = {
   MAIN_THEME: 'main-theme',
   BATTLE_THEME: 'battle-theme',
+  LOW_HEALTH_WARNING: 'low-health-warning',
 };
 
 export const SoundFXKey = {

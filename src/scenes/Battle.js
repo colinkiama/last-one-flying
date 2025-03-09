@@ -199,11 +199,7 @@ export class Battle extends Scene {
       this,
     );
 
-    gameLogicEventEmitter.on(
-      GameLogicEvent.ENEMY_FIRE,
-      this.onEnemyFire,
-      this,
-    );
+    gameLogicEventEmitter.on(GameLogicEvent.ENEMY_FIRE, this.onEnemyFire, this);
 
     gameLogicEventEmitter.on(
       GameLogicEvent.ENEMY_DEATH,
@@ -410,7 +406,7 @@ export class Battle extends Scene {
   }
 
   onResumeGame() {
-    this._audioSystem.resume(AudioKey.BATTLE_THEME);
+    this._audioSystem.resume();
     this.scene.resume(SceneKey.HUD);
     this.scene.resume(this);
   }
@@ -419,6 +415,9 @@ export class Battle extends Scene {
     this.scene.pause(SceneKey.HUD);
     this.scene.pause(this);
     this._audioSystem.pause(AudioKey.BATTLE_THEME);
+    if (this._audioSystem.get(AudioKey.LOW_HEALTH_WARNING)?.isPlaying) {
+      this._audioSystem.pause(AudioKey.LOW_HEALTH_WARNING);
+    }
   }
 
   onDataChanged(_parent, key, value) {
@@ -512,6 +511,12 @@ export class Battle extends Scene {
 
   onLivesUpdated(lives) {
     crossSceneEventEmitter.emit(CrossSceneEvent.UPDATE_LIVES, lives);
+
+    if (lives === 1) {
+      this._audioSystem.play(AudioKey.LOW_HEALTH_WARNING, { loop: true });
+    } else if (lives === 0) {
+      this._audioSystem.stop(AudioKey.LOW_HEALTH_WARNING);
+    }
   }
 
   onGameOver() {
