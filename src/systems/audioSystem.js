@@ -6,10 +6,12 @@ export class AudioSystem {
    */
   _soundManager;
   _loopMarkers;
+  _pausedAudio;
 
   constructor(soundManager) {
     this._soundManager = soundManager;
     this._loopMarkers = new Map();
+    this._pausedAudio = new Map();
   }
 
   play(key, options) {
@@ -43,11 +45,22 @@ export class AudioSystem {
   pause(key) {
     const audio = this.get(key);
     audio.pause();
+    this._pausedAudio.set(key, audio);
   }
 
   resume(key) {
-    const audio = this.get(key);
-    audio.resume();
+    if (key) {
+      const audio = this.get(key);
+      audio.resume();
+      return;
+    }
+
+    const keys = this._pausedAudio.keys().toArray();
+    keys.forEach((key) => {
+      const audio = this._pausedAudio.get(key);
+      audio.resume()
+      this._pausedAudio.delete(key);
+    });
   }
 
   get(key) {
@@ -66,6 +79,7 @@ export class AudioSystem {
   }
 
   unsubscribeFromEvents() {
+    this._pausedAudio.clear();
     const keys = this._loopMarkers.keys().toArray();
     keys.forEach((key) => {
       const audio = this._soundManager.get(key);
