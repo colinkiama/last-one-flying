@@ -3,6 +3,10 @@ export const AudioKey = {
   BATTLE_THEME: 'battle-theme',
 };
 
+export const SoundFXKey = {
+  EXPLOSION: 'explosion',
+};
+
 export const AudioMarkerKey = {
   BATTLE_THEME_LOOP: 'battle-theme-loop',
 };

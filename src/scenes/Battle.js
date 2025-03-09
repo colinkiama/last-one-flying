@@ -39,6 +39,7 @@ import {
   AudioKey,
   AudioMarkerKey,
   LOOP_MARKER_CONFIGS,
+  SoundFXKey,
 } from '../constants/audio.js';
 
 export class Battle extends Scene {
@@ -465,6 +466,27 @@ export class Battle extends Scene {
 
   onShipDestroyed(ship) {
     this._vfxSystem.createShipExplosion(ship);
+    const shipPosition = { x: ship.x, y: ship.y };
+
+    console.log('Ship Position:', shipPosition);
+
+    // TODO: Map x of ship position to spatial sound x-axis between -3 to 3.
+
+    this._audioSystem.playSFX(SoundFXKey.EXPLOSION, {
+      mute: false,
+      volume: 1,
+      rate: 1,
+      detune: 0,
+      seek: 0,
+      loop: false,
+      delay: 0,
+
+      // source of the spatial sound
+      source: {
+        x: 0,
+        y: 0,
+      },
+    });
   }
 
   onScoreUpdated(score) {
