@@ -48,6 +48,10 @@ export class MainMenu extends Scene {
               label: 'Play',
               action: this.startNewGame,
             },
+            {
+              label: 'Toggle Full Screen',
+              action: this.onFullScreenToggle,
+            },
             // // TODO: Set text based on sound playback prefernce value
             // // in local storage
             {
@@ -91,6 +95,10 @@ export class MainMenu extends Scene {
     // - Set sound playback preference in local storage
     // - Update soundToggle button text to either "Sound: On" or "Sound: Off"
     //   based on the current sound playback preference value
+  }
+
+  onFullScreenToggle() {
+    this.scale.toggleFullscreen();
   }
 }
 
