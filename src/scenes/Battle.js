@@ -199,11 +199,7 @@ export class Battle extends Scene {
       this,
     );
 
-    gameLogicEventEmitter.on(
-      GameLogicEvent.ENEMY_FIRE,
-      this.onEnemyFire,
-      this,
-    );
+    gameLogicEventEmitter.on(GameLogicEvent.ENEMY_FIRE, this.onEnemyFire, this);
 
     gameLogicEventEmitter.on(
       GameLogicEvent.ENEMY_DEATH,
@@ -512,6 +508,10 @@ export class Battle extends Scene {
 
   onLivesUpdated(lives) {
     crossSceneEventEmitter.emit(CrossSceneEvent.UPDATE_LIVES, lives);
+
+    if (lives === 1) {
+      this._audioSystem.play(AudioKey.LOW_HEALTH_WARNING, { loop: true });
+    }
   }
 
   onGameOver() {
