@@ -2,6 +2,8 @@
 
 An arcade survival shooter made with Phaser 3
 
+![Last One Flying Gameplay](/last-one-flying.gif)
+
 ## Requirements
 
 - A http server. Run the server in the root of the project
