@@ -14,7 +14,7 @@ An arcade survival shooter made with Phaser 3
 
 **Note**: This is a #nobuild project. There are no build steps required to start developing the project however, for production environments, optimised files can be used to save space and improve loading times.
 
-The following instructions in this sect explain how to copy the game code files to a different location to be ready for production environments.
+The following instructions in this section explain how to copy the game code files to a different location to be ready for production environments.
 
 ### Automated
 
