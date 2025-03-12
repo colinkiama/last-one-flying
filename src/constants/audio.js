@@ -9,6 +9,8 @@ export const SoundFXKey = {
   PLAYER_LASER_FIRE: 'player-laser-fire',
   ENEMY_LASER_FIRE: 'enemy-laser-fire',
   STAT_REVEAL: 'stat-reveal',
+  ITEM_HOVER: 'item-hover',
+  ITEM_SELECTION: 'item-selection',
 };
 
 export const AudioMarkerKey = {
