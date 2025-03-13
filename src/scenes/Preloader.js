@@ -189,7 +189,7 @@ export class Preloader extends Scene {
         this.progressBar.setVisible(false);
         this.progressBarFill.setVisible(false);
 
-        this._menuSystem = new MenuSystem(this);
+        this._menuSystem = new MenuSystem(this, dependencyInjector, { muted: true});
         this._menuSystem.start(
           [
             {

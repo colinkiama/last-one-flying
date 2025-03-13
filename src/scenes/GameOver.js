@@ -50,7 +50,7 @@ export class GameOver extends Scene {
 
     const isNewHighScore = score > oldHighScore;
 
-    this._menuSystem = new MenuSystem(this);
+    this._menuSystem = new MenuSystem(this, this.injector);
     this._menuSystem.start(
       [
         {

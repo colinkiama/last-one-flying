@@ -34,7 +34,7 @@ export class MainMenu extends Scene {
       this._audioSystem.play(AudioKey.MAIN_THEME);
     }
 
-    this._menuSystem = new MenuSystem(this);
+    this._menuSystem = new MenuSystem(this, this.injector);
     this._menuSystem.start(
       [
         {
