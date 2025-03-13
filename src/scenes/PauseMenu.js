@@ -5,8 +5,10 @@ import { MenuSystem } from '../systems/menuSystem.js';
 import { SceneKey } from '../constants/scene.js';
 
 export class PauseMenu extends Scene {
+  injector;
   /** @type {MenuSystem} */
   _menuSystem;
+  _audioSystem;
 
   constructor() {
     super(SceneKey.PAUSE_MENU);
@@ -15,7 +17,7 @@ export class PauseMenu extends Scene {
   create() {
     crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
     this.cameras.main.setBackgroundColor(0xaa000000);
-    this._menuSystem = new MenuSystem(this);
+    this._menuSystem = new MenuSystem(this, this.injector);
     this._menuSystem.start(
       [
         {

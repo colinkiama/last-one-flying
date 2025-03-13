@@ -117,6 +117,16 @@ export class Preloader extends Scene {
       'audio/stat-reveal.mp3',
     ]);
 
+    this.load.audio(SoundFXKey.ITEM_HOVER, [
+      'audio/item-hover.opus',
+      'audio/item-hover.mp3',
+    ]);
+
+    this.load.audio(SoundFXKey.ITEM_SELECTION, [
+      'audio/item-selection.opus',
+      'audio/item-selection.mp3',
+    ]);
+
     this.load.image('logo', 'last-one-flying-logo.png');
     this.load.image('player', 'player.png');
     this.load.image('player-laser-beam', 'player-laser-beam.png');
@@ -179,7 +189,7 @@ export class Preloader extends Scene {
         this.progressBar.setVisible(false);
         this.progressBarFill.setVisible(false);
 
-        this._menuSystem = new MenuSystem(this);
+        this._menuSystem = new MenuSystem(this, dependencyInjector, { muted: true});
         this._menuSystem.start(
           [
             {

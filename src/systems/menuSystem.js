@@ -5,6 +5,9 @@ import {
   MENU_ITEM_CONFIG,
 } from '../constants/menu.js';
 
+import { AudioKey, SoundFXKey } from '../constants/audio.js';
+import { DependencyKey } from '../constants/injector.js';
+
 /**
  * @typedef {Object} MenuItem
  * @property {boolean} [isInteractive] Determines if an item is selectable or not
@@ -36,6 +39,7 @@ export class MenuSystem {
   menuMap;
   /** @type {string} */
   firstMenuKey;
+  injector;
   /** @type {Menu} */
   _currentMenu;
   /** @type {GameObjects.Container} */
@@ -44,12 +48,17 @@ export class MenuSystem {
   _currentFooterContainer;
   /** @type {Tweens.Tween} */
   _titleTween;
+  _audioSystem;
+  _options;
 
   /**
    * @param {Scene} scene
    */
-  constructor(scene) {
+  constructor(scene, injector, options) {
     this.scene = scene;
+    this.injector = injector;
+    this._audioSystem = injector.get(DependencyKey.AUDIO_SYSTEM);
+    this._options = options;
   }
 
   /**
@@ -137,14 +146,33 @@ export class MenuSystem {
       if (menuItem.isInteractive) {
         const menuItemGameObject = this._currentMenuContainer.getAt(i);
         menuItemGameObject.off('pointerover', onButtonHover);
+        menuItemGameObject.off('pointerover', onButtonHoverForInstance, this)
+
         menuItemGameObject.off('pointerout', onButtonOut);
         if (menuItem.action) {
+          menuItemGameObject.off('pointerup', onButtonUpForInstance, this);
           menuItemGameObject.off('pointerup', menuItem.action, this.scene);
         }
       }
     }
 
-    // 3. TODO: Disable menu footer item events
+    // 3. Disable menu footer item events
+    const footerItemsLength = this._currentMenu.footerItems?.length ?? 0;
+    for (let i = 0; i < footerItemsLength; i++) {
+      const footerItem = this._currentMenu.items[i];
+      if (footerItem.isInteractive) {
+        const footerItemGameObject = this._currentMenuContainer.getAt(i);
+        footerItemGameObject.off('pointerover', onButtonHover);
+        footerItemGameObject.off('pointerover', onButtonHoverForInstance, this)
+
+        footerItemGameObject.off('pointerout', onButtonOut);
+        if (footerItem.action) {
+          footerItemGameObject.off('pointerup', onButtonUpForInstance, this);
+          footerItemGameObject.off('pointerup', footerItem.action, this.scene);
+        }
+      }
+    }
+
   }
 
   async pop() {
@@ -311,8 +339,10 @@ export class MenuSystem {
     if (menuItem.isInteractive === undefined || menuItem.isInteractive) {
       menuItemGameObject.setInteractive(MENU_ITEM_CONFIG);
       menuItemGameObject.on('pointerover', onButtonHover);
+      menuItemGameObject.on('pointerover', onButtonHoverForInstance, this)
       menuItemGameObject.on('pointerout', onButtonOut);
       if (menuItem.action) {
+        menuItemGameObject.on('pointerup', onButtonUpForInstance, this);
         menuItemGameObject.on('pointerup', menuItem.action, this.scene);
       }
     }
@@ -370,8 +400,10 @@ export class MenuSystem {
     if (footerItem.isInteractive === undefined || footerItem.isInteractive) {
       footerItemObject.setInteractive(MENU_ITEM_CONFIG);
       footerItemObject.on('pointerover', onButtonHover);
+      footerItemObject.on('pointerover', onButtonHoverForInstance, this);
       footerItemObject.on('pointerout', onButtonOut);
       if (footerItem.action) {
+        footerItemObject.on('pointerup', onButtonUpForInstance, this);
         footerItemObject.on('pointerup', footerItem.action, this.scene);
       }
     }
@@ -380,8 +412,24 @@ export class MenuSystem {
   }
 }
 
+function onButtonUpForInstance() {
+  if (this._options?.muted) {
+    return;
+  }
+
+  this._audioSystem.playSFX(SoundFXKey.ITEM_SELECTION);
+}
+
 function onButtonHover() {
   this.setColor(COLORS.hoverForeground);
+}
+
+function onButtonHoverForInstance() {
+  if (this._options?.muted) {
+    return;
+  }
+
+  this._audioSystem.playSFX(SoundFXKey.ITEM_HOVER);
 }
 
 function onButtonOut() {
