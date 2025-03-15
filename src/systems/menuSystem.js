@@ -448,5 +448,5 @@ function recentreMenu(scene, menuContainer) {
 
 function realignFooter(scene, footerContainer) {
   const bounds = footerContainer.getBounds();
-  footerContainer.y = scene.cameras.main.height - bounds.height - 20;
+  footerContainer.y = scene.cameras.main.height - bounds.height - 12;
 }
