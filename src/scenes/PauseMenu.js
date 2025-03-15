@@ -36,6 +36,10 @@ export class PauseMenu extends Scene {
               action: this.onFullScreenToggle
             },
             {
+              label: 'Controls',
+              action: this.showControls,
+            },
+            {
               label: 'Sound: On',
             },
             {
@@ -66,6 +70,12 @@ export class PauseMenu extends Scene {
 
     this.input.keyboard.once('keyup-P', () => {
       this.resumeGame();
+    });
+  }
+
+  showControls() {
+    this.scene.start(SceneKey.CONTROLS, {
+      returnScene: SceneKey.PAUSE_MENU
     });
   }
 

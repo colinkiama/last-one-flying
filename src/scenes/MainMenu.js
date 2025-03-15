@@ -84,7 +84,9 @@ export class MainMenu extends Scene {
   }
 
   showControls() {
-    this.scene.start(SceneKey.CONTROLS);
+    this.scene.start(SceneKey.CONTROLS, {
+      returnScene: SceneKey.MAIN_MENU
+    });
   }
 
   showCredits() {

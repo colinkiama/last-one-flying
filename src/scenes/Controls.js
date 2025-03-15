@@ -23,7 +23,9 @@ export class Controls extends Scene {
         this._audioSystem = this.injector.get(DependencyKey.AUDIO_SYSTEM);
     }
 
-    create() {
+    create(data) {
+        this.cameras.main.setBackgroundColor(0x00000000);
+
         const title = this.add
         .text(320, 60, 'Controls', {
             fontFamily: 'usuzi',
@@ -52,7 +54,7 @@ export class Controls extends Scene {
         backButton.on('pointerout', onButtonOut);
         backButton.on('pointerup', () => {
             this._audioSystem.playSFX(SoundFXKey.ITEM_SELECTION)
-            this.scene.start(SceneKey.MAIN_MENU, { playMusic: false });
+            this.scene.start(data.returnScene);
         });
     }
 }
