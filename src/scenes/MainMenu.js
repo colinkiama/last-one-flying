@@ -59,6 +59,10 @@ export class MainMenu extends Scene {
               action: this.onSoundToggle,
             },
             {
+              label: 'Controls',
+              action: this.showControls,
+            },
+            {
               label: 'Credits',
               action: this.showCredits,
             },
@@ -78,6 +82,11 @@ export class MainMenu extends Scene {
       this._menuSystem.shutDownCurrentMenu();
     });
   }
+
+  showControls() {
+    this.scene.start(SceneKey.CONTROLS);
+  }
+
   showCredits() {
     this.scene.start(SceneKey.CREDITS);
   }

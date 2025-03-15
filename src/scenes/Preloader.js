@@ -1,12 +1,9 @@
 import { Scene } from 'phaser';
 import { SceneKey } from '../constants/scene.js';
 import { LocalStorageKey, RegistryKey } from '../constants/data.js';
-import { COLORS, MENU_ITEM_CONFIG } from '../constants/menu.js';
-import { onButtonHover, onButtonOut } from '../utils/ui.js';
 import { MenuSystem } from '../systems/menuSystem.js';
 import { Injector } from '../utils/injector.js';
 import { DependencyKey } from '../constants/injector.js';
-import { AudioSystem } from '../systems/audioSystem.js';
 import { AudioKey, SoundFXKey } from '../constants/audio.js';
 
 const PROGRESS_BAR_WIDTH = 300;
@@ -18,6 +15,7 @@ const SCENES_TO_LOAD = [
   'PauseMenu',
   'GameOver',
   'Credits',
+  'Controls'
 ];
 
 let dependencyInjector;
