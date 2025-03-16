@@ -1,4 +1,4 @@
-import { Scene } from 'phaser';
+import { Data, Scene } from 'phaser';
 import {
   COLORS,
   WEBSITE_URL,
@@ -26,9 +26,8 @@ export class MainMenu extends Scene {
     this._audioSystem = this.injector.get(DependencyKey.AUDIO_SYSTEM);
   }
 
-  create(data) {
+  create() {
     if (
-      data.playMusic &&
       !this._audioSystem.get(AudioKey.MAIN_THEME)?.isPlaying
     ) {
       this._audioSystem.play(AudioKey.MAIN_THEME);
@@ -55,7 +54,8 @@ export class MainMenu extends Scene {
             // // TODO: Set text based on sound playback prefernce value
             // // in local storage
             {
-              label: 'Sound: On',
+              name: 'sound-toggle',
+              label: `Sound: ${this.sound.mute ? 'Off' : 'On'}`,
               action: this.onSoundToggle,
             },
             {
@@ -78,8 +78,13 @@ export class MainMenu extends Scene {
       'main-menu',
     );
 
+    this.game.registry.events.on(Data.Events.CHANGE_DATA, this.onDataChanged, this);
+
+
     this.events.once('shutdown', () => {
+      this.game.registry.events.off(Data.Events.CHANGE_DATA, this.onDataChanged, this);
       this._menuSystem.shutDownCurrentMenu();
+
     });
   }
 
@@ -101,11 +106,25 @@ export class MainMenu extends Scene {
     this.scene.start(SceneKey.BATTLE);
   }
 
+  onDataChanged(_parent, key, value) {
+    switch (key) {
+      case RegistryKey.PLAY_SOUND:
+        if (value) {
+          this.sound.setMute(false);
+          this._menuSystem.updateItemText('sound-toggle', 'Sound: On');
+        } else {
+          this.sound.setMute(true);
+          this._menuSystem.updateItemText('sound-toggle', 'Sound: Off');
+        }
+
+        break;
+      default:
+        break;
+    }
+  }
+
   onSoundToggle() {
-    // TODO:
-    // - Set sound playback preference in local storage
-    // - Update soundToggle button text to either "Sound: On" or "Sound: Off"
-    //   based on the current sound playback preference value
+    this.registry.set(RegistryKey.PLAY_SOUND, !this.registry.get(RegistryKey.PLAY_SOUND));
   }
 
   onFullScreenToggle() {

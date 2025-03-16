@@ -98,10 +98,12 @@ export class Credits extends Scene {
     backButton.on('pointerover', onButtonHover);
     backButton.on('pointerover', onButtonHoverForInstance, this);
     backButton.on('pointerout', onButtonOut);
-    backButton.on('pointerup', () => {
-      this._audioSystem.playSFX(SoundFXKey.ITEM_SELECTION);
-      this.scene.start(SceneKey.MAIN_MENU, { playMusic: false });
-    });
+    backButton.on('pointerup', this.onBackButtonPress, this);
+  }
+
+  onBackButtonPress() {
+    this._audioSystem.playSFX(SoundFXKey.ITEM_SELECTION);
+    this.scene.start(SceneKey.MAIN_MENU);
   }
 }
 

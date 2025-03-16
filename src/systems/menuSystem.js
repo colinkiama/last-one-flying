@@ -12,6 +12,7 @@ import { DependencyKey } from '../constants/injector.js';
  * @typedef {Object} MenuItem
  * @property {boolean} [isInteractive] Determines if an item is selectable or not
  * @property {string} label
+ * @property {string} [name]
  * @property {function(...any):void} [action] Logic to run when item is selected
  */
 
@@ -89,6 +90,16 @@ export class MenuSystem {
 
     this._currentFooterContainer.add(this._renderFooter(this._currentMenu));
     realignFooter(this.scene, this._currentFooterContainer);
+  }
+
+  updateItemText(name, value) {
+    const item = this._currentMenuContainer.getByName(name);
+    console.log('Item to update:', item);
+    if (!item) {
+      return;
+    }
+
+    item.text = value;
   }
 
   /**
@@ -334,6 +345,10 @@ export class MenuSystem {
         color: COLORS.foreground,
       })
       .setOrigin(0.5, 0);
+
+    if (menuItem.name) {
+      menuItemGameObject.name = menuItem.name;
+    }
 
     if (menuItem.isInteractive === undefined || menuItem.isInteractive) {
       menuItemGameObject.setInteractive(MENU_ITEM_CONFIG);
