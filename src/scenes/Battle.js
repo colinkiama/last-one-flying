@@ -242,6 +242,12 @@ export class Battle extends Scene {
     );
 
     crossSceneEventEmitter.on(
+      CrossSceneEvent.PAUSE_REQUESTED,
+      this.onPauseRequested,
+      this,
+    );
+
+    crossSceneEventEmitter.on(
       CrossSceneEvent.SHAKE_SCREEN,
       this.onScreenShakeRequested,
       this,
@@ -285,7 +291,7 @@ export class Battle extends Scene {
   }
 
   onPauseRequested() {
-    this.scene.launch(SceneKey.PAUSE_MENU);
+    this.scene.launch(SceneKey.PAUSE_MENU, { isReturning: false });
   }
 
   unsubscribeFromEvents() {
@@ -339,6 +345,12 @@ export class Battle extends Scene {
     gameLogicEventEmitter.off(
       GameLogicEvent.GRACE_PERIOD_ENDED,
       this.onGracePeriodEnded,
+      this,
+    );
+
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.PAUSE_REQUESTED,
+      this.onPauseRequested,
       this,
     );
 

@@ -97,7 +97,6 @@ export class PauseMenu extends Scene {
   }
 
   resumeGame() {
-    this._menuSystem.shutDownCurrentMenu();
     crossSceneEventEmitter.emit(CrossSceneEvent.RESUME_GAME);
     this.scene.stop(this);
   }
