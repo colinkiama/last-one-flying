@@ -1,7 +1,7 @@
 {
   "name": "last-one-flying",
   "description": "An arcade survival shooter made with Phaser 3.",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "type": "module",
   "repository": {
     "type": "git",
