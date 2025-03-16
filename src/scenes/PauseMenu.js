@@ -33,7 +33,7 @@ export class PauseMenu extends Scene {
             },
             {
               label: 'Toggle Full Screen',
-              action: this.onFullScreenToggle
+              action: this.onFullScreenToggle,
             },
             {
               label: 'Controls',
@@ -75,7 +75,7 @@ export class PauseMenu extends Scene {
 
   showControls() {
     this.scene.start(SceneKey.CONTROLS, {
-      returnScene: SceneKey.PAUSE_MENU
+      returnScene: SceneKey.PAUSE_MENU,
     });
   }
 

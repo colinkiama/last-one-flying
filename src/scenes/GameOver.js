@@ -95,7 +95,9 @@ export class GameOver extends Scene {
             at: 2750,
             run: () => {
               this._vfxSystem.shakeScreen(ScreenShakeType.HIGH_SCORE);
-              crossSceneEventEmitter.emit(CrossSceneEvent.NEW_HIGH_SCORE_REVEAL);
+              crossSceneEventEmitter.emit(
+                CrossSceneEvent.NEW_HIGH_SCORE_REVEAL,
+              );
               this._audioSystem.playSFX(SoundFXKey.EXPLOSION);
               this.revealStat('highScore', {
                 showExplosion: true,

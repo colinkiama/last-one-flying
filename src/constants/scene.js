@@ -4,7 +4,8 @@ export const SceneKey = {
   MAIN_MENU: 'MainMenu',
   BATTLE: 'Battle',
   PAUSE_MENU: 'PauseMenu',
-  CONTROLS: 'Controls',  CREDITS: 'Credits',
+  CONTROLS: 'Controls',
+  CREDITS: 'Credits',
   HUD: 'HUD',
   GAME_OVER: 'GameOver',
 };

@@ -36,3 +36,52 @@ export const CREDITS_LIST_ITEMS = [
     ],
   },
 ];
+
+export const CONTROLS_LIST_ITEMS = [
+  {
+    title: 'Keyboard',
+    controls: [
+      {
+        input: 'W',
+        action: 'Move forward',
+      },
+      {
+        input: 'A',
+        action: 'Rotate left',
+      },
+      {
+        input: 'S',
+        action: 'Move backwards',
+      },
+      {
+        input: 'D',
+        action: 'Rotate right',
+      },
+      {
+        input: 'J',
+        action: 'Fire laser beam',
+      },
+      {
+        input: 'P',
+        action: 'Pause',
+      },
+    ],
+  },
+  {
+    title: 'Touch',
+    controls: [
+      {
+        input: 'Left Joystick Up',
+        action: 'Move forward',
+      },
+      {
+        input: 'Left Joystick Down',
+        action: 'Move backwards',
+      },
+      {
+        input: 'Right Joystick',
+        action: 'Rotate ship and fire laser beam',
+      },
+    ],
+  },
+];

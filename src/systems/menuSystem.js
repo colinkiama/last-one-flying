@@ -146,7 +146,7 @@ export class MenuSystem {
       if (menuItem.isInteractive) {
         const menuItemGameObject = this._currentMenuContainer.getAt(i);
         menuItemGameObject.off('pointerover', onButtonHover);
-        menuItemGameObject.off('pointerover', onButtonHoverForInstance, this)
+        menuItemGameObject.off('pointerover', onButtonHoverForInstance, this);
 
         menuItemGameObject.off('pointerout', onButtonOut);
         if (menuItem.action) {
@@ -163,7 +163,7 @@ export class MenuSystem {
       if (footerItem.isInteractive) {
         const footerItemGameObject = this._currentMenuContainer.getAt(i);
         footerItemGameObject.off('pointerover', onButtonHover);
-        footerItemGameObject.off('pointerover', onButtonHoverForInstance, this)
+        footerItemGameObject.off('pointerover', onButtonHoverForInstance, this);
 
         footerItemGameObject.off('pointerout', onButtonOut);
         if (footerItem.action) {
@@ -172,7 +172,6 @@ export class MenuSystem {
         }
       }
     }
-
   }
 
   async pop() {
@@ -339,7 +338,7 @@ export class MenuSystem {
     if (menuItem.isInteractive === undefined || menuItem.isInteractive) {
       menuItemGameObject.setInteractive(MENU_ITEM_CONFIG);
       menuItemGameObject.on('pointerover', onButtonHover);
-      menuItemGameObject.on('pointerover', onButtonHoverForInstance, this)
+      menuItemGameObject.on('pointerover', onButtonHoverForInstance, this);
       menuItemGameObject.on('pointerout', onButtonOut);
       if (menuItem.action) {
         menuItemGameObject.on('pointerup', onButtonUpForInstance, this);

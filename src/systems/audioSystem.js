@@ -58,7 +58,7 @@ export class AudioSystem {
     const keys = this._pausedAudio.keys().toArray();
     keys.forEach((key) => {
       const audio = this._pausedAudio.get(key);
-      audio.resume()
+      audio.resume();
       this._pausedAudio.delete(key);
     });
   }
