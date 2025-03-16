@@ -27,7 +27,7 @@ export class Controls extends Scene {
     this.cameras.main.setBackgroundColor(0x00000000);
 
     const title = this.add
-      .text(320, 40, 'Controls', {
+      .text(320, 20, 'Controls', {
         fontFamily: 'usuzi',
         fontSize: 40,
       })
