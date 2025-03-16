@@ -151,7 +151,7 @@ export class Preloader extends Scene {
       LocalStorageKey.HIGH_SCORE,
     );
 
-    this.game.registry.set(RegistryKey.HIGH_SCORE, storedHighScore ?? 0);
+    this.registry.set(RegistryKey.HIGH_SCORE, storedHighScore ?? 0);
 
     //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
     //  For example, you can define global animations here, so we can use them in other scenes.
@@ -217,12 +217,12 @@ export class Preloader extends Scene {
   }
 
   startGameWithSound() {
-    this.game.registry.set(RegistryKey.PLAY_SOUND, true);
+    this.registry.set(RegistryKey.PLAY_SOUND, true);
     this.scene.start(SceneKey.MAIN_MENU);
   }
 
   startGameMuted() {
-    this.game.registry.set(RegistryKey.PLAY_SOUND, false);
+    this.registry.set(RegistryKey.PLAY_SOUND, false);
     this.sound.setMute(true);
     this.scene.start(SceneKey.MAIN_MENU);
   }

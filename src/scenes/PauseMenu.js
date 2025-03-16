@@ -47,7 +47,6 @@ export class PauseMenu extends Scene {
               name: 'sound-toggle',
               label: `Sound: ${this.sound.mute ? 'Off' : 'On'}`,
               action: this.onSoundToggle,
-
             },
             {
               label: 'Back To Main Menu',
@@ -79,10 +78,14 @@ export class PauseMenu extends Scene {
       this.resumeGame();
     });
 
-    this.game.registry.events.on(Data.Events.CHANGE_DATA, this.onDataChanged, this);
+    this.registry.events.on(Data.Events.CHANGE_DATA, this.onDataChanged, this);
 
     this.events.once('shutdown', () => {
-      this.game.registry.events.off(Data.Events.CHANGE_DATA, this.onDataChanged, this);
+      this.registry.events.off(
+        Data.Events.CHANGE_DATA,
+        this.onDataChanged,
+        this,
+      );
       this._menuSystem.shutDownCurrentMenu();
     });
   }
@@ -117,7 +120,7 @@ export class PauseMenu extends Scene {
   }
 
   onSoundToggle() {
-    this.registry.set(RegistryKey.PLAY_SOUND, !this.registry.get(RegistryKey.PLAY_SOUND));
+    this.registry.toggle(RegistryKey.PLAY_SOUND);
   }
 
   onFullScreenToggle() {

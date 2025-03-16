@@ -27,9 +27,7 @@ export class MainMenu extends Scene {
   }
 
   create() {
-    if (
-      !this._audioSystem.get(AudioKey.MAIN_THEME)?.isPlaying
-    ) {
+    if (!this._audioSystem.get(AudioKey.MAIN_THEME)?.isPlaying) {
       this._audioSystem.play(AudioKey.MAIN_THEME);
     }
 
@@ -78,13 +76,15 @@ export class MainMenu extends Scene {
       'main-menu',
     );
 
-    this.game.registry.events.on(Data.Events.CHANGE_DATA, this.onDataChanged, this);
-
+    this.registry.events.on(Data.Events.CHANGE_DATA, this.onDataChanged, this);
 
     this.events.once('shutdown', () => {
-      this.game.registry.events.off(Data.Events.CHANGE_DATA, this.onDataChanged, this);
+      this.registry.events.off(
+        Data.Events.CHANGE_DATA,
+        this.onDataChanged,
+        this,
+      );
       this._menuSystem.shutDownCurrentMenu();
-
     });
   }
 
@@ -124,7 +124,7 @@ export class MainMenu extends Scene {
   }
 
   onSoundToggle() {
-    this.registry.set(RegistryKey.PLAY_SOUND, !this.registry.get(RegistryKey.PLAY_SOUND));
+    this.registry.toggle(RegistryKey.PLAY_SOUND);
   }
 
   onFullScreenToggle() {

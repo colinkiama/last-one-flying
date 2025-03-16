@@ -154,7 +154,7 @@ export class HUD extends Scene {
       return;
     }
 
-    const storedHighScore = this.game.registry.get(RegistryKey.HIGH_SCORE);
+    const storedHighScore = this.registry.get(RegistryKey.HIGH_SCORE);
     if (nextPointsValue > storedHighScore) {
       this._highScoreLabelText.setVisible(true);
     }
@@ -165,7 +165,7 @@ export class HUD extends Scene {
   }
 
   onPause() {
-    this.scene.launch(SceneKey.PAUSE_MENU, {isReturning: false});
+    this.scene.launch(SceneKey.PAUSE_MENU, { isReturning: false });
   }
 
   unsubscribeFromEvents() {

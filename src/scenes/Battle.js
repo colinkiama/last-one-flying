@@ -503,7 +503,7 @@ export class Battle extends Scene {
     this._sessionStopWatch.pause();
     const gameStats = {
       score: this._scoreSystem.getScore(),
-      oldHighScore: this.game.registry.get(RegistryKey.HIGH_SCORE),
+      oldHighScore: this.registry.get(RegistryKey.HIGH_SCORE),
       time: this._sessionStopWatch.formattedElapsedTime,
     };
 
@@ -518,11 +518,11 @@ export class Battle extends Scene {
   }
 
   updateHighScore() {
-    const storedHighScore = this.game.registry.get(RegistryKey.HIGH_SCORE);
+    const storedHighScore = this.registry.get(RegistryKey.HIGH_SCORE);
     const score = this._scoreSystem.getScore();
 
     if (score > storedHighScore) {
-      this.game.registry.set(RegistryKey.HIGH_SCORE, score);
+      this.registry.set(RegistryKey.HIGH_SCORE, score);
       localStorage.setItem(LocalStorageKey.HIGH_SCORE, score);
     }
   }
