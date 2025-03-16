@@ -103,7 +103,9 @@ export class Controls extends Scene {
     backButton.on('pointerout', onButtonOut);
     backButton.on('pointerup', () => {
       this._audioSystem.playSFX(SoundFXKey.ITEM_SELECTION);
-      this.scene.start(data.returnScene);
+      this.scene.start(data.returnScene, {
+        isReturning: true
+      });
     });
   }
 }

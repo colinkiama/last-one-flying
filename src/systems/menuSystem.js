@@ -94,7 +94,6 @@ export class MenuSystem {
 
   updateItemText(name, value) {
     const item = this._currentMenuContainer.getByName(name);
-    console.log('Item to update:', item);
     if (!item) {
       return;
     }

@@ -165,7 +165,7 @@ export class HUD extends Scene {
   }
 
   onPause() {
-    this.scene.launch(SceneKey.PAUSE_MENU);
+    this.scene.launch(SceneKey.PAUSE_MENU, {isReturning: false});
   }
 
   unsubscribeFromEvents() {

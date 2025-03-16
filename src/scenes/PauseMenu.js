@@ -1,8 +1,9 @@
-import { Scene } from 'phaser';
+import { Data, Scene } from 'phaser';
 import { crossSceneEventEmitter } from '../utils/events.js';
 import { CrossSceneEvent } from '../constants/events.js';
 import { MenuSystem } from '../systems/menuSystem.js';
 import { SceneKey } from '../constants/scene.js';
+import { RegistryKey } from '../constants/data.js';
 
 export class PauseMenu extends Scene {
   injector;
@@ -14,8 +15,11 @@ export class PauseMenu extends Scene {
     super(SceneKey.PAUSE_MENU);
   }
 
-  create() {
-    crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
+  create(data) {
+    if (!data.isReturning) {
+      crossSceneEventEmitter.emit(CrossSceneEvent.PAUSE_GAME);
+    }
+
     this.cameras.main.setBackgroundColor(0xaa000000);
     this._menuSystem = new MenuSystem(this, this.injector);
     this._menuSystem.start(
@@ -40,7 +44,10 @@ export class PauseMenu extends Scene {
               action: this.showControls,
             },
             {
-              label: 'Sound: On',
+              name: 'sound-toggle',
+              label: `Sound: ${this.sound.mute ? 'Off' : 'On'}`,
+              action: this.onSoundToggle,
+
             },
             {
               label: 'Back To Main Menu',
@@ -71,6 +78,13 @@ export class PauseMenu extends Scene {
     this.input.keyboard.once('keyup-P', () => {
       this.resumeGame();
     });
+
+    this.game.registry.events.on(Data.Events.CHANGE_DATA, this.onDataChanged, this);
+
+    this.events.once('shutdown', () => {
+      this.game.registry.events.off(Data.Events.CHANGE_DATA, this.onDataChanged, this);
+      this._menuSystem.shutDownCurrentMenu();
+    });
   }
 
   showControls() {
@@ -85,12 +99,32 @@ export class PauseMenu extends Scene {
     this.scene.stop(this);
   }
 
+  onDataChanged(_parent, key, value) {
+    switch (key) {
+      case RegistryKey.PLAY_SOUND:
+        if (value) {
+          this.sound.setMute(false);
+          this._menuSystem.updateItemText('sound-toggle', 'Sound: On');
+        } else {
+          this.sound.setMute(true);
+          this._menuSystem.updateItemText('sound-toggle', 'Sound: Off');
+        }
+
+        break;
+      default:
+        break;
+    }
+  }
+
+  onSoundToggle() {
+    this.registry.set(RegistryKey.PLAY_SOUND, !this.registry.get(RegistryKey.PLAY_SOUND));
+  }
+
   onFullScreenToggle() {
     this.scale.toggleFullscreen();
   }
 
   quitGame() {
-    this._menuSystem.shutDownCurrentMenu();
     crossSceneEventEmitter.emit(CrossSceneEvent.QUIT_GAME);
     this.scene.stop(this);
   }
