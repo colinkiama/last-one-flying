@@ -1,12 +1,6 @@
-import { Scene } from 'phaser';
-import {
-  COLORS,
-  WEBSITE_URL,
-  MENU_ITEM_CONFIG,
-  HOVER_TWEEN_CONFIG,
-} from '../constants/menu.js';
+import { Data, Scene } from 'phaser';
+import { WEBSITE_URL } from '../constants/menu.js';
 import { SceneKey } from '../constants/scene.js';
-import { onButtonHover, onButtonOut } from '../utils/ui.js';
 import { RegistryKey } from '../constants/data.js';
 import { DependencyKey } from '../constants/injector.js';
 import { AudioKey } from '../constants/audio.js';
@@ -26,11 +20,8 @@ export class MainMenu extends Scene {
     this._audioSystem = this.injector.get(DependencyKey.AUDIO_SYSTEM);
   }
 
-  create(data) {
-    if (
-      data.playMusic &&
-      !this._audioSystem.get(AudioKey.MAIN_THEME)?.isPlaying
-    ) {
+  create() {
+    if (!this._audioSystem.get(AudioKey.MAIN_THEME)?.isPlaying) {
       this._audioSystem.play(AudioKey.MAIN_THEME);
     }
 
@@ -52,10 +43,9 @@ export class MainMenu extends Scene {
               label: 'Toggle Full Screen',
               action: this.onFullScreenToggle,
             },
-            // // TODO: Set text based on sound playback prefernce value
-            // // in local storage
             {
-              label: 'Sound: On',
+              name: 'sound-toggle',
+              label: `Sound: ${this.sound.mute ? 'Off' : 'On'}`,
               action: this.onSoundToggle,
             },
             {
@@ -70,7 +60,7 @@ export class MainMenu extends Scene {
           footerItems: [
             {
               label: 'Colin Kiama - 2025',
-              action: onFooterCreditsClick,
+              action: this.onFooterCreditsClick,
             },
           ],
         },
@@ -78,7 +68,14 @@ export class MainMenu extends Scene {
       'main-menu',
     );
 
+    this.registry.events.on(Data.Events.CHANGE_DATA, this.onDataChanged, this);
+
     this.events.once('shutdown', () => {
+      this.registry.events.off(
+        Data.Events.CHANGE_DATA,
+        this.onDataChanged,
+        this,
+      );
       this._menuSystem.shutDownCurrentMenu();
     });
   }
@@ -101,18 +98,32 @@ export class MainMenu extends Scene {
     this.scene.start(SceneKey.BATTLE);
   }
 
+  onDataChanged(_parent, key, value) {
+    switch (key) {
+      case RegistryKey.PLAY_SOUND:
+        if (value) {
+          this.sound.setMute(false);
+          this._menuSystem.updateItemText('sound-toggle', 'Sound: On');
+        } else {
+          this.sound.setMute(true);
+          this._menuSystem.updateItemText('sound-toggle', 'Sound: Off');
+        }
+
+        break;
+      default:
+        break;
+    }
+  }
+
   onSoundToggle() {
-    // TODO:
-    // - Set sound playback preference in local storage
-    // - Update soundToggle button text to either "Sound: On" or "Sound: Off"
-    //   based on the current sound playback preference value
+    this.registry.toggle(RegistryKey.PLAY_SOUND);
   }
 
   onFullScreenToggle() {
     this.scale.toggleFullscreen();
   }
-}
 
-function onFooterCreditsClick() {
-  window.open(WEBSITE_URL, '_blank');
+  onFooterCreditsClick() {
+    window.open(WEBSITE_URL, '_blank');
+  }
 }

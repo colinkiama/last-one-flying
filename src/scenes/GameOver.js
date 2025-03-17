@@ -16,7 +16,6 @@ export class GameOver extends Scene {
   /** @type {MenuSystem} */
   _menuSystem;
   _renderedStatsObjects;
-  _tweenTimeline;
   _explosionPool;
   _vfxSystem;
   _statsContainer;

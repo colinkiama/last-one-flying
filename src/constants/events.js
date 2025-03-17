@@ -8,6 +8,7 @@ export const CrossSceneEvent = {
   HUD_DESTROYED: 'hud-destroyed',
   RESET_GAME: 'reset-game',
   SCORE_RESET: 'score-reset',
+  PAUSE_REQUESTED: 'pause-requested',
 };
 
 export const GameLogicEvent = {

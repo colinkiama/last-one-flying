@@ -242,6 +242,12 @@ export class Battle extends Scene {
     );
 
     crossSceneEventEmitter.on(
+      CrossSceneEvent.PAUSE_REQUESTED,
+      this.onPauseRequested,
+      this,
+    );
+
+    crossSceneEventEmitter.on(
       CrossSceneEvent.SHAKE_SCREEN,
       this.onScreenShakeRequested,
       this,
@@ -285,7 +291,7 @@ export class Battle extends Scene {
   }
 
   onPauseRequested() {
-    this.scene.launch(SceneKey.PAUSE_MENU);
+    this.scene.launch(SceneKey.PAUSE_MENU, { isReturning: false });
   }
 
   unsubscribeFromEvents() {
@@ -339,6 +345,12 @@ export class Battle extends Scene {
     gameLogicEventEmitter.off(
       GameLogicEvent.GRACE_PERIOD_ENDED,
       this.onGracePeriodEnded,
+      this,
+    );
+
+    crossSceneEventEmitter.off(
+      CrossSceneEvent.PAUSE_REQUESTED,
+      this.onPauseRequested,
       this,
     );
 
@@ -503,7 +515,7 @@ export class Battle extends Scene {
     this._sessionStopWatch.pause();
     const gameStats = {
       score: this._scoreSystem.getScore(),
-      oldHighScore: this.game.registry.get(RegistryKey.HIGH_SCORE),
+      oldHighScore: this.registry.get(RegistryKey.HIGH_SCORE),
       time: this._sessionStopWatch.formattedElapsedTime,
     };
 
@@ -518,11 +530,11 @@ export class Battle extends Scene {
   }
 
   updateHighScore() {
-    const storedHighScore = this.game.registry.get(RegistryKey.HIGH_SCORE);
+    const storedHighScore = this.registry.get(RegistryKey.HIGH_SCORE);
     const score = this._scoreSystem.getScore();
 
     if (score > storedHighScore) {
-      this.game.registry.set(RegistryKey.HIGH_SCORE, score);
+      this.registry.set(RegistryKey.HIGH_SCORE, score);
       localStorage.setItem(LocalStorageKey.HIGH_SCORE, score);
     }
   }

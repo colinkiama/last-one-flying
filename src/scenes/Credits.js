@@ -1,7 +1,6 @@
 import { Scene } from 'phaser';
 import {
   COLORS,
-  WEBSITE_URL,
   MENU_ITEM_CONFIG,
   HOVER_TWEEN_CONFIG,
   CREDITS_LIST_ITEMS,
@@ -14,9 +13,12 @@ import { SoundFXKey } from '../constants/audio.js';
 export class Credits extends Scene {
   injector;
   _audioSystem;
+  _interactiveItems;
+  _backButton;
 
   constructor() {
     super(SceneKey.CREDITS);
+    this._interactiveItems = [];
   }
 
   setupDependencies() {
@@ -24,6 +26,8 @@ export class Credits extends Scene {
   }
 
   create() {
+    this._interactiveItems = [];
+
     const title = this.add
       .text(320, 60, 'Credits', {
         fontFamily: 'usuzi',
@@ -74,10 +78,10 @@ export class Credits extends Scene {
           previousListItem.on('pointerover', onButtonHover);
           previousListItem.on('pointerover', onButtonHoverForInstance, this);
           previousListItem.on('pointerout', onButtonOut);
-          previousListItem.on('pointerup', () => {
-            this._audioSystem.playSFX(SoundFXKey.ITEM_SELECTION);
-            window.open(href, '_blank');
-          });
+          previousListItem.on('pointerup', onButtonPress);
+          previousListItem.on('pointerup', onButtonPressForInstance, this);
+          previousListItem.setData('href', href);
+          this._interactiveItems.push(previousListItem);
         }
 
         if (j === people.length - 1) {
@@ -86,7 +90,7 @@ export class Credits extends Scene {
       }
     }
 
-    const backButton = this.add
+    this._backButton = this.add
       .text(320, 340, 'Back to Main Menu', {
         fontFamily: 'usuzi',
         fontSize: 16,
@@ -95,14 +99,44 @@ export class Credits extends Scene {
       .setOrigin(0.5, 1)
       .setInteractive(MENU_ITEM_CONFIG);
 
-    backButton.on('pointerover', onButtonHover);
-    backButton.on('pointerover', onButtonHoverForInstance, this);
-    backButton.on('pointerout', onButtonOut);
-    backButton.on('pointerup', () => {
-      this._audioSystem.playSFX(SoundFXKey.ITEM_SELECTION);
-      this.scene.start(SceneKey.MAIN_MENU, { playMusic: false });
-    });
+    this._backButton.on('pointerover', onButtonHover);
+    this._backButton.on('pointerover', onButtonHoverForInstance, this);
+    this._backButton.on('pointerout', onButtonOut);
+    this._backButton.on('pointerup', onBackButtonPressForInstance, this);
+
+    this.events.once(
+      'shutdown',
+      () => {
+        for (let i = this._interactiveItems.length - 1; i > -1; i--) {
+          const item = this._interactiveItems[i];
+          item.off('pointerover', onButtonHover);
+          item.off('pointerover', onButtonHoverForInstance, this);
+          item.off('pointerout', onButtonOut);
+          item.off('pointerup', onButtonPress);
+          item.off('pointerup', onButtonPressForInstance, this);
+        }
+
+        this._backButton.off('pointerover', onButtonHover);
+        this._backButton.off('pointerover', onButtonHoverForInstance, this);
+        this._backButton.off('pointerout', onButtonOut);
+        this._backButton.off('pointerup', onBackButtonPressForInstance, this);
+      },
+      this,
+    );
   }
+}
+
+function onBackButtonPressForInstance() {
+  this._audioSystem.playSFX(SoundFXKey.ITEM_SELECTION);
+  this.scene.start(SceneKey.MAIN_MENU);
+}
+
+function onButtonPress() {
+  window.open(this.getData('href'), '_blank');
+}
+
+function onButtonPressForInstance() {
+  this._audioSystem.playSFX(SoundFXKey.ITEM_SELECTION);
 }
 
 function onButtonHoverForInstance() {
