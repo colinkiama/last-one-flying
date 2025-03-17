@@ -1,7 +1,6 @@
 import { Scene } from 'phaser';
 import {
   COLORS,
-  WEBSITE_URL,
   MENU_ITEM_CONFIG,
   HOVER_TWEEN_CONFIG,
   CREDITS_LIST_ITEMS,
@@ -81,7 +80,7 @@ export class Credits extends Scene {
           previousListItem.on('pointerout', onButtonOut);
           previousListItem.on('pointerup', onButtonPress);
           previousListItem.on('pointerup', onButtonPressForInstance, this);
-
+          previousListItem.setData('href', href);
           this._interactiveItems.push(previousListItem);
         }
 
@@ -133,7 +132,7 @@ function onBackButtonPressForInstance() {
 }
 
 function onButtonPress() {
-  window.open(this.href, '_blank');
+  window.open(this.getData('href'), '_blank');
 }
 
 function onButtonPressForInstance() {

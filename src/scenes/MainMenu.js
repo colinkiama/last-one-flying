@@ -1,12 +1,6 @@
 import { Data, Scene } from 'phaser';
-import {
-  COLORS,
-  WEBSITE_URL,
-  MENU_ITEM_CONFIG,
-  HOVER_TWEEN_CONFIG,
-} from '../constants/menu.js';
+import { WEBSITE_URL } from '../constants/menu.js';
 import { SceneKey } from '../constants/scene.js';
-import { onButtonHover, onButtonOut } from '../utils/ui.js';
 import { RegistryKey } from '../constants/data.js';
 import { DependencyKey } from '../constants/injector.js';
 import { AudioKey } from '../constants/audio.js';
@@ -49,8 +43,6 @@ export class MainMenu extends Scene {
               label: 'Toggle Full Screen',
               action: this.onFullScreenToggle,
             },
-            // // TODO: Set text based on sound playback prefernce value
-            // // in local storage
             {
               name: 'sound-toggle',
               label: `Sound: ${this.sound.mute ? 'Off' : 'On'}`,
@@ -68,7 +60,7 @@ export class MainMenu extends Scene {
           footerItems: [
             {
               label: 'Colin Kiama - 2025',
-              action: onFooterCreditsClick,
+              action: this.onFooterCreditsClick,
             },
           ],
         },
@@ -130,8 +122,8 @@ export class MainMenu extends Scene {
   onFullScreenToggle() {
     this.scale.toggleFullscreen();
   }
-}
 
-function onFooterCreditsClick() {
-  window.open(WEBSITE_URL, '_blank');
+  onFooterCreditsClick() {
+    window.open(WEBSITE_URL, '_blank');
+  }
 }

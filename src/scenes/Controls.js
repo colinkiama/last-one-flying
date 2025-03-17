@@ -1,7 +1,6 @@
 import { Scene } from 'phaser';
 import {
   COLORS,
-  WEBSITE_URL,
   MENU_ITEM_CONFIG,
   HOVER_TWEEN_CONFIG,
   CONTROLS_LIST_ITEMS,
