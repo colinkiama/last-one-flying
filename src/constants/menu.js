@@ -42,23 +42,23 @@ export const CONTROLS_LIST_ITEMS = [
     title: 'Keyboard',
     controls: [
       {
-        input: 'W',
+        input: 'W/Up Arrow',
         action: 'Move forward',
       },
       {
-        input: 'A',
+        input: 'A/Left Arrow',
         action: 'Rotate left',
       },
       {
-        input: 'S',
+        input: 'S/Down Arrow',
         action: 'Move backwards',
       },
       {
-        input: 'D',
+        input: 'D/Right Arrow',
         action: 'Rotate right',
       },
       {
-        input: 'J',
+        input: 'J/Space',
         action: 'Fire laser beam',
       },
       {
