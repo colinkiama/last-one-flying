@@ -163,10 +163,11 @@ export class CombatSystem {
   }
 
   update(movementType) {
-    const { shoot } = this._combatKeys;
+    const { shoot, shootAlt = null } = this._combatKeys;
 
     const shootButtonPressed =
       shoot.isDown ||
+      shootAlt?.isDown ||
       (movementType === MovementType.TOUCH
         ? this._touchControlsSystem.isRightJoystickPressed
         : false);

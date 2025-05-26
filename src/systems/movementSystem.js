@@ -1,4 +1,3 @@
-import { Math as PhaserMath } from 'phaser';
 import { createMovementKeys } from '../utils/input.js';
 import {
   MovementType,
@@ -17,14 +16,14 @@ export class MovementSystem {
   _leftJoystickCursorKeys;
   _movementType;
 
-  constructor(scene, player, movementSystem) {
+  constructor(scene, player, touchControlsSystem) {
     this.scene = scene;
     this._player = player;
     this._keyboardCursorKeys = createMovementKeys(this.scene.input.keyboard);
-    this._leftJoystick = movementSystem.leftJoystick;
+    this._leftJoystick = touchControlsSystem.leftJoystick;
     this._leftJoystickCursorKeys = this._leftJoystick.createCursorKeys();
-
-    this._rightJoystick = movementSystem.rightJoystick;
+    this._rightJoystick = touchControlsSystem.rightJoystick;
+    this._movementType = MovementType.NON_TOUCH;
   }
 
   get movementType() {
@@ -51,25 +50,34 @@ export class MovementSystem {
   }
 
   handleKeyMovement(cursorKeys) {
-    const { up, down, left, right } = cursorKeys;
+    const {
+      up,
+      down,
+      left,
+      right,
+      upAlt = null,
+      downAlt = null,
+      leftAlt = null,
+      rightAlt = null,
+    } = cursorKeys;
 
     if (this._movementType === MovementType.NON_TOUCH) {
-      if (left.isDown) {
+      if (left.isDown || leftAlt?.isDown) {
         this._player.setAngularVelocity(-PLAYER_ROTATION_SPEED);
-      } else if (right.isDown) {
+      } else if (right.isDown || rightAlt?.isDown) {
         this._player.setAngularVelocity(PLAYER_ROTATION_SPEED);
       } else {
         this._player.setAngularVelocity(0);
       }
     }
 
-    if (up.isDown) {
+    if (up.isDown || upAlt?.isDown) {
       this.scene.physics.velocityFromRotation(
         this._player.rotation,
         PLAYER_MOVEMENT_SPEED,
         this._player.body.velocity,
       );
-    } else if (down.isDown) {
+    } else if (down.isDown || downAlt?.isDown) {
       this.scene.physics.velocityFromRotation(
         this._player.rotation,
         -PLAYER_MOVEMENT_SPEED,
