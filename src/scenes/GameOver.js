@@ -12,7 +12,7 @@ import { ScreenShakeType } from '../constants/vfx.js';
 
 const MenuItemNames = {
   PLAY_AGAIN: 'play-again',
-  MAIN_MENU: 'main-menu'
+  MAIN_MENU: 'main-menu',
 };
 
 export class GameOver extends Scene {
@@ -84,10 +84,10 @@ export class GameOver extends Scene {
 
     this._menuItems = [
       this._menuSystem.getMenuItem(MenuItemNames.PLAY_AGAIN),
-      this._menuSystem.getMenuItem(MenuItemNames.MAIN_MENU)
-    ].filter(item => !!item);
+      this._menuSystem.getMenuItem(MenuItemNames.MAIN_MENU),
+    ].filter((item) => !!item);
 
-    this._hideMenuItems(); 
+    this._hideMenuItems();
 
     const timeline = this.add.timeline([
       {
@@ -126,23 +126,24 @@ export class GameOver extends Scene {
               this.revealStat('highScore');
             },
           },
-      isNewHighScore ?
-          {
+      isNewHighScore
+        ? {
             at: 3750,
             run: () => {
               this.showMenuItems();
-            }
+            },
           }
         : {
-          at: 3000,
-          run: () => {
-            this.showMenuItems();
-          }
-        }
-
+            at: 3000,
+            run: () => {
+              this.showMenuItems();
+            },
+          },
     ]);
 
     timeline.play();
+
+    this.input.once('pointerup', () => (timeline.timeScale = 10.0));
   }
 
   revealStat(key, options) {
