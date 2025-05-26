@@ -10,6 +10,11 @@ import { DependencyKey } from '../constants/injector.js';
 import { SoundFXKey } from '../constants/audio.js';
 import { ScreenShakeType } from '../constants/vfx.js';
 
+const MenuItemNames = {
+  PLAY_AGAIN: 'play-again',
+  MAIN_MENU: 'main-menu',
+};
+
 export class GameOver extends Scene {
   injector;
   _audioSystem;
@@ -20,6 +25,7 @@ export class GameOver extends Scene {
   _vfxSystem;
   _statsContainer;
   _newHighScoreBlinkTimer;
+  _menuItems;
 
   constructor() {
     super(SceneKey.GAME_OVER);
@@ -61,10 +67,12 @@ export class GameOver extends Scene {
           customContent: this._statsContainer,
           items: [
             {
+              name: MenuItemNames.PLAY_AGAIN,
               label: 'Play Again',
               action: this.resetGame,
             },
             {
+              name: MenuItemNames.MAIN_MENU,
               label: 'Back To Main Menu',
               action: this.quitGame,
             },
@@ -73,6 +81,13 @@ export class GameOver extends Scene {
       ],
       'pause',
     );
+
+    this._menuItems = [
+      this._menuSystem.getMenuItem(MenuItemNames.PLAY_AGAIN),
+      this._menuSystem.getMenuItem(MenuItemNames.MAIN_MENU),
+    ].filter((item) => !!item);
+
+    this._hideMenuItems();
 
     const timeline = this.add.timeline([
       {
@@ -111,9 +126,24 @@ export class GameOver extends Scene {
               this.revealStat('highScore');
             },
           },
+      isNewHighScore
+        ? {
+            at: 3750,
+            run: () => {
+              this.showMenuItems();
+            },
+          }
+        : {
+            at: 3000,
+            run: () => {
+              this.showMenuItems();
+            },
+          },
     ]);
 
     timeline.play();
+
+    this.input.once('pointerup', () => (timeline.timeScale = 10.0));
   }
 
   revealStat(key, options) {
@@ -224,6 +254,23 @@ export class GameOver extends Scene {
     lastRenderedItem = renderedHighScore[renderedHighScore.length - 1];
 
     return renderedItems;
+  }
+
+  _hideMenuItems() {
+    const count = this._menuItems.length;
+    for (let i = 0; i < count; i++) {
+      const item = this._menuItems[i];
+      item.setActive(false).setVisible(false);
+    }
+  }
+
+  showMenuItems() {
+    const count = this._menuItems.length;
+
+    for (let i = 0; i < count; i++) {
+      const item = this._menuItems[i];
+      item.setActive(true).setVisible(true);
+    }
   }
 
   _renderStatItem(item, options) {

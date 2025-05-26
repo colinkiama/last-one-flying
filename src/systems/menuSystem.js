@@ -92,6 +92,15 @@ export class MenuSystem {
     realignFooter(this.scene, this._currentFooterContainer);
   }
 
+  getMenuItem(name) {
+    const item = this._currentMenuContainer.getByName(name);
+    if (!item) {
+      return undefined;
+    }
+
+    return item;
+  }
+
   updateItemText(name, value) {
     const item = this._currentMenuContainer.getByName(name);
     if (!item) {
