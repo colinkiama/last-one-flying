@@ -65,6 +65,7 @@ export class MenuSystem {
   /**
    * @param {Array<Menu>} menus
    * @param {string} firstMenuKey
+   * @return {GameObjects.Container}
    */
   start(menus, firstMenuKey) {
     this.firstMenuKey = firstMenuKey;
@@ -90,6 +91,16 @@ export class MenuSystem {
 
     this._currentFooterContainer.add(this._renderFooter(this._currentMenu));
     realignFooter(this.scene, this._currentFooterContainer);
+    return this._currentMenuContainer;
+  }
+
+  getMenuItem(name) {
+    const item = this._currentMenuContainer.getByName(name);
+    if (!item) {
+      return undefined;
+    }
+
+    return item;
   }
 
   updateItemText(name, value) {
