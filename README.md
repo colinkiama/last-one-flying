@@ -4,6 +4,8 @@ An arcade survival shooter made with Phaser 3
 
 ![Last One Flying Gameplay](/last-one-flying.gif)
 
+Playble now on itch.io: https://colinkiama.itch.io/last-one-flying
+
 ## Requirements
 
 - A http server. Run the server in the root of the project
