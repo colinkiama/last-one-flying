@@ -36,7 +36,7 @@ If you don't want to use `bun`, these instructions tell you how to perform the t
 
 #### Production Environment Setup
 
-Copy the following files and directories into an directory, to prepare the game for a production environment:
+Copy the following files and directories into a directory, to prepare the game for a production environment:
 
 - `assets/`
 - `src/`
